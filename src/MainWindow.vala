@@ -19,8 +19,6 @@ class MainWindow : Gtk.Window {
         Stylesheet.STYLES,
         Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
     );
-
-    this.get_style_context().add_class("context");
   }
 
   construct {
@@ -45,7 +43,6 @@ class MainWindow : Gtk.Window {
     main.get_style_context().add_class("main");
 
     var upload_area = new Gtk.Box(Gtk.Orientation.VERTICAL, 0);
-    upload_area.get_style_context().add_class("upload_area");
     upload_area.set_spacing(15);
     upload_area.set_valign(Gtk.Align.CENTER);
     upload_area.set_halign(Gtk.Align.CENTER);

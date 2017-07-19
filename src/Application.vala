@@ -1,6 +1,5 @@
 using Granite.Widgets;
 
-
 class Application : Granite.Application {
   public Application() {
     Object (application_id: "com.github.gijsgoudzwaard.image-optimizer",
@@ -11,7 +10,6 @@ class Application : Granite.Application {
     var app_window = new MainWindow(this);
     app_window.show_all();
   }
-
 
   public static int main(string[] args) {
     var app = new Application();
