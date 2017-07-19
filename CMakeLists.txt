@@ -42,6 +42,7 @@
         src/Application.vala
         src/MainWindow.vala
         src/Widgets/Toolbar.vala
+        src/Widgets/UploadScreen.vala
         src/Utils/Image.vala
         src/Constants/Stylesheet.vala
 
