@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=Text
+GenericName=Text
+Comment=Basic text editor
+Categories=Utility;Education;
+Exec=com.github.gijsgoudzwaard.image-optimizer
+Icon=application-default-icon
+Terminal=false
+Type=Application
+X-GNOME-Gettext-Domain=text
+Keywords=Text;Editor;Notes
