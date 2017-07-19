@@ -1,6 +1,7 @@
 # Image Optimzer
-## Simple image optimzer
 [![Get it on AppCenter](https://appcenter.elementary.io/badge.svg)](https://appcenter.elementary.io/com.github.gijsgoudzwaard.image-optimizer)
+
+Simple image optimzer.
 
 ![Screenshot](data/screenshots/welcome-screen.png)
 
