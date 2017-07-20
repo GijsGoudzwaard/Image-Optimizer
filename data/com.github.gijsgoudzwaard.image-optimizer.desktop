@@ -2,9 +2,9 @@
 Name=Image Optimizer
 GenericName=Image Optimizer
 Comment=Simple image optimzer
-Categories=Utility;Accessories;Graphics;
+Categories=Utility;Accessories;Graphics
 Exec=com.github.gijsgoudzwaard.image-optimizer
-Icon=gijsgoudzwaard.image-optimizer
+Icon=com.github.gijsgoudzwaard.image-optimizer
 Terminal=false
 Type=Application
 X-GNOME-Gettext-Domain=text

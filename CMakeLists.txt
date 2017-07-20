@@ -70,4 +70,4 @@
 
     install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/data/icons/upload_icon.svg DESTINATION share/icons/hicolor/scalable/apps)
 
-    install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/data/icons/com.github.gijsgoudzwaard.image-optimizer.svg DESTINATION share/icons/hicolor/scalable/apps)
+    install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/data/com.github.gijsgoudzwaard.image-optimizer.svg DESTINATION share/icons/hicolor/scalable/apps)
