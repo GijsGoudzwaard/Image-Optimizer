@@ -43,6 +43,7 @@
         src/MainWindow.vala
         src/Widgets/Toolbar.vala
         src/Widgets/UploadScreen.vala
+        src/Widgets/List.vala
         src/Utils/Image.vala
         src/Constants/Stylesheet.vala
 
@@ -68,3 +69,5 @@
     install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml DESTINATION ${DATADIR}/metainfo/)
 
     install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/data/icons/upload_icon.svg DESTINATION share/icons/hicolor/scalable/apps)
+
+    install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/data/icons/com.github.gijsgoudzwaard.image-optimizer.svg DESTINATION share/icons/hicolor/scalable/apps)

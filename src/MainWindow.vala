@@ -4,6 +4,8 @@ public class MainWindow : Gtk.Window {
 
   private Image[] images;
 
+  private UploadScreen upload_screen;
+
   public MainWindow(Gtk.Application application) {
     Object (
       application: application,
@@ -26,41 +28,50 @@ public class MainWindow : Gtk.Window {
 
     this.set_titlebar(new Toolbar());
 
+    //  for (var i = 0; i < 50; i++) {
+    //    this.images += new Image("test", "test", "tesdt");
+    //  }
+
     if (images.length == 0) {
-      var upload_screen = new UploadScreen();
-      add(upload_screen.window());
+      this.upload_screen = new UploadScreen();
+      add(this.upload_screen.window());
 
-      upload_screen.upload_button.clicked.connect(on_open_clicked);
+      this.upload_screen.upload_button.clicked.connect(on_open_clicked);
     } else {
-      this.imageList();
+      var images_list = new List(this.images);
+      add(images_list.window());
     }
-  }
-
-  private void imageList() {
-    //
   }
 
   public void on_open_clicked () {
-    var file_chooser = new FileChooserDialog ("Open File", this,
-                                  FileChooserAction.OPEN,
-                                  "_Cancel", ResponseType.CANCEL,
-                                  "_Open", ResponseType.ACCEPT);
+    var file_chooser = new Gtk.FileChooserDialog ("Select image(s)", this,
+                                  Gtk.FileChooserAction.OPEN,
+                                  "_Cancel", Gtk.ResponseType.CANCEL,
+                                  "_Open", Gtk.ResponseType.ACCEPT);
 
-    if (file_chooser.run () == ResponseType.ACCEPT) {
-      open_file (file_chooser.get_filename ());
+    file_chooser.select_multiple = true;
+
+    if (file_chooser.run () == Gtk.ResponseType.ACCEPT) {
+      foreach (string uri in file_chooser.get_filenames()) {
+        var name = Image.getFileName(uri);
+        var type = Image.getFileType(name);
+
+        if (Image.isValid(type)) {
+          images += new Image(uri, name, type);
+        }
+      }
+
+      if (images.length > 0) {
+        remove(this.upload_screen);
+
+        var images_list = new List(this.images);
+        add(images_list.window());
+
+        show_all();
+      }
+
     }
 
     file_chooser.destroy ();
-  }
-
-  public void open_file (string filename) {
-    try {
-      string text;
-      FileUtils.get_contents (filename, out text);
-
-      print(filename);
-    } catch (Error e) {
-      stderr.printf ("Error: %s\n", e.message);
-    }
   }
 }

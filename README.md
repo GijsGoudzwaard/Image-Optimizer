@@ -1,9 +1,14 @@
 # Image Optimzer
 [![Get it on AppCenter](https://appcenter.elementary.io/badge.svg)](https://appcenter.elementary.io/com.github.gijsgoudzwaard.image-optimizer)
 
-Simple image optimzer.
+A simple image optimizer build for [Elementary OS](https://elementary.io).
 
 ![Screenshot](data/screenshots/welcome-screen.png)
+
+## Donations
+Do you like the app? Would you like to support its development? Feel free to donate
+
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=PH9T46XBY7FTC)
 
 ## Dependencies
 
@@ -19,8 +24,8 @@ gtk+-3.0
 Simply clone this repo, then:
 
 ```
-$ cd build
-$ make
-$ sudo make install
+$ mkdir build && cd build
+$ cmake ..
+$ make && sudo make install
 $ com.github.gijsgoudzwaard.image-optimizer
 ```
