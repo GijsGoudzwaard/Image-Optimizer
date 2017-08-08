@@ -23,19 +23,44 @@ public class Image {
   public string type;
 
   /**
+   * The image size before optimizing.
+   *
+   * @var int
+   */
+  public int size;
+
+  /**
+   * The image size after optimizing.
+   *
+   * @var int
+   */
+  public int new_size = 0;
+
+  /**
+   * The image savings percentage after the image is optimized.
+   *
+   * @var int
+   */
+  public int savings = 0;
+
+  /**
    * Set the image properties.
    *
    * @param string path
    * @param string name
    * @param string type
+   * @param int size
    */
-  public Image(string path, string name, string type) {
+  public Image(string path, string name, string type, int size) {
     this.path = path;
     this.name = name;
     this.type = type;
+    this.size = size;
+
+    this.savings = 0;
   }
 
-  /*
+  /**
    * Get file name from a path.
    *
    * @param  string path
@@ -47,7 +72,7 @@ public class Image {
     return array[array.length - 1];
   }
 
-  /*
+  /**
    * Get file type from a file.
    *
    * @param  string name
@@ -66,22 +91,12 @@ public class Image {
    * @return bool
    */
   public static bool isValid(string type) {
-    var is_image = false;
-
     string[] supported_types = {
       "png",
       "jpg",
       "jpeg"
     };
 
-    foreach (string image_type in supported_types) {
-      if (image_type == type) {
-        is_image = true;
-
-        break;
-      }
-    }
-
-    return is_image;
+    return Utils.inArray(supported_types, type);
   }
 }

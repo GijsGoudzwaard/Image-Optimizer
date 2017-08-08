@@ -1,7 +1,7 @@
 # Image Optimzer
 [![Get it on AppCenter](https://appcenter.elementary.io/badge.svg)](https://appcenter.elementary.io/com.github.gijsgoudzwaard.image-optimizer)
 
-A simple image optimizer build for [Elementary OS](https://elementary.io).
+Simple losless image optimizer build for [Elementary OS](https://elementary.io).
 
 ![Screenshot](data/screenshots/welcome-screen.png)
 
@@ -17,6 +17,9 @@ Please make sure you have these dependencies first before building.
 ```
 granite
 gtk+-3.0
+glib-2.0
+jpegoptim
+optipng
 ```
 
 ## Building

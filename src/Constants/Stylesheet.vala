@@ -3,6 +3,15 @@ class Stylesheet {
         GtkWindow {
           border-bottom-left-radius: 3px;
           border-bottom-right-radius: 3px;
+          transition: background-color .1s ease-in-out;
+        }
+
+        GtkWindow.on_drag_motion {
+          background-color: #E8E8E8;
+        }
+
+        GtkWindow.on_drag_motion .toolbar {
+          background-color: #E8E8E8;
         }
 
         .main {
@@ -41,6 +50,18 @@ class Stylesheet {
           background: #F5F5F5;
           border-bottom-color: #F5F5F5;
           box-shadow: inset 0px 1px 1px -2px white;
+          transition: background-color .1s ease-in-out;
+          border: none;
+          outline: none;
+        }
+
+        GtkTreeView GtkButton {
+          background-color: #F5F5F5;
+          border: none;
+          border-bottom: 2px solid #E0E0E0;
+          padding: 10px;
+          outline: none;
+          background-image: none;
         }
     """;
 }

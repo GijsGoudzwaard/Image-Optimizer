@@ -23,7 +23,7 @@
     find_package(PkgConfig)
 
     # now let's actually check for the required dependencies
-    pkg_check_modules(DEPS REQUIRED gtk+-3.0 granite)
+    pkg_check_modules(DEPS REQUIRED gtk+-3.0 granite jpegoptim optipng)
 
     add_definitions(${DEPS_CFLAGS})
     link_libraries(${DEPS_LIBRARIES})
@@ -44,13 +44,17 @@
         src/Widgets/Toolbar.vala
         src/Widgets/UploadScreen.vala
         src/Widgets/List.vala
+        src/Utils/Utils.vala
         src/Utils/Image.vala
+        src/Utils/Optimizer.vala
+        src/Utils/JpegOptim.vala
+        src/Utils/OptiPng.vala
         src/Constants/Stylesheet.vala
 
     # tell what libraries to use when compiling
     PACKAGES
-        granite
         gtk+-3.0
+        granite
     )
 
     # tell cmake what to call the executable we just made
