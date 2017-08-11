@@ -5,7 +5,7 @@ public class Utils {
    *
    * @return bool
    */
-  public static bool inArray(string[] haystack, string needle) {
+  public static bool inArray (string[] haystack, string needle) {
     foreach (var item in haystack) {
       if (item == needle) {
         return true;
@@ -13,5 +13,22 @@ public class Utils {
     }
 
     return false;
+  }
+
+  /**
+   * Glue a string array together.
+   *
+   * @param  string glue
+   * @param  string[] pieces
+   * @return string
+   */
+  public static string join (string glue, string[] pieces) {
+    string glued_string = "";
+
+    foreach (var piece in pieces) {
+      glued_string += piece + glue;
+    }
+
+    return glued_string;
   }
 }

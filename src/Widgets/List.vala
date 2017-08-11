@@ -22,12 +22,13 @@ public class List {
                     0, true,
                     1, 1,
                     2, image.name,
-                    3, image.size.to_string(),
-                    4, image.new_size.to_string(),
-                    5, image.savings.to_string() + "%");
+                    3, image.size.to_string (),
+                    4, image.new_size.to_string (),
+                    5, image.savings.to_string () + "%");
     }
 
     var view = new Gtk.TreeView.with_model (listmodel);
+    view.get_style_context ().add_class ("tree_view");
     main.add (view);
 
     var cell = new Gtk.CellRendererText ();
@@ -45,20 +46,22 @@ public class List {
 		view.insert_column_with_attributes (4, "New size", cell, "text", 4);
     view.insert_column_with_attributes (5, "Savings", cell, "text", 5);
 
-    //  Update the spinner:
+    // Rotate the spinner:
 		Timeout.add (50, () => {
 			listmodel.foreach ((model, path, iter) => {
 				Value val;
 				listmodel.get_value (iter, 1, out val);
 				val.set_int (val.get_int () + 1);
-				listmodel.set_value (iter, 1, val);
+        listmodel.set_value (iter, 1, val);
+
 				return false;
-			});
+      });
+
 			return true;
 		});
 
-    //  var optimizer = new Optimizer (this.images);
-    //  optimizer.optimize ();
+    var optimizer = new Optimizer (this.images);
+    optimizer.optimize ();
 
     return main;
   }

@@ -54,7 +54,10 @@ public class MainWindow : Gtk.Window {
     this.set_titlebar (new Toolbar ());
 
     //  for (var i = 0; i < 50; i++) {
-    //    this.images += new Image("test", "test", "tesdt", 2);
+      //  this.images += new Image("/home/gijs/Pictures/oU3pGlU.jpg", "oU3pGlU.jpg", "jpg", 2);
+      //  this.images += new Image("/home/gijs/Pictures/oU3pGlU.jpg", "oU3pGlU.jpg", "jpg", 2);
+      //  this.images += new Image("/home/gijs/Pictures/Screenshot from 2017-07-19 12.58.40.png", "Screenshot from 2017-07-19 12.58.40.png", "png", 2);
+      //  this.images += new Image("/home/gijs/Pictures/Screenshot from 2017-07-19 12.58.40.png", "Screenshot from 2017-07-19 12.58.40.png", "png", 2);
     //  }
 
     if (images.length == 0) {

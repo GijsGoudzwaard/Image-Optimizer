@@ -12,7 +12,7 @@ public class JpegOptim {
    *
    * @var string[]
    */
-  private string[] args;
+  private string[] args = {"--strip-all"};
 
   /**
    * Add images to the current object.
@@ -29,6 +29,16 @@ public class JpegOptim {
    * @return void
    */
   public void optimize() {
-    //  print(string.join(" ", this.images));
+    var command = "jpegoptim " + Utils.join(" ", this.args);
+
+    foreach (var image in this.images) {
+      try {
+        print(command + " " + image);
+        Process.spawn_command_line_sync (command + " " + image);
+      } catch (SpawnError e) {
+        stdout.printf ("Error: %s\n", e.message);
+      }
+    }
+
   }
 }

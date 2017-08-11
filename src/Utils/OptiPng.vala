@@ -29,6 +29,6 @@ public class OptiPng {
    * @return void
    */
   public void optimize() {
-    //  print(string.join(" ", this.images));
+    print("%s\n", Utils.join(" ", this.images));
   }
 }

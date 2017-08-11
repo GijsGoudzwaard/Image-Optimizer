@@ -55,7 +55,12 @@ class Stylesheet {
           outline: none;
         }
 
-        GtkTreeView GtkButton {
+        .tree_view {
+          background-color: #fff;
+          color: #000;
+        }
+
+        .tree_view GtkButton {
           background-color: #F5F5F5;
           border: none;
           border-bottom: 2px solid #E0E0E0;
