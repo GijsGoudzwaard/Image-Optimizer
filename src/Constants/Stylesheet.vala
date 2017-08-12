@@ -55,18 +55,36 @@ class Stylesheet {
           outline: none;
         }
 
+        .list .toolbar {
+          background: #687ddb;
+          color: #fff;
+        }
+
+        .list .toolbar GtkImage, .list .toolbar GtkLabel {
+          color: #fff;
+        }
+
         .tree_view {
           background-color: #fff;
           color: #000;
         }
 
         .tree_view GtkButton {
-          background-color: #F5F5F5;
+          background-color: #687ddb;
+          color: #fff;
           border: none;
           border-bottom: 2px solid #E0E0E0;
           padding: 10px;
           outline: none;
           background-image: none;
+
+          border: 1px solid transparent;
+          border-color: #687ddb;
+          box-shadow: inset 0 0, inset 0 0;
+        }
+
+        .tree_view GtkButton GtkLabel {
+          color: #fff;
         }
     """;
 }
