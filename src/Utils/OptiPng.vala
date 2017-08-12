@@ -12,7 +12,7 @@ public class OptiPng {
    *
    * @var string[]
    */
-  private string[] args;
+  private string[] args = {"-o7", "-preserve"};
 
   /**
    * Add images to the current object.
@@ -29,6 +29,14 @@ public class OptiPng {
    * @return void
    */
   public void optimize() {
-    print("%s\n", Utils.join(" ", this.images));
+    var command = "optipng " + Utils.join(" ", this.args);
+
+    foreach (var image in this.images) {
+      try {
+        Process.spawn_command_line_async (command + " " + image.replace(" ", "\\ "));
+      } catch (SpawnError e) {
+        stdout.printf ("Error: %s\n", e.message);
+      }
+    }
   }
 }

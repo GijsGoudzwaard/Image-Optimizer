@@ -25,16 +25,16 @@ public class Image {
   /**
    * The image size before optimizing.
    *
-   * @var int
+   * @var int64
    */
-  public int size;
+  public int64 size;
 
   /**
    * The image size after optimizing.
    *
-   * @var int
+   * @var int64
    */
-  public int new_size = 0;
+  public int64 new_size = 0;
 
   /**
    * The image savings percentage after the image is optimized.
@@ -51,7 +51,7 @@ public class Image {
    * @param string type
    * @param int size
    */
-  public Image(string path, string name, string type, int size) {
+  public Image(string path, string name, string type, int64 size) {
     this.path = path;
     this.name = name;
     this.type = type;
@@ -98,5 +98,27 @@ public class Image {
     };
 
     return Utils.inArray(supported_types, type);
+  }
+
+  /**
+   * Get size in bytes and return in proper units (bytes, KB, MB).
+   *
+   * @param  int64 bytes
+   * @return string
+   */
+  public static string getUnit(int64 bytes) {
+    var unit = "";
+
+    if (bytes > 1000 && bytes < 100000) {
+      var size = "%.2f".printf(((double) bytes) / 1000);
+      unit = size.to_string().replace(".", ",") + " kb";
+    } else if (bytes > 1000000) {
+      var size = "%.2f".printf(((double) bytes) / 1000000);
+      unit = size.to_string().replace(".", ",") + " mb";
+    } else {
+      unit = bytes.to_string() + " bytes";
+    }
+
+    return unit;
   }
 }

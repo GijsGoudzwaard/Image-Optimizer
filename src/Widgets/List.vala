@@ -22,9 +22,9 @@ public class List {
                     0, true,
                     1, 1,
                     2, image.name,
-                    3, image.size.to_string (),
-                    4, image.new_size.to_string (),
-                    5, image.savings.to_string () + "%");
+                    3, Image.getUnit(image.size),
+                    4, image.new_size != 0 ? image.new_size.to_string () : "",
+                    5, image.savings != 0 ? (image.savings.to_string () + "%") : "");
     }
 
     var view = new Gtk.TreeView.with_model (listmodel);

@@ -164,7 +164,17 @@ public class MainWindow : Gtk.Window {
         var type = Image.getFileType (name);
 
         if (Image.isValid (type)) {
-          this.images += new Image (uri, name, type, 0);
+          File file = File.new_for_path(uri);
+          int64 file_size = 0;
+
+          try {
+            file_size = file.query_info ("*", FileQueryInfoFlags.NONE).get_size ();
+            stdout.printf ("File size: %lld bytes\n", file_size);
+          } catch (Error e) {
+            stdout.printf ("Error occurred");
+          }
+
+          this.images += new Image (uri, name, type, file_size);
         }
       }
 

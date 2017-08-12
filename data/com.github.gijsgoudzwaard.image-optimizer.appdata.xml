@@ -1,18 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Copyright 2017 Your Name <you@email.com> -->
+<!-- Copyright 2017 Gijs Goudzwaard <gijs.goudzwaard@gmail.com> -->
 <component type="desktop">
   <id>com.github.gijsgoudzwaard.image-optimizer.desktop</id>
   <metadata_license>CC0</metadata_license>
   <name>Text</name>
   <summary>Simple image optimizer</summary>
   <description>
-    <p>Optimize your images with ease. These images are supported (more will be added soon)</p>
+    <p>Compress your images with ease using JpegOptim and OptiPng</p>
+    <p>Features:</p>
     <ul>
-      <li>png</li>
-      <li>jpg</li>
-      <li>jpeg</li>
+      <li>Easily quit the application by pressing Control + q</li>
     </ul>
-    <p>Easily quit the application by pressing Control + q</p>
   </description>
   <url type="homepage">https://github.com/gijsgoudzwaard/image-optimizer</url>
   <url type="bugtracker">https://github.com/gijsgoudzwaard/image-optimizer/issues</url>

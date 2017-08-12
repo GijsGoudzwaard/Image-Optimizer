@@ -33,12 +33,10 @@ public class JpegOptim {
 
     foreach (var image in this.images) {
       try {
-        print(command + " " + image);
-        Process.spawn_command_line_sync (command + " " + image);
+        Process.spawn_command_line_async (command + " " + image.replace(" ", "\\ "));
       } catch (SpawnError e) {
         stdout.printf ("Error: %s\n", e.message);
       }
     }
-
   }
 }
