@@ -21,9 +21,9 @@ public class Optimizer {
    *
    * @return void
    */
-  public void optimize () {
-    var jpegoptim = new JpegOptim ();
-    var optipng = new OptiPng ();
+  public void optimize (List list) {
+    var jpegoptim = new JpegOptim (list);
+    var optipng = new OptiPng (list);
 
     foreach (var image in this.images) {
       if (Utils.inArray ({"jpg", "jpeg"}, image.type)) {
@@ -33,7 +33,11 @@ public class Optimizer {
       }
     }
 
-    jpegoptim.optimize ();
-    optipng.optimize ();
+    try {
+      jpegoptim.compress ();
+      optipng.compress ();
+    } catch (ThreadError e) {
+      stdout.printf ("Error: %s\n", e.message);
+    }
   }
 }

@@ -67,6 +67,8 @@ class Stylesheet {
         .tree_view {
           background-color: #fff;
           color: #000;
+          border-bottom-left-radius: 3px;
+          border-bottom-right-radius: 3px;
         }
 
         .tree_view GtkButton {

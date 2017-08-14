@@ -39,9 +39,9 @@ public class Image {
   /**
    * The image savings percentage after the image is optimized.
    *
-   * @var int
+   * @var float
    */
-  public int savings = 0;
+  public float savings = 0;
 
   /**
    * Set the image properties.
@@ -49,14 +49,22 @@ public class Image {
    * @param string path
    * @param string name
    * @param string type
-   * @param int size
    */
-  public Image(string path, string name, string type, int64 size) {
+  public Image(string path, string name, string type) {
     this.path = path;
     this.name = name;
     this.type = type;
-    this.size = size;
 
+    File file = File.new_for_path(path);
+    int64 file_size = 0;
+
+    try {
+      file_size = file.query_info ("*", FileQueryInfoFlags.NONE).get_size ();
+    } catch (Error e) {
+      stdout.printf ("Error occurred");
+    }
+
+    this.size = file_size;
     this.savings = 0;
   }
 
@@ -109,7 +117,7 @@ public class Image {
   public static string getUnit(int64 bytes) {
     var unit = "";
 
-    if (bytes > 1000 && bytes < 100000) {
+    if (bytes > 1000 && bytes < 1000000) {
       var size = "%.2f".printf(((double) bytes) / 1000);
       unit = size.to_string().replace(".", ",") + " kb";
     } else if (bytes > 1000000) {

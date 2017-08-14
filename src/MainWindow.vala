@@ -54,10 +54,10 @@ public class MainWindow : Gtk.Window {
     this.set_titlebar (new Toolbar ());
 
     //  for (var i = 0; i < 50; i++) {
-      this.images += new Image ("/home/gijs/Pictures/oU3pGlU.jpg", "oU3pGlU.jpg", "jpg", 2);
-      this.images += new Image ("/home/gijs/Pictures/oU3pGlU.jpg", "oU3pGlU.jpg", "jpg", 2);
-      this.images += new Image ("/home/gijs/Pictures/Screenshot from 2017-07-19 12.58.40.png", "Screenshot from 2017-07-19 12.58.40.png", "png", 2);
-      this.images += new Image ("/home/gijs/Pictures/Screenshot from 2017-07-19 12.58.40.png", "Screenshot from 2017-07-19 12.58.40.png", "png", 2);
+      //  this.images += new Image ("/home/gijs/Pictures/oU3pGlU.jpg", "oU3pGlU.jpg", "jpg");
+      //  this.images += new Image ("/home/gijs/Pictures/oU3pGlU.jpg", "oU3pGlU.jpg", "jpg");
+      //  this.images += new Image ("/home/gijs/Pictures/Screenshot from 2017-07-19 12.58.40.png", "Screenshot from 2017-07-19 12.58.40.png", "png");
+      //  this.images += new Image ("/home/gijs/Pictures/Screenshot from 2017-07-19 12.58.40.png", "Screenshot from 2017-07-19 12.58.40.png", "png");
     //  }
 
     if (images.length == 0) {
@@ -106,6 +106,8 @@ public class MainWindow : Gtk.Window {
    * @return bool
    */
   private bool on_drag_motion (Gdk.DragContext context, int x, int y, uint time) {
+    Gtk.drag_unhighlight (this);
+
     if (! this.get_style_context ().has_class ("on_drag_motion")) {
       this.get_style_context ().add_class ("on_drag_motion");
     }
@@ -127,15 +129,19 @@ public class MainWindow : Gtk.Window {
   private void on_drag_data_received (Gdk.DragContext drag_context, int x, int y, Gtk.SelectionData data, uint info, uint time)
   {
     foreach (string uri in data.get_uris ()) {
+      uri = uri.replace("%20", " ").replace("file://", "");
+
       var name = Image.getFileName (uri);
       var type = Image.getFileType (name);
 
       if (Image.isValid(type)) {
-        this.images += new Image (uri, name, type, 0);
+        this.images += new Image (uri, name, type);
       }
     }
 
     if (images.length > 0) {
+      this.get_style_context ().add_class ("list");
+
       remove (this.upload_screen);
 
       var images_list = new List (this.images);
@@ -166,21 +172,13 @@ public class MainWindow : Gtk.Window {
         var type = Image.getFileType (name);
 
         if (Image.isValid (type)) {
-          File file = File.new_for_path(uri);
-          int64 file_size = 0;
-
-          try {
-            file_size = file.query_info ("*", FileQueryInfoFlags.NONE).get_size ();
-            stdout.printf ("File size: %lld bytes\n", file_size);
-          } catch (Error e) {
-            stdout.printf ("Error occurred");
-          }
-
-          this.images += new Image (uri, name, type, file_size);
+          this.images += new Image (uri, name, type.down());
         }
       }
 
       if (images.length > 0) {
+        this.get_style_context ().add_class ("list");
+
         remove (this.upload_screen);
 
         var images_list = new List (this.images);
