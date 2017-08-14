@@ -122,6 +122,14 @@ public class Image {
     return unit;
   }
 
+  /**
+   * Calculate the savings from the new size compared to the old size.
+   * Returns a percentage.
+   *
+   * @param  float size
+   * @param  float new_size
+   * @return string
+   */
   public static string calcSavings (float size, float new_size) {
     float savings = 100.00f - (new_size / size * 100.00f);
 
