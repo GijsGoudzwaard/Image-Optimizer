@@ -44,7 +44,7 @@ public class JpegOptim {
    *
    * @return void
    */
-  public void compress() throws ThreadError {
+  public void compress() throws Error {
     var command = "jpegoptim " + Utils.join(" ", this.args);
 
     ThreadFunc<void*> run = () => {
@@ -72,7 +72,7 @@ public class JpegOptim {
       return null;
     };
 
-    Thread.create<void*>(run, false);
+    new Thread<void*>.try("thread", run);
     yield;
   }
 

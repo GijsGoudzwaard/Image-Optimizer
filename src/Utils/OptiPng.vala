@@ -44,7 +44,7 @@ public class OptiPng {
    *
    * @return void
    */
-  public void compress() throws ThreadError {
+  public void compress() throws Error {
     var command = "optipng " + Utils.join(" ", this.args);
 
     ThreadFunc<void*> run = () => {
@@ -72,7 +72,7 @@ public class OptiPng {
       return null;
     };
 
-    Thread.create<void*>(run, false);
+    new Thread<void*>.try("thread", run);
     yield;
   }
 

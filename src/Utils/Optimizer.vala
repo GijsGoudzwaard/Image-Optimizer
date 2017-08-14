@@ -36,7 +36,7 @@ public class Optimizer {
     try {
       jpegoptim.compress ();
       optipng.compress ();
-    } catch (ThreadError e) {
+    } catch (Error e) {
       stdout.printf ("Error: %s\n", e.message);
     }
   }
