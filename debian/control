@@ -1,0 +1,17 @@
+Source: com.github.gijsgoudzwaard.image-optimizer
+Section: x11
+Priority: extra
+Maintainer: Gijs Goudzwaard <gijs.goudzwaard@gmail.com>
+Build-Depends: cmake,
+               cmake-elementary,
+               debhelper (>= 9),
+               valac-0.26 | valac (>= 0.26)
+               jpegoptim
+               optipng
+Standards-Version: 3.9.6
+
+Package: com.github.gijsgoudzwaard.image-optimizer
+Architecture: any
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Description: Image Optimizer
+ A simple image optimizer.

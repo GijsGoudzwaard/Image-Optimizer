@@ -1,10 +1,37 @@
 using Gtk;
 
-class MainWindow : Gtk.Window {
+public class MainWindow : Gtk.Window {
 
-  private Image[] images;
+  /**
+   * Contains the images that are uploaded into the application.
+   *
+   * @var Image[]
+   */
+  private Image[] images = {};
 
-  public MainWindow(Gtk.Application application) {
+  /**
+   * An instance of the upload screen.
+   *
+   * @var UploadScreen
+   */
+  private UploadScreen upload_screen;
+
+  /**
+   * Contains a single type of data than can be supplied for by a widget for a
+   * selection or for supplied or received during drag-and-drop.
+   *
+   * @var Gtk.TargetEntry[]
+   */
+  private const Gtk.TargetEntry[] targets = {
+      {"text/uri-list",0,0}
+  };
+
+  /**
+   * Create a new window.
+   *
+   * @param Gtk.Application application
+   */
+  public MainWindow (Gtk.Application application) {
     Object (
       application: application,
       height_request: 680,
@@ -15,95 +42,149 @@ class MainWindow : Gtk.Window {
     );
 
     Granite.Widgets.Utils.set_theming_for_screen (
-        this.get_screen(),
-        Stylesheet.STYLES,
-        Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+      this.get_screen(),
+      Stylesheet.STYLES,
+      Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
     );
-
-    this.get_style_context().add_class("context");
   }
 
   construct {
     this.window_position = Gtk.WindowPosition.CENTER;
 
+    this.set_titlebar (new Toolbar ());
+
     if (images.length == 0) {
-      this.uploadScreen();
+      this.upload_screen = new UploadScreen ();
+      add (this.upload_screen.window ());
+
+      this.upload_screen.upload_button.clicked.connect (on_open_clicked);
+
+      //connect drag drop handlers
+      Gtk.drag_dest_set (this, Gtk.DestDefaults.ALL, targets, Gdk.DragAction.COPY);
+      this.drag_leave.connect (this.on_drag_leave);
+      this.drag_motion.connect (this.on_drag_motion);
+      this.drag_data_received.connect (this.on_drag_data_received);
     } else {
-      this.imageList();
+      this.get_style_context ().add_class ("list");
+
+      var images_list = new List (this.images);
+      var box = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
+
+      box.pack_start(images_list.window (), true, true, 0);
+
+      add (box);
     }
   }
 
-  private void imageList() {
-    //
+  /**
+   * Gets called while a file is being dragged out of the application.
+   *
+   * @param  Gdk.DragContext context
+   * @param  uint time
+   * @return void
+   */
+  private void on_drag_leave (Gdk.DragContext context, uint time) {
+    if (this.get_style_context ().has_class ("on_drag_motion")) {
+      this.get_style_context ().remove_class ("on_drag_motion");
+    }
   }
 
-  private void uploadScreen() {
-    this.set_titlebar(new Toolbar());
+  /**
+   * Gets called when a file is being dragged into the application while still holding the file.
+   *
+   * @param  Gdk.DragContext context
+   * @param  int x
+   * @param  int y
+   * @param  uint time
+   * @return bool
+   */
+  private bool on_drag_motion (Gdk.DragContext context, int x, int y, uint time) {
+    Gtk.drag_unhighlight (this);
 
-    var main = new Gtk.Box(Gtk.Orientation.VERTICAL, 0);
-    main.border_width = 10;
-    main.get_style_context().add_class("main");
-
-    var upload_area = new Gtk.Box(Gtk.Orientation.VERTICAL, 0);
-    upload_area.get_style_context().add_class("upload_area");
-    upload_area.set_spacing(15);
-    upload_area.set_valign(Gtk.Align.CENTER);
-    upload_area.set_halign(Gtk.Align.CENTER);
-
-    Gtk.Image icon = new Gtk.Image();
-
-    try {
-      var icon_pixbuf = new Gdk.Pixbuf.from_file_at_scale("/usr/share/icons/hicolor/scalable/apps/upload_icon.svg", 64, 64, true);
-      icon = new Gtk.Image.from_pixbuf(icon_pixbuf);
-    } catch (Error e) {}
-
-    var title = new Gtk.Label("Drag and drop images here");
-    title.get_style_context().add_class("h1");
-
-    var otherwise = new Gtk.Label("or");
-    otherwise.get_style_context().add_class("h4");
-
-    var upload_button = new Gtk.Button.with_label("Browse files");
-    upload_button.get_style_context().add_class("upload_button");
-    upload_button.clicked.connect(on_open_clicked);
-    upload_button.set_valign(Gtk.Align.CENTER);
-    upload_button.set_halign(Gtk.Align.CENTER);
-    upload_button.set_focus_on_click(false);
-
-    if (icon != null) {
-      upload_area.pack_start(icon, false, false, 0);
+    if (! this.get_style_context ().has_class ("on_drag_motion")) {
+      this.get_style_context ().add_class ("on_drag_motion");
     }
 
-    upload_area.pack_start(title, false, false, 0);
-    upload_area.pack_start(otherwise, false, false, 0);
-    upload_area.pack_start(upload_button, false, false, 0);
-
-    main.pack_start(upload_area);
-
-    add(main);
+    return true;
   }
 
-    private void on_open_clicked () {
-      var file_chooser = new FileChooserDialog ("Open File", this,
-                                    FileChooserAction.OPEN,
-                                    "_Cancel", ResponseType.CANCEL,
-                                    "_Open", ResponseType.ACCEPT);
-      if (file_chooser.run () == ResponseType.ACCEPT) {
-          open_file (file_chooser.get_filename ());
+  /**
+   * Gets called when a file gets dropped into the application.
+   *
+   * @param  Gdk.DragContext drag_context
+   * @param  int x
+   * @param  int y
+   * @param  Gtk.SelectionData data
+   * @param  uint info
+   * @param  uint time
+   * @return void
+   */
+  private void on_drag_data_received (Gdk.DragContext drag_context, int x, int y, Gtk.SelectionData data, uint info, uint time)
+  {
+    foreach (string uri in data.get_uris ()) {
+      uri = uri.replace("%20", " ").replace("file://", "");
+
+      var name = Image.getFileName (uri);
+      var type = Image.getFileType (name);
+
+      if (Image.isValid (type.down())) {
+        this.images += new Image (uri, name, type.down());
+      } else {
+        // TODO: add an error message here
+      }
+    }
+
+    if (images.length > 0) {
+      this.get_style_context ().add_class ("list");
+
+      remove (this.upload_screen);
+
+      var images_list = new List (this.images);
+      add (images_list.window ());
+
+      show_all ();
+    }
+
+    Gtk.drag_finish (drag_context, true, false, time);
+  }
+
+  /**
+   * Gets called when the button 'Browse files' gets clicked.
+   *
+   * @return void
+   */
+  public void on_open_clicked () {
+    var file_chooser = new Gtk.FileChooserDialog ("Select image(s)", this,
+                                  Gtk.FileChooserAction.OPEN,
+                                  "_Cancel", Gtk.ResponseType.CANCEL,
+                                  "_Open", Gtk.ResponseType.ACCEPT);
+
+    file_chooser.select_multiple = true;
+
+    if (file_chooser.run () == Gtk.ResponseType.ACCEPT) {
+      foreach (string uri in file_chooser.get_filenames ()) {
+        var name = Image.getFileName (uri);
+        var type = Image.getFileType (name);
+
+        if (Image.isValid (type.down())) {
+          this.images += new Image (uri, name, type.down());
+        } else {
+          // TODO: add an error message here
+        }
       }
 
-      file_chooser.destroy ();
+      if (images.length > 0) {
+        this.get_style_context ().add_class ("list");
+
+        remove (this.upload_screen);
+
+        var images_list = new List (this.images);
+        add (images_list.window ());
+
+        show_all ();
+      }
     }
 
-  private void open_file (string filename) {
-      try {
-          string text;
-          FileUtils.get_contents (filename, out text);
-          //  this.text_view.buffer.text = text;
-          print(filename);
-
-      } catch (Error e) {
-          stderr.printf ("Error: %s\n", e.message);
-      }
+    file_chooser.destroy ();
   }
 }

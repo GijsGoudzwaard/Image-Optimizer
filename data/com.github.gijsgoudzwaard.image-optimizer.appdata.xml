@@ -1,11 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Copyright 2017 Your Name <you@email.com> -->
+<!-- Copyright 2017 Gijs Goudzwaard <gijs.goudzwaard@gmail.com> -->
 <component type="desktop">
   <id>com.github.gijsgoudzwaard.image-optimizer.desktop</id>
   <metadata_license>CC0</metadata_license>
   <name>Text</name>
-  <summary>A Catchy Tagline</summary>
+  <summary>Simple lossless image optimizer</summary>
   <description>
-    <p>A quick summary of your app's main selling points and features. Just a couple sentences per paragraph is best.</p>
+    <p>Compress your images with ease using JpegOptim and OptiPng</p>
+    <p>Features:</p>
+    <ul>
+      <li>Easily quit the application by pressing Control + q</li>
+      <li>Compress <b>jpg / jpeg, png, bmp, gif, pnm and tiff</b> with lossless compression</li>
+    </ul>
   </description>
+  <url type="homepage">https://github.com/gijsgoudzwaard/image-optimizer</url>
+  <url type="bugtracker">https://github.com/gijsgoudzwaard/image-optimizer/issues</url>
+  <url type="help">https://github.com/gijsgoudzwaard/image-optimizer/issues</url>
+  <update_contact>gijs.goudzwaard@gmail.com</update_contact>
+  <screenshots>
+    <screenshot type="default">
+      <image>https://raw.githubusercontent.com/GijsGoudzwaard/Image-Optimizer/master/data/screenshots/welcome-screen.png</image>
+    </screenshot>
+  </screenshots>
 </component>

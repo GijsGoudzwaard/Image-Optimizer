@@ -3,6 +3,15 @@ class Stylesheet {
         GtkWindow {
           border-bottom-left-radius: 3px;
           border-bottom-right-radius: 3px;
+          transition: background-color .1s ease-in-out;
+        }
+
+        GtkWindow.on_drag_motion {
+          background-color: #E8E8E8;
+        }
+
+        GtkWindow.on_drag_motion .toolbar {
+          background-color: #E8E8E8;
         }
 
         .main {
@@ -41,6 +50,43 @@ class Stylesheet {
           background: #F5F5F5;
           border-bottom-color: #F5F5F5;
           box-shadow: inset 0px 1px 1px -2px white;
+          transition: background-color .1s ease-in-out;
+          border: none;
+          outline: none;
+        }
+
+        .list .toolbar {
+          background: #687ddb;
+          color: #fff;
+        }
+
+        .list .toolbar GtkImage, .list .toolbar GtkLabel {
+          color: #fff;
+        }
+
+        .tree_view {
+          background-color: #fff;
+          color: #000;
+          border-bottom-left-radius: 3px;
+          border-bottom-right-radius: 3px;
+        }
+
+        .tree_view GtkButton {
+          background-color: #687ddb;
+          color: #fff;
+          border: none;
+          border-bottom: 2px solid #E0E0E0;
+          padding: 10px;
+          outline: none;
+          background-image: none;
+
+          border: 1px solid transparent;
+          border-color: #687ddb;
+          box-shadow: inset 0 0, inset 0 0;
+        }
+
+        .tree_view GtkButton GtkLabel {
+          color: #fff;
         }
     """;
 }
