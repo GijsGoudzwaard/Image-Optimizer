@@ -25,7 +25,7 @@ public class List {
                     2, image.name,
                     3, Image.getUnit(image.size),
                     4, image.new_size != 0 ? image.new_size.to_string () : "",
-                    5, image.savings != 0 ? (image.savings.to_string () + "%") : "");
+                    5, "");
     }
 
     var view = new Gtk.TreeView.with_model (listmodel);
@@ -72,11 +72,6 @@ public class List {
     for (var i = 0; i < this.images.length; i++) {
       if (this.images[i].path == path) {
         this.images[i].new_size = (size == 0 || this.images[i].size < size) ? this.images[i].size : size;
-        this.images[i].savings = (100 - (this.images[i].new_size / this.images[i].size * 100));
-
-        //  print(this.images[i].new_size.to_string());
-        //  print(" - " + this.images[i].size.to_string());
-        //  print("\n");
       }
     }
 
@@ -101,6 +96,6 @@ public class List {
               2, image.name,
               3, Image.getUnit (image.size),
               4, Image.getUnit (image.new_size),
-              5, image.savings.to_string () + "%");
+              5, Image.calcSavings((float) image.size, (float) image.new_size));
   }
 }

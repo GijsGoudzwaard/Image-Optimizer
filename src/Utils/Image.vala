@@ -37,25 +37,18 @@ public class Image {
   public int64 new_size = 0;
 
   /**
-   * The image savings percentage after the image is optimized.
-   *
-   * @var float
-   */
-  public float savings = 0;
-
-  /**
    * Set the image properties.
    *
    * @param string path
    * @param string name
    * @param string type
    */
-  public Image(string path, string name, string type) {
+  public Image (string path, string name, string type) {
     this.path = path;
     this.name = name;
     this.type = type;
 
-    File file = File.new_for_path(path);
+    File file = File.new_for_path (path);
     int64 file_size = 0;
 
     try {
@@ -65,7 +58,6 @@ public class Image {
     }
 
     this.size = file_size;
-    this.savings = 0;
   }
 
   /**
@@ -74,7 +66,7 @@ public class Image {
    * @param  string path
    * @return string
    */
-  public static string getFileName(string path) {
+  public static string getFileName (string path) {
     var array = path.split("/");
 
     return array[array.length - 1];
@@ -86,7 +78,7 @@ public class Image {
    * @param  string name
    * @return string
    */
-  public static string getFileType(string name) {
+  public static string getFileType (string name) {
     var array = name.split(".");
 
     return array[array.length - 1];
@@ -98,14 +90,14 @@ public class Image {
    * @param  string type
    * @return bool
    */
-  public static bool isValid(string type) {
+  public static bool isValid (string type) {
     string[] supported_types = {
       "png",
       "jpg",
       "jpeg"
     };
 
-    return Utils.inArray(supported_types, type);
+    return Utils.inArray (supported_types, type);
   }
 
   /**
@@ -114,19 +106,25 @@ public class Image {
    * @param  int64 bytes
    * @return string
    */
-  public static string getUnit(int64 bytes) {
+  public static string getUnit (int64 bytes) {
     var unit = "";
 
     if (bytes > 1000 && bytes < 1000000) {
-      var size = "%.2f".printf(((double) bytes) / 1000);
-      unit = size.to_string().replace(".", ",") + " kb";
+      var size = "%.2f".printf (((double) bytes) / 1000);
+      unit = size.to_string ().replace (".", ",") + " kb";
     } else if (bytes > 1000000) {
-      var size = "%.2f".printf(((double) bytes) / 1000000);
-      unit = size.to_string().replace(".", ",") + " mb";
+      var size = "%.2f".printf (((double) bytes) / 1000000);
+      unit = size.to_string ().replace (".", ",") + " mb";
     } else {
-      unit = bytes.to_string() + " bytes";
+      unit = bytes.to_string () + " bytes";
     }
 
     return unit;
+  }
+
+  public static string calcSavings (float size, float new_size) {
+    float savings = 100.00f - (new_size / size * 100.00f);
+
+    return "%.2f%%".printf(savings);
   }
 }

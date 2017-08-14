@@ -12,7 +12,7 @@ public class OptiPng {
    *
    * @var string[]
    */
-  private string[] args = {"-o7", "-preserve"};
+  private string[] args = {"-preserve"};
 
   /**
    * Used to update the treeview when done compressing.
@@ -35,7 +35,7 @@ public class OptiPng {
    *
    * @return void
    */
-  public void addImage(string image) {
+  public void addImage (string image) {
     this.images += image;
   }
 
@@ -44,26 +44,30 @@ public class OptiPng {
    *
    * @return void
    */
-  public void compress() throws Error {
+  public void compress () throws Error {
     var command = "optipng " + Utils.join(" ", this.args);
 
     ThreadFunc<void*> run = () => {
       foreach (var image in this.images) {
-        string ls_stdout;
-        string ls_stderr;
-        int ls_status;
+        string stdout;
+        string stderr;
+        int status;
 
         try {
           Process.spawn_command_line_sync (
             command + " " + image.replace(" ", "\\ "),
-            out ls_stdout,
-            out ls_stderr,
-            out ls_status
+            out stderr,
+            out stdout,
+            out status
           );
 
-          var new_size = this.getNewSize(ls_stdout);
-          this.list.updateSize(image, new_size);
+          var new_size = 0;
 
+          if (! stdout.contains ("is already optimized")) {
+            new_size = this.getNewSize(stdout);
+          }
+
+          this.list.updateSize(image, new_size);
         } catch (SpawnError e) {
           stdout.printf ("Error: %s\n", e.message);
         }
@@ -83,12 +87,10 @@ public class OptiPng {
    * @return int
    */
   public int getNewSize (string stdout) {
-    // If stdout contains this piece of text, there was no change.
-    if (stdout.contains("is already optimized")) {
-      return 0;
-    }
+    // After the piece of text and a space there should be the new size in bytes.
+    var text = stdout.split("Output file size = ")[1];
 
     // The first integer until a space should be the new size in bytes.
-    return 0;
+    return int.parse(text.split(" ")[0]);
   }
 }

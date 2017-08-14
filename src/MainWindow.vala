@@ -53,13 +53,6 @@ public class MainWindow : Gtk.Window {
 
     this.set_titlebar (new Toolbar ());
 
-    //  for (var i = 0; i < 50; i++) {
-      //  this.images += new Image ("/home/gijs/Pictures/oU3pGlU.jpg", "oU3pGlU.jpg", "jpg");
-      //  this.images += new Image ("/home/gijs/Pictures/oU3pGlU.jpg", "oU3pGlU.jpg", "jpg");
-      //  this.images += new Image ("/home/gijs/Pictures/Screenshot from 2017-07-19 12.58.40.png", "Screenshot from 2017-07-19 12.58.40.png", "png");
-      //  this.images += new Image ("/home/gijs/Pictures/Screenshot from 2017-07-19 12.58.40.png", "Screenshot from 2017-07-19 12.58.40.png", "png");
-    //  }
-
     if (images.length == 0) {
       this.upload_screen = new UploadScreen ();
       add (this.upload_screen.window ());
@@ -134,8 +127,10 @@ public class MainWindow : Gtk.Window {
       var name = Image.getFileName (uri);
       var type = Image.getFileType (name);
 
-      if (Image.isValid(type)) {
-        this.images += new Image (uri, name, type);
+      if (Image.isValid (type.down())) {
+        this.images += new Image (uri, name, type.down());
+      } else {
+        // TODO: add an error message here
       }
     }
 
@@ -171,8 +166,10 @@ public class MainWindow : Gtk.Window {
         var name = Image.getFileName (uri);
         var type = Image.getFileType (name);
 
-        if (Image.isValid (type)) {
+        if (Image.isValid (type.down())) {
           this.images += new Image (uri, name, type.down());
+        } else {
+          // TODO: add an error message here
         }
       }
 

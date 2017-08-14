@@ -4,12 +4,13 @@
   <id>com.github.gijsgoudzwaard.image-optimizer.desktop</id>
   <metadata_license>CC0</metadata_license>
   <name>Text</name>
-  <summary>Simple image optimizer</summary>
+  <summary>Simple lossless image optimizer</summary>
   <description>
     <p>Compress your images with ease using JpegOptim and OptiPng</p>
     <p>Features:</p>
     <ul>
       <li>Easily quit the application by pressing Control + q</li>
+      <li>Compress <b>jpg / jpeg, png, bmp, gif, pnm and tiff</b> with lossless compression</li>
     </ul>
   </description>
   <url type="homepage">https://github.com/gijsgoudzwaard/image-optimizer</url>

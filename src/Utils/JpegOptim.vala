@@ -35,7 +35,7 @@ public class JpegOptim {
    *
    * @return void
    */
-  public void addImage(string image) {
+  public void addImage (string image) {
     this.images += image;
   }
 
@@ -44,24 +44,24 @@ public class JpegOptim {
    *
    * @return void
    */
-  public void compress() throws Error {
+  public void compress () throws Error {
     var command = "jpegoptim " + Utils.join(" ", this.args);
 
     ThreadFunc<void*> run = () => {
       foreach (var image in this.images) {
-        string ls_stdout;
-        string ls_stderr;
-        int ls_status;
+        string stdout;
+        string stderr;
+        int status;
 
         try {
           Process.spawn_command_line_sync (
             command + " " + image.replace(" ", "\\ "),
-            out ls_stdout,
-            out ls_stderr,
-            out ls_status
+            out stdout,
+            out stderr,
+            out status
           );
 
-          var new_size = this.getNewSize(ls_stdout);
+          var new_size = this.getNewSize(stdout);
           this.list.updateSize(image, new_size);
 
         } catch (SpawnError e) {
