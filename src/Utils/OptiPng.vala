@@ -12,7 +12,7 @@ public class OptiPng {
    *
    * @var string[]
    */
-  private string[] args = {"-preserve"};
+  private string[] args = {"-o3", "-preserve"};
 
   /**
    * Used to update the treeview when done compressing.

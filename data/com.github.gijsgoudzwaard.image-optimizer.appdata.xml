@@ -3,7 +3,7 @@
 <component type="desktop">
   <id>com.github.gijsgoudzwaard.image-optimizer.desktop</id>
   <metadata_license>CC0</metadata_license>
-  <name>Text</name>
+  <name>Image Optimizer</name>
   <summary>Simple lossless image optimizer</summary>
   <description>
     <p>Compress your images with ease using JpegOptim and OptiPng</p>
@@ -20,6 +20,9 @@
   <screenshots>
     <screenshot type="default">
       <image>https://raw.githubusercontent.com/GijsGoudzwaard/Image-Optimizer/master/data/screenshots/welcome-screen.png</image>
+    </screenshot>
+    <screenshot>
+      <image>https://raw.githubusercontent.com/GijsGoudzwaard/Image-Optimizer/master/data/screenshots/treeview.png</image>
     </screenshot>
   </screenshots>
 </component>

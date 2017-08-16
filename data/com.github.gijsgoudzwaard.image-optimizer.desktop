@@ -7,5 +7,5 @@ Exec=com.github.gijsgoudzwaard.image-optimizer
 Icon=com.github.gijsgoudzwaard.image-optimizer
 Terminal=false
 Type=Application
-X-GNOME-Gettext-Domain=text
+X-GNOME-Gettext-Domain=Image Optimizer
 Keywords=Image;Optimzer;
