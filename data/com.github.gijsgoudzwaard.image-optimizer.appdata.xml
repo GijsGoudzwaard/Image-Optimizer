@@ -10,7 +10,7 @@
     <p>Features:</p>
     <ul>
       <li>Easily quit the application by pressing Control + q</li>
-      <li>Compress <b>jpg / jpeg, png, bmp, gif, pnm and tiff</b> with lossless compression</li>
+      <li>Compress <b>jpg / jpeg, png, bmp, pnm and tiff</b> with lossless compression</li>
     </ul>
   </description>
   <url type="homepage">https://github.com/gijsgoudzwaard/image-optimizer</url>

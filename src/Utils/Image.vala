@@ -94,7 +94,11 @@ public class Image {
     string[] supported_types = {
       "png",
       "jpg",
-      "jpeg"
+      "jpeg",
+      "bmp",
+      "gif",
+      "pnm",
+      "tiff"
     };
 
     return Utils.inArray (supported_types, type);

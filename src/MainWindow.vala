@@ -84,7 +84,7 @@ public class MainWindow : Gtk.Window {
    * @return void
    */
   private void on_drag_leave (Gdk.DragContext context, uint time) {
-    if (this.get_style_context ().has_class ("on_drag_motion")) {
+    if (this.get_style_context ().has_class ("on_drag_motion") && this.get_style_context ().has_class ("list")) {
       this.get_style_context ().remove_class ("on_drag_motion");
     }
   }
@@ -101,7 +101,7 @@ public class MainWindow : Gtk.Window {
   private bool on_drag_motion (Gdk.DragContext context, int x, int y, uint time) {
     Gtk.drag_unhighlight (this);
 
-    if (! this.get_style_context ().has_class ("on_drag_motion")) {
+    if (! this.get_style_context ().has_class ("on_drag_motion") && ! this.get_style_context ().has_class ("list")) {
       this.get_style_context ().add_class ("on_drag_motion");
     }
 
