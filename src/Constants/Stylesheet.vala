@@ -6,7 +6,7 @@ class Stylesheet {
           transition: background-color .1s ease-in-out;
         }
 
-        GtkWindow.on_drag_motion {
+        GtkWindow.on_drag_motion, GtkWindow.on_drag_motion .tree_view {
           background-color: #E8E8E8;
         }
 
@@ -17,6 +17,11 @@ class Stylesheet {
         .main {
           border: 3px dashed #c2cdda;
           border-radius: 3px;
+        }
+
+        .upload_button.add {
+          border-radius: 100%;
+          padding: 10px 17px;
         }
 
         .upload_button {
@@ -55,6 +60,17 @@ class Stylesheet {
           outline: none;
         }
 
+        .toolbar .titlebutton GtkLabel {
+          font-size: 16px;
+          padding:0px 8px;
+          color: #fff;
+          font-weight: 700;
+        }
+
+        .toolbar .titlebutton.add {
+          padding: 0;
+        }
+
         .list .toolbar {
           background: #687ddb;
           color: #fff;
@@ -69,6 +85,10 @@ class Stylesheet {
           color: #000;
           border-bottom-left-radius: 3px;
           border-bottom-right-radius: 3px;
+        }
+
+        .tree_view row {
+          border-bottom: 1px solid #ddd;
         }
 
         .tree_view GtkButton {

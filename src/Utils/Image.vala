@@ -96,7 +96,6 @@ public class Image {
       "jpg",
       "jpeg",
       "bmp",
-      "gif",
       "pnm",
       "tiff"
     };

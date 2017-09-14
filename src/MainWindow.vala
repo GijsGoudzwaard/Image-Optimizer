@@ -10,11 +10,25 @@ public class MainWindow : Gtk.Window {
   private Image[] images = {};
 
   /**
+   * An instance of the header bar.
+   *
+   * @var Gtk.HeaderBar
+   */
+  private Gtk.HeaderBar toolbar;
+
+  /**
    * An instance of the upload screen.
    *
    * @var UploadScreen
    */
   private UploadScreen upload_screen;
+
+  /**
+   * An instance of the list screen.
+   *
+   * @var List
+   */
+  private List images_list;
 
   /**
    * Contains a single type of data than can be supplied for by a widget for a
@@ -51,29 +65,57 @@ public class MainWindow : Gtk.Window {
   construct {
     this.window_position = Gtk.WindowPosition.CENTER;
 
-    this.set_titlebar (new Toolbar ());
+    this.toolbar = new Toolbar ();
+    this.set_titlebar (this.toolbar);
+
+    //  for (int a = 0; a < 10; a++) {
+    //    this.images += new Image ("", "", "");
+    //  }
+
+    Gtk.drag_dest_set (this, Gtk.DestDefaults.ALL, targets, Gdk.DragAction.COPY);
+    this.drag_leave.connect (this.on_drag_leave);
+    this.drag_motion.connect (this.on_drag_motion);
+    this.drag_data_received.connect (this.on_drag_data_received);
 
     if (images.length == 0) {
       this.upload_screen = new UploadScreen ();
       add (this.upload_screen.window ());
 
       this.upload_screen.upload_button.clicked.connect (on_open_clicked);
-
-      //connect drag drop handlers
-      Gtk.drag_dest_set (this, Gtk.DestDefaults.ALL, targets, Gdk.DragAction.COPY);
-      this.drag_leave.connect (this.on_drag_leave);
-      this.drag_motion.connect (this.on_drag_motion);
-      this.drag_data_received.connect (this.on_drag_data_received);
     } else {
-      this.get_style_context ().add_class ("list");
-
-      var images_list = new List (this.images);
-      var box = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
-
-      box.pack_start(images_list.window (), true, true, 0);
-
-      add (box);
+      this.set_list_window ();
     }
+  }
+
+  /**
+   * Set the list window, if it is already set and the method is called again return void.
+   *
+   * @return void
+   */
+  private void set_list_window () {
+    if (this.images_list != null) {
+      return;
+    }
+
+    this.get_style_context ().add_class ("list");
+
+    remove (this.upload_screen);
+
+    images_list = new List (this.images);
+    add (images_list.window ());
+
+    var add_image = new Gtk.Button.with_label ("+");
+    this.toolbar.remove (add_image);
+
+    add_image.get_style_context ().add_class ("button");
+    add_image.get_style_context ().add_class ("titlebutton");
+    add_image.get_style_context ().add_class ("add");
+    add_image.clicked.connect (on_open_clicked);
+
+    this.toolbar.pack_end (add_image);
+    this.toolbar.show_all ();
+
+    show_all ();
   }
 
   /**
@@ -134,22 +176,19 @@ public class MainWindow : Gtk.Window {
       }
     }
 
-    if (images.length > 0) {
-      this.get_style_context ().add_class ("list");
-
-      remove (this.upload_screen);
-
-      var images_list = new List (this.images);
-      add (images_list.window ());
-
-      show_all ();
+    if (images.length > 0 && this.images_list == null) {
+      this.set_list_window ();
+    } else if (this.images_list != null) {
+      this.images_list.updateTreeView (this.images);
     }
+
+    this.images = {};
 
     Gtk.drag_finish (drag_context, true, false, time);
   }
 
   /**
-   * Gets called when the button 'Browse files' gets clicked.
+   * Gets called when the button 'Browse files' or '+' gets clicked.
    *
    * @return void
    */
@@ -173,16 +212,15 @@ public class MainWindow : Gtk.Window {
         }
       }
 
-      if (images.length > 0) {
-        this.get_style_context ().add_class ("list");
-
-        remove (this.upload_screen);
-
-        var images_list = new List (this.images);
-        add (images_list.window ());
-
-        show_all ();
+      if (this.images_list != null) {
+        this.images_list.updateTreeView (this.images);
       }
+
+      if (this.images.length > 0) {
+        this.set_list_window();
+      }
+
+      this.images = {};
     }
 
     file_chooser.destroy ();

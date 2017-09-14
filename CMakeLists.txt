@@ -34,7 +34,7 @@
     # make sure we use vala
     include(ValaVersion)
     # make sure it's the desired version of vala
-    ensure_vala_version("0.16" MINIMUM)
+    ensure_vala_version("0.26.0" MINIMUM)
 
     # files we want to compile
     include(ValaPrecompile)

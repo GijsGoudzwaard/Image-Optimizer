@@ -6,6 +6,8 @@ public class List {
 
   private Gtk.ListStore listmodel;
 
+  public Gtk.Button upload_button;
+
   public List (Image[] images) {
     this.images = images;
   }
@@ -16,6 +18,13 @@ public class List {
 
     listmodel = new Gtk.ListStore (6, typeof (bool), typeof (int), typeof (string), typeof (string), typeof (string), typeof (string));
 
+    this.upload_button = new Gtk.Button.with_label("+");
+    this.upload_button.get_style_context().add_class("upload_button");
+    this.upload_button.get_style_context().add_class("add");
+    this.upload_button.set_valign(Gtk.Align.START);
+    this.upload_button.set_halign(Gtk.Align.END);
+    this.upload_button.set_focus_on_click(false);
+
     Gtk.TreeIter iter;
     foreach (var image in this.images) {
       listmodel.append (out iter);
@@ -24,7 +33,7 @@ public class List {
                     1, 1,
                     2, image.name,
                     3, Image.getUnit(image.size),
-                    4, image.new_size != 0 ? image.new_size.to_string () : "",
+                    4, "",
                     5, "");
     }
 
@@ -33,6 +42,9 @@ public class List {
     main.add (view);
 
     var cell = new Gtk.CellRendererText ();
+    cell.height = 50;
+    cell.width = 150;
+    cell.wrap_width = 10;
     var spinner = new Gtk.CellRendererSpinner ();
 
     Gtk.TreeViewColumn column = new Gtk.TreeViewColumn ();
@@ -59,7 +71,7 @@ public class List {
       });
 
 			return true;
-		});
+    });
 
     var optimizer = new Optimizer (this.images);
     optimizer.optimize (this);
@@ -97,5 +109,34 @@ public class List {
               3, Image.getUnit (image.size),
               4, Image.getUnit (image.new_size),
               5, Image.calcSavings((float) image.size, (float) image.new_size));
+  }
+
+  public void updateTreeView (Image[] images) {
+    Gtk.TreeIter iter;
+
+    foreach (var image in images) {
+      var duplicate = false;
+      for (int i = 0; i < this.images.length; i++) {
+        if (this.images[i].path == image.path) {
+          duplicate = true;
+        }
+      }
+
+      if (! duplicate) {
+        listmodel.append (out iter);
+        listmodel.set (iter,
+                      0, true,
+                      1, 1,
+                      2, image.name,
+                      3, Image.getUnit(image.size),
+                      4, "",
+                      5, "");
+      }
+
+      this.images += image;
+    }
+
+    var optimizer = new Optimizer (images);
+    optimizer.optimize (this);
   }
 }

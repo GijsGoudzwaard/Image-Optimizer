@@ -4,7 +4,7 @@
   <id>com.github.gijsgoudzwaard.image-optimizer.desktop</id>
   <metadata_license>CC0</metadata_license>
   <name>Image Optimizer</name>
-  <summary>Simple lossless image optimizer</summary>
+  <summary>Simple lossless image compression</summary>
   <description>
     <p>Compress your images with ease using JpegOptim and OptiPng</p>
     <p>Features:</p>
