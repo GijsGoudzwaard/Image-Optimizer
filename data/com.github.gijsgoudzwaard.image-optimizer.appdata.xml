@@ -30,4 +30,11 @@
     <value key="x-appcenter-color-primary-text">#ffffff</value>
     <value key="x-appcenter-suggested-price">2</value>
   </custom>
+  <releases>
+      <release version="0.1.2" date="2017-10-04">
+        <description>
+          <p>This release changes the icon to fit the Elementary OS HIG better.</p>
+        </description>
+      </release>
+    </releases>
 </component>
