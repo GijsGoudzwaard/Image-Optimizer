@@ -1,7 +1,6 @@
 Source: com.github.gijsgoudzwaard.image-optimizer
 Section: x11
 Priority: extra
-Maintainer: Gijs Goudzwaard <gijs.goudzwaard@gmail.com>
 Build-Depends: cmake,
                cmake-elementary,
                libgtk-3-dev,
