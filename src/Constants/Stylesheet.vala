@@ -1,5 +1,7 @@
 class Stylesheet {
     public const string STYLES = """
+        @define-color primary_color #687ddb;
+
         GtkWindow {
           border-bottom-left-radius: 3px;
           border-bottom-right-radius: 3px;
@@ -25,19 +27,12 @@ class Stylesheet {
         }
 
         .upload_button {
-          background-color: #687ddb;
-          border-radius: 3px;
-          padding: 8px 13px 10px;
-          border: none;
+          padding: 6px 10px 8px;
+          font-size:11px;
           color: #fff;
-          font-weight: bold;
-          font-size: 12px;
-          box-shadow: 0px 0px 1px 1px rgba (0, 0, 0, 0);
-          transition: background-color .1s ease-in-out;
-        }
-
-        .upload_button:hover {
-          background-color: #898AE4;
+          background: @primary_color;
+          border: 1px solid darker(@primary_color);
+          transition: all 200ms ease-in-out;
         }
 
         .h1 {
@@ -72,7 +67,7 @@ class Stylesheet {
         }
 
         .list .toolbar {
-          background: #687ddb;
+          background: @primary_color;
           color: #fff;
         }
 
@@ -92,7 +87,7 @@ class Stylesheet {
         }
 
         .tree_view GtkButton {
-          background-color: #687ddb;
+          background-color: @primary_color;
           color: #fff;
           border: none;
           border-bottom: 2px solid #E0E0E0;
@@ -101,7 +96,7 @@ class Stylesheet {
           background-image: none;
 
           border: 1px solid transparent;
-          border-color: #687ddb;
+          border-color: @primary_color;
           box-shadow: inset 0 0, inset 0 0;
         }
 

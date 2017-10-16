@@ -27,6 +27,7 @@ public class UploadScreen : Gtk.Box {
     otherwise.get_style_context().add_class("h4");
 
     this.upload_button = new Gtk.Button.with_label("Browse files");
+    this.upload_button.get_style_context().add_class ("suggested-action");
     this.upload_button.get_style_context().add_class("upload_button");
     this.upload_button.set_valign(Gtk.Align.CENTER);
     this.upload_button.set_halign(Gtk.Align.CENTER);
