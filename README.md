@@ -8,7 +8,7 @@ Simple losless image optimizer build for [Elementary OS](https://elementary.io).
 ## Donations
 Do you like the app? Would you like to support its development? Feel free to donate
 
-[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=PH9T46XBY7FTC)
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://paypal.me/gijsgoudzwaard)
 
 ## Dependencies
 
