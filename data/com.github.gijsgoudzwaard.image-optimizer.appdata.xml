@@ -4,6 +4,8 @@
   <id>com.github.gijsgoudzwaard.image-optimizer.desktop</id>
   <metadata_license>CC0</metadata_license>
   <name>Image Optimizer</name>
+​  <developer_name>Gijs Goudzwaard</developer_name>
+​  <project_license>MIT</project_license>
   <summary>Simple lossless image compression</summary>
   <description>
     <p>Compress your images with ease using JpegOptim and OptiPng</p>
@@ -31,7 +33,7 @@
     <value key="x-appcenter-suggested-price">2</value>
   </custom>
   <releases>
-      <release version="0.1.5" date="2018-01-18">
+      <release version="0.1.6" date="2018-01-18">
         <description>
           <p>This release adds a context menu in Files for images that will allow easier image optimizations.</p>
         </description>
