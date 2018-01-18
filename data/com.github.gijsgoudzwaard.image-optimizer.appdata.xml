@@ -31,6 +31,11 @@
     <value key="x-appcenter-suggested-price">2</value>
   </custom>
   <releases>
+      <release version="0.1.5" date="2018-01-18">
+        <description>
+          <p>This release adds a context menu in Files for images that will allow easier image optimizations.</p>
+        </description>
+      </release>
       <release version="0.1.4" date="2017-10-16">
         <description>
           <p>This release changes the upload button to fit the Elementary OS HIG better.</p>
