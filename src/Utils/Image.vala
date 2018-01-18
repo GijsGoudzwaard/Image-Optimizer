@@ -95,9 +95,7 @@ public class Image {
       "png",
       "jpg",
       "jpeg",
-      "bmp",
-      "pnm",
-      "tiff"
+      "bmp"
     };
 
     return Utils.inArray (supported_types, type);

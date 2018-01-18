@@ -1,0 +1,5 @@
+[Contractor Entry]
+Name=Optimize image
+Description=Simple lossless image compression
+MimeType=image/jpeg;image/jpg;image/png;image/bmp
+Exec=com.github.gijsgoudzwaard.image-optimizer

@@ -77,6 +77,8 @@
     # install our .desktop file so the Applications menu will see it
     install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/data/com.github.gijsgoudzwaard.image-optimizer.desktop DESTINATION ${DATADIR}/applications/)
 
+    install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/data/com.github.gijsgoudzwaard.image-optimizer.contract DESTINATION ~/.local/share/contractor)
+
     # install our .appdata.xml file so AppCenter will see it
     install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml DESTINATION ${DATADIR}/metainfo/)
 

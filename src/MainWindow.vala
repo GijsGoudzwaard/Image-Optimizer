@@ -55,6 +55,8 @@ public class MainWindow : Gtk.Window {
       width_request: 980
     );
 
+    this.images = images;
+
     Granite.Widgets.Utils.set_theming_for_screen (
       this.get_screen(),
       Stylesheet.STYLES,
@@ -76,6 +78,25 @@ public class MainWindow : Gtk.Window {
     this.drag_leave.connect (this.on_drag_leave);
     this.drag_motion.connect (this.on_drag_motion);
     this.drag_data_received.connect (this.on_drag_data_received);
+
+    if (images.length == 0) {
+      this.upload_screen = new UploadScreen ();
+      add (this.upload_screen.window ());
+
+      this.upload_screen.upload_button.clicked.connect (on_open_clicked);
+    } else {
+      this.set_list_window ();
+    }
+  }
+
+  /**
+   * Set the images and set the appropriate view.
+   *
+   * @param  Image images
+   * @return void
+   */
+  public void set_images(Image[] images) {
+    this.images = images;
 
     if (images.length == 0) {
       this.upload_screen = new UploadScreen ();
