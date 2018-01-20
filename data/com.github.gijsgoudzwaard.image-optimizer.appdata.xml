@@ -33,6 +33,11 @@
     <value key="x-appcenter-suggested-price">2</value>
   </custom>
   <releases>
+      <release version="0.1.7" date="2018-01-20">
+        <description>
+          <p>This release fixes the context menu in Files.</p>
+        </description>
+      </release>
       <release version="0.1.6" date="2018-01-18">
         <description>
           <p>This release adds a context menu in Files for images that will allow easier image optimizations.</p>
