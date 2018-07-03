@@ -33,6 +33,11 @@
     <value key="x-appcenter-suggested-price">2</value>
   </custom>
   <releases>
+      <release version="0.1.8" date="2018-07-03">
+        <description>
+          <p>Getting things ready for Juno.</p>
+        </description>
+      </release>
       <release version="0.1.7" date="2018-01-20">
         <description>
           <p>This release fixes the context menu in Files.</p>
