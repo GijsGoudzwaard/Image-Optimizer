@@ -2,17 +2,17 @@ class Stylesheet {
     public const string STYLES = """
         @define-color primary_color #687ddb;
 
-        GtkWindow {
+        window {
           border-bottom-left-radius: 3px;
           border-bottom-right-radius: 3px;
           transition: background-color .1s ease-in-out;
         }
 
-        GtkWindow.on_drag_motion, GtkWindow.on_drag_motion .tree_view {
+        window.on_drag_motion, window.on_drag_motion .tree_view {
           background-color: #E8E8E8;
         }
 
-        GtkWindow.on_drag_motion .toolbar {
+        window.on_drag_motion .toolbar {
           background-color: #E8E8E8;
         }
 
@@ -55,9 +55,8 @@ class Stylesheet {
           outline: none;
         }
 
-        .toolbar .titlebutton GtkLabel {
+        .toolbar .titlebutton {
           font-size: 16px;
-          padding:0px 8px;
           color: #fff;
           font-weight: 700;
         }
@@ -71,7 +70,7 @@ class Stylesheet {
           color: #fff;
         }
 
-        .list .toolbar GtkImage, .list .toolbar GtkLabel {
+        .list .toolbar image, .list .toolbar label, .list .toolbar button {
           color: #fff;
         }
 
@@ -86,7 +85,7 @@ class Stylesheet {
           border-bottom: 1px solid #ddd;
         }
 
-        .tree_view GtkButton {
+        .tree_view button {
           background-color: @primary_color;
           color: #fff;
           border: none;
@@ -100,7 +99,7 @@ class Stylesheet {
           box-shadow: inset 0 0, inset 0 0;
         }
 
-        .tree_view GtkButton GtkLabel {
+        .tree_view button label {
           color: #fff;
         }
     """;
