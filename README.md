@@ -26,9 +26,13 @@ optipng
 
 Simply clone this repo, then:
 
-```
-$ mkdir build && cd build
-$ cmake ..
-$ make && sudo make install
-$ com.github.gijsgoudzwaard.image-optimizer
-```
+Run `meson build` to configure the build environment and run `ninja test` to build and run automated tests
+
+    meson build --prefix=/usr
+    cd build
+    ninja test
+
+To install, use `ninja install`, then execute with `com.github.gijsgoudzwaard.image-optimizer`
+
+    sudo ninja install
+    com.github.gijsgoudzwaard.image-optimizer
