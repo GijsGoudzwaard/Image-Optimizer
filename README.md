@@ -1,7 +1,7 @@
-# Image Optimzer
+# Image Optimizer
 [![Get it on AppCenter](https://appcenter.elementary.io/badge.svg)](https://appcenter.elementary.io/com.github.gijsgoudzwaard.image-optimizer)
 
-Simple losless image optimizer build for [Elementary OS](https://elementary.io).
+Simple lossless image optimizer built for [elementary OS](https://elementary.io).
 
 ![Screenshot](data/screenshots/welcome-screen.png)
 
