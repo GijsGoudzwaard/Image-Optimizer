@@ -1,22 +1,28 @@
-
-
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Copyright 2017 Gijs Goudzwaard <gijs.goudzwaard@gmail.com> -->
 <component type="desktop">
    <id>com.github.gijsgoudzwaard.image-optimizer.desktop</id>
-   <metadata_license>CC0</metadata_license>
+   <metadata_license>CC0-1.0</metadata_license>
    <name>Image Optimizer</name>
+   <name xml:lang="nb">Image Optimizer</name>
    <developer_name>Gijs Goudzwaard</developer_name>
    <project_license>MIT</project_license>
    <summary>Simple lossless image compression</summary>
+   <summary xml:lang="nb">Enkel tapsfri bildekomprimering</summary>
    <description>
-      <p>Compress your images with ease using JpegOptim and OptiPng</p>
+      <p>Compress your images with ease without the cost of loosing the images quality using JpegOptim and OptiPng.</p>
+      <p xml:lang="nb">Komprimer bildene dine enkelt uten å miste bildekvaliteten med JpegOptim og OptiPng.</p>
       <p>Features:</p>
-      <ul>
-         <li>Easily quit the application by pressing Control + q</li>
-         <li>
-            Compress jpg / jpeg, png, bmp, pnm and tiff with lossless compression
-         </li>
+      <p xml:lang="nb">Egenskaper:</p>
+      <ul>         
+         <li>Compress bmp, jpg / jpeg, png, pnm and tiff with lossless compression</li>
+         <li xml:lang="nb">Komprimerer bmp, jpg / jpeg, png, pnm og tiff med tapsfri komprimering</li>
+         <li>Works offline, always ready where and whenever needed</li>
+         <li xml:lang="nb">Virker uten internett, alltid klar hvor og når det er nødvendig</li>
+         <li>A clean interface, optimize your images effortlessly</li>
+         <li xml:lang="nb">Et rent grensesnitt, optimaliser bildene dine uten problemer</li>
+         <li>Easily quit the application by pressing Ctrl + Q</li>
+         <li xml:lang="nb">Avslutt programmet enkelt ved å trykke Ctrl + Q</li>
       </ul>
    </description>
    <url type="homepage">https://github.com/gijsgoudzwaard/image-optimizer</url>
@@ -37,7 +43,17 @@
       <value key="x-appcenter-suggested-price">2</value>
    </custom>
    <releases>
-      <release version="0.1.9" date="2018-08-03">
+     <release version="0.1.11" date="2018-08-03">
+        <description>
+           <p>Getting things ready for Juno, #27 should be fixed.</p>
+        </description>
+     </release>
+     <release version="0.1.10" date="2018-07-03">
+        <description>
+           <p>Fixed unmet dependencies.</p>
+        </description>
+     </release>
+      <release version="0.1.9" date="2018-07-03">
          <description>
             <p>Getting things ready for Juno.</p>
          </description>
@@ -73,5 +89,5 @@
          </description>
       </release>
    </releases>
+   <content_rating type="oars-1.1" />
 </component>
-
