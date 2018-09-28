@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Copyright 2017 Gijs Goudzwaard <gijs.goudzwaard@gmail.com> -->
 <component type="desktop">
-   <id>com.github.gijsgoudzwaard.image-optimizer.desktop</id>
+   <id>com.github.gijsgoudzwaard.image-optimizer</id>
    <metadata_license>CC0-1.0</metadata_license>
    <name>Image Optimizer</name>
    <name xml:lang="nb">Image Optimizer</name>
@@ -14,7 +14,7 @@
       <p xml:lang="nb">Komprimer bildene dine enkelt uten å miste bildekvaliteten med JpegOptim og OptiPng.</p>
       <p>Features:</p>
       <p xml:lang="nb">Egenskaper:</p>
-      <ul>         
+      <ul>
          <li>Compress bmp, jpg / jpeg, png, pnm and tiff with lossless compression</li>
          <li xml:lang="nb">Komprimerer bmp, jpg / jpeg, png, pnm og tiff med tapsfri komprimering</li>
          <li>Works offline, always ready where and whenever needed</li>
@@ -89,5 +89,33 @@
          </description>
       </release>
    </releases>
-   <content_rating type="oars-1.1" />
+   <content_rating type="oars-1.1">
+      <content_attribute id="violence-cartoon">none</content_attribute>
+      <content_attribute id="violence-fantasy">none</content_attribute>
+      <content_attribute id="violence-realistic">none</content_attribute>
+      <content_attribute id="violence-bloodshed">none</content_attribute>
+      <content_attribute id="violence-sexual">none</content_attribute>
+      <content_attribute id="violence-desecration">none</content_attribute>
+      <content_attribute id="violence-slavery">none</content_attribute>
+      <content_attribute id="violence-worship">none</content_attribute>
+      <content_attribute id="drugs-alcohol">none</content_attribute>
+      <content_attribute id="drugs-narcotics">none</content_attribute>
+      <content_attribute id="drugs-tobacco">none</content_attribute>
+      <content_attribute id="sex-nudity">none</content_attribute>
+      <content_attribute id="sex-themes">none</content_attribute>
+      <content_attribute id="sex-homosexuality">none</content_attribute>
+      <content_attribute id="sex-prostitution">none</content_attribute>
+      <content_attribute id="sex-adultery">none</content_attribute>
+      <content_attribute id="sex-appearance">none</content_attribute>
+      <content_attribute id="language-profanity">none</content_attribute>
+      <content_attribute id="language-humor">none</content_attribute>
+      <content_attribute id="language-discrimination">none</content_attribute>
+      <content_attribute id="social-chat">none</content_attribute>
+      <content_attribute id="social-info">none</content_attribute>
+      <content_attribute id="social-audio">none</content_attribute>
+      <content_attribute id="social-location">none</content_attribute>
+      <content_attribute id="social-contacts">none</content_attribute>
+      <content_attribute id="money-purchasing">none</content_attribute>
+      <content_attribute id="money-gambling">none</content_attribute>
+    </content_rating>
 </component>
