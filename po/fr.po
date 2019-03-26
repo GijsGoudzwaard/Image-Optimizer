@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: com.github.gijsgoudzwaard.image-optimizer\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-26 13:56+0100\n"
+"POT-Creation-Date: 2019-03-26 23:00+0100\n"
 "PO-Revision-Date: 2019-03-26 13:49+0100\n"
 "Last-Translator: NathanBnm\n"
 "Language-Team: Français\n"
@@ -21,15 +21,19 @@ msgstr ""
 msgid "Image Optimizer"
 msgstr "Optimiseur d'image"
 
-#: src/MainWindow.vala:217
+#: src/MainWindow.vala:129
+msgid "Add Image"
+msgstr "Ajouter une image"
+
+#: src/MainWindow.vala:218
 msgid "Select image(s)"
 msgstr "Sélectionnez des images"
 
-#: src/MainWindow.vala:219
+#: src/MainWindow.vala:220
 msgid "_Cancel"
 msgstr "_Annuler"
 
-#: src/MainWindow.vala:220
+#: src/MainWindow.vala:221
 msgid "_Open"
 msgstr "_Ouvrir"
 
@@ -52,6 +56,10 @@ msgstr "Économie"
 #: src/Widgets/UploadScreen.vala:23
 msgid "Drag and drop images here"
 msgstr "Glissez-déposez des images ici"
+
+#: src/Widgets/UploadScreen.vala:26
+msgid "or"
+msgstr "ou"
 
 #: src/Widgets/UploadScreen.vala:29
 msgid "Browse files"

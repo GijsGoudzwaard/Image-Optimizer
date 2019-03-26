@@ -23,7 +23,7 @@ public class UploadScreen : Gtk.Box {
     var title = new Gtk.Label(_("Drag and drop images here"));
     title.get_style_context().add_class("h1");
 
-    var otherwise = new Gtk.Label("or");
+    var otherwise = new Gtk.Label(_("or"));
     otherwise.get_style_context().add_class("h4");
 
     this.upload_button = new Gtk.Button.with_label(_("Browse files"));
