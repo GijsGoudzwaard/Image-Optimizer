@@ -126,6 +126,7 @@ public class MainWindow : Gtk.Window {
     add (images_list.window ());
 
     var add_image = new Gtk.Button.with_label ("+");
+    add_image.set_tooltip_markup(_("Add Image"));
     this.toolbar.remove (add_image);
 
     add_image.get_style_context ().add_class ("button");

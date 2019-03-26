@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: extra\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-26 13:56+0100\n"
+"POT-Creation-Date: 2019-03-26 23:12+0100\n"
 "PO-Revision-Date: 2019-03-26 13:52+0100\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -18,25 +18,20 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:6
-#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:7
 #: data/com.github.gijsgoudzwaard.image-optimizer.desktop.in:3
 #: data/com.github.gijsgoudzwaard.image-optimizer.desktop.in:4
 msgid "Image Optimizer"
 msgstr "Image Optimizer"
 
-#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:8
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:7
 msgid "Gijs Goudzwaard"
 msgstr "Gijs Goudzwaard"
 
-#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:10
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:9
 msgid "Simple lossless image compression"
 msgstr "Simple lossless image compression"
 
 #: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:11
-msgid "Enkel tapsfri bildekomprimering"
-msgstr "Enkel tapsfri bildekomprimering"
-
-#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:13
 msgid ""
 "Compress your images with ease without the cost of loosing the images "
 "quality using JpegOptim and OptiPng."
@@ -44,72 +39,44 @@ msgstr ""
 "Compress your images with ease without the cost of loosing the images "
 "quality using JpegOptim and OptiPng."
 
-#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:14
-msgid ""
-"Komprimer bildene dine enkelt uten å miste bildekvaliteten med JpegOptim og "
-"OptiPng."
-msgstr ""
-"Komprimer bildene dine enkelt uten å miste bildekvaliteten med JpegOptim og "
-"OptiPng."
-
-#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:15
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:12
 msgid "Features:"
 msgstr "Features:"
 
-#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:16
-msgid "Egenskaper:"
-msgstr "Egenskaper:"
-
-#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:18
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:14
 msgid "Compress bmp, jpg / jpeg, png, pnm and tiff with lossless compression"
 msgstr "Compress bmp, jpg / jpeg, png, pnm and tiff with lossless compression"
 
-#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:19
-msgid "Komprimerer bmp, jpg / jpeg, png, pnm og tiff med tapsfri komprimering"
-msgstr "Komprimerer bmp, jpg / jpeg, png, pnm og tiff med tapsfri komprimering"
-
-#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:20
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:15
 msgid "Works offline, always ready where and whenever needed"
 msgstr "Works offline, always ready where and whenever needed"
 
-#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:21
-msgid "Virker uten internett, alltid klar hvor og når det er nødvendig"
-msgstr "Virker uten internett, alltid klar hvor og når det er nødvendig"
-
-#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:22
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:16
 msgid "A clean interface, optimize your images effortlessly"
 msgstr "A clean interface, optimize your images effortlessly"
 
-#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:23
-msgid "Et rent grensesnitt, optimaliser bildene dine uten problemer"
-msgstr "Et rent grensesnitt, optimaliser bildene dine uten problemer"
-
-#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:24
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:17
 msgid "Easily quit the application by pressing Ctrl + Q"
 msgstr "Easily quit the application by pressing Ctrl + Q"
 
-#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:25
-msgid "Avslutt programmet enkelt ved å trykke Ctrl + Q"
-msgstr "Avslutt programmet enkelt ved å trykke Ctrl + Q"
-
-#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:48
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:40
 msgid "Getting things ready for Juno, #27 should be fixed."
 msgstr "Getting things ready for Juno, #27 should be fixed."
 
-#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:53
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:45
 msgid "Fixed unmet dependencies."
 msgstr "Fixed unmet dependencies."
 
-#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:58
-#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:63
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:50
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:55
 msgid "Getting things ready for Juno."
 msgstr "Getting things ready for Juno."
 
-#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:68
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:60
 msgid "This release fixes the context menu in Files."
 msgstr "This release fixes the context menu in Files."
 
-#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:73
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:65
 msgid ""
 "This release adds a context menu in Files for images that will allow easier "
 "image optimizations."
@@ -117,19 +84,19 @@ msgstr ""
 "This release adds a context menu in Files for images that will allow easier "
 "image optimizations."
 
-#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:78
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:70
 msgid ""
 "This release changes the upload button to fit the Elementary OS HIG better."
 msgstr ""
 "This release changes the upload button to fit the Elementary OS HIG better."
 
-#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:83
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:75
 msgid ""
 "This release changes the upload icon to fit the Elementary OS HIG better."
 msgstr ""
 "This release changes the upload icon to fit the Elementary OS HIG better."
 
-#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:88
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:80
 msgid "This release changes the icon to fit the Elementary OS HIG better."
 msgstr "This release changes the icon to fit the Elementary OS HIG better."
 
@@ -144,3 +111,30 @@ msgstr "com.github.gijsgoudzwaard.image-optimizer"
 #: data/com.github.gijsgoudzwaard.image-optimizer.desktop.in:12
 msgid "Image;Optimzer;"
 msgstr "Image;Optimzer;"
+
+#~ msgid "Enkel tapsfri bildekomprimering"
+#~ msgstr "Enkel tapsfri bildekomprimering"
+
+#~ msgid ""
+#~ "Komprimer bildene dine enkelt uten å miste bildekvaliteten med JpegOptim "
+#~ "og OptiPng."
+#~ msgstr ""
+#~ "Komprimer bildene dine enkelt uten å miste bildekvaliteten med JpegOptim "
+#~ "og OptiPng."
+
+#~ msgid "Egenskaper:"
+#~ msgstr "Egenskaper:"
+
+#~ msgid ""
+#~ "Komprimerer bmp, jpg / jpeg, png, pnm og tiff med tapsfri komprimering"
+#~ msgstr ""
+#~ "Komprimerer bmp, jpg / jpeg, png, pnm og tiff med tapsfri komprimering"
+
+#~ msgid "Virker uten internett, alltid klar hvor og når det er nødvendig"
+#~ msgstr "Virker uten internett, alltid klar hvor og når det er nødvendig"
+
+#~ msgid "Et rent grensesnitt, optimaliser bildene dine uten problemer"
+#~ msgstr "Et rent grensesnitt, optimaliser bildene dine uten problemer"
+
+#~ msgid "Avslutt programmet enkelt ved å trykke Ctrl + Q"
+#~ msgstr "Avslutt programmet enkelt ved å trykke Ctrl + Q"
