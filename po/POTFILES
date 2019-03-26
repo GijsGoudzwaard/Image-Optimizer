@@ -1,0 +1,3 @@
+src/MainWindow.vala
+src/Widgets/List.vala
+src/Widgets/UploadScreen.vala
