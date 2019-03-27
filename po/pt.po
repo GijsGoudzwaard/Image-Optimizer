@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: com.github.gijsgoudzwaard.image-optimizer\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-26 23:00+0100\n"
+"POT-Creation-Date: 2019-03-27 08:17+0100\n"
 "PO-Revision-Date: 2019-03-26 13:49+0100\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -35,6 +35,18 @@ msgstr ""
 
 #: src/MainWindow.vala:221
 msgid "_Open"
+msgstr ""
+
+#: src/Utils/Image.vala:115
+msgid "kb"
+msgstr ""
+
+#: src/Utils/Image.vala:118
+msgid "mb"
+msgstr ""
+
+#: src/Utils/Image.vala:120
+msgid "bytes"
 msgstr ""
 
 #: src/Widgets/List.vala:57
