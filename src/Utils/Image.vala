@@ -112,12 +112,12 @@ public class Image {
 
     if (bytes > 1000 && bytes < 1000000) {
       var size = "%.2f".printf (((double) bytes) / 1000);
-      unit = size.to_string ().replace (".", ",") + " kb";
+      unit = size.to_string ().replace (".", ",") + " " + _("kb");
     } else if (bytes > 1000000) {
       var size = "%.2f".printf (((double) bytes) / 1000000);
-      unit = size.to_string ().replace (".", ",") + " mb";
+      unit = size.to_string ().replace (".", ",") + " " + _("mb");
     } else {
-      unit = bytes.to_string () + " bytes";
+      unit = bytes.to_string () + " " + _("bytes");
     }
 
     return unit;
