@@ -1,28 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Copyright 2017 Gijs Goudzwaard <gijs.goudzwaard@gmail.com> -->
+<!-- Copyright 2019 Gijs Goudzwaard <gijs.goudzwaard@gmail.com> -->
 <component type="desktop">
    <id>com.github.gijsgoudzwaard.image-optimizer</id>
    <metadata_license>CC0-1.0</metadata_license>
    <name>Image Optimizer</name>
-   <name xml:lang="nb">Image Optimizer</name>
    <developer_name>Gijs Goudzwaard</developer_name>
    <project_license>MIT</project_license>
    <summary>Simple lossless image compression</summary>
-   <summary xml:lang="nb">Enkel tapsfri bildekomprimering</summary>
    <description>
       <p>Compress your images with ease without the cost of loosing the images quality using JpegOptim and OptiPng.</p>
-      <p xml:lang="nb">Komprimer bildene dine enkelt uten å miste bildekvaliteten med JpegOptim og OptiPng.</p>
       <p>Features:</p>
-      <p xml:lang="nb">Egenskaper:</p>
       <ul>
          <li>Compress bmp, jpg / jpeg, png, pnm and tiff with lossless compression</li>
-         <li xml:lang="nb">Komprimerer bmp, jpg / jpeg, png, pnm og tiff med tapsfri komprimering</li>
          <li>Works offline, always ready where and whenever needed</li>
-         <li xml:lang="nb">Virker uten internett, alltid klar hvor og når det er nødvendig</li>
          <li>A clean interface, optimize your images effortlessly</li>
-         <li xml:lang="nb">Et rent grensesnitt, optimaliser bildene dine uten problemer</li>
          <li>Easily quit the application by pressing Ctrl + Q</li>
-         <li xml:lang="nb">Avslutt programmet enkelt ved å trykke Ctrl + Q</li>
       </ul>
    </description>
    <url type="homepage">https://github.com/gijsgoudzwaard/image-optimizer</url>

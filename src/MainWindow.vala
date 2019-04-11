@@ -51,7 +51,7 @@ public class MainWindow : Gtk.Window {
       height_request: 680,
       icon_name: "com.github.gijsgoudzwaard.image-optimizer",
       resizable: true,
-      title: "Image Optimizer",
+      title: _("Image Optimizer"),
       width_request: 980
     );
 
@@ -126,6 +126,7 @@ public class MainWindow : Gtk.Window {
     add (images_list.window ());
 
     var add_image = new Gtk.Button.with_label ("+");
+    add_image.set_tooltip_markup(_("Add Image"));
     this.toolbar.remove (add_image);
 
     add_image.get_style_context ().add_class ("button");
@@ -214,10 +215,10 @@ public class MainWindow : Gtk.Window {
    * @return void
    */
   public void on_open_clicked () {
-    var file_chooser = new Gtk.FileChooserDialog ("Select image(s)", this,
+    var file_chooser = new Gtk.FileChooserDialog (_("Select image(s)"), this,
                                   Gtk.FileChooserAction.OPEN,
-                                  "_Cancel", Gtk.ResponseType.CANCEL,
-                                  "_Open", Gtk.ResponseType.ACCEPT);
+                                  _("_Cancel"), Gtk.ResponseType.CANCEL,
+                                  _("_Open"), Gtk.ResponseType.ACCEPT);
 
     file_chooser.select_multiple = true;
 

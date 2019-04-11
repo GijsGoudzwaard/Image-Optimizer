@@ -54,10 +54,10 @@ public class List {
 		column.add_attribute (spinner, "pulse", 1);
 		view.append_column (column);
 
-    view.insert_column_with_attributes (2, "File", cell, "text", 2);
-		view.insert_column_with_attributes (3, "Size", cell, "text", 3);
-		view.insert_column_with_attributes (4, "New size", cell, "text", 4);
-    view.insert_column_with_attributes (5, "Savings", cell, "text", 5);
+    view.insert_column_with_attributes (2, _("File"), cell, "text", 2);
+		view.insert_column_with_attributes (3, _("Size"), cell, "text", 3);
+		view.insert_column_with_attributes (4, _("New size"), cell, "text", 4);
+    view.insert_column_with_attributes (5, _("Savings"), cell, "text", 5);
 
     // Rotate the spinner:
 		Timeout.add (50, () => {

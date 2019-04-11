@@ -20,13 +20,13 @@ public class UploadScreen : Gtk.Box {
       icon = new Gtk.Image.from_pixbuf(icon_pixbuf);
     } catch (Error e) {}
 
-    var title = new Gtk.Label("Drag and drop images here");
+    var title = new Gtk.Label(_("Drag and drop images here"));
     title.get_style_context().add_class("h1");
 
-    var otherwise = new Gtk.Label("or");
+    var otherwise = new Gtk.Label(_("or"));
     otherwise.get_style_context().add_class("h4");
 
-    this.upload_button = new Gtk.Button.with_label("Browse files");
+    this.upload_button = new Gtk.Button.with_label(_("Browse files"));
     this.upload_button.get_style_context().add_class ("suggested-action");
     this.upload_button.get_style_context().add_class("upload_button");
     this.upload_button.set_valign(Gtk.Align.CENTER);
