@@ -24,7 +24,7 @@ msgstr ""
 #: data/com.github.gijsgoudzwaard.image-optimizer.desktop.in:3
 #: data/com.github.gijsgoudzwaard.image-optimizer.desktop.in:4
 msgid "Image Optimizer"
-msgstr "Оптимізатор зображень"
+msgstr "Image Optimizer"
 
 #: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:7
 msgid "Gijs Goudzwaard"
