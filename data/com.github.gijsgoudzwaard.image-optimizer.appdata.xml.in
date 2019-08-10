@@ -35,6 +35,11 @@
       <value key="x-appcenter-suggested-price">2</value>
    </custom>
    <releases>
+     <release version="0.1.15" date="2019-08-10">
+        <description>
+           <p>Added Ukrainian translations.</p>
+        </description>
+     </release>
      <release version="0.1.11" date="2018-08-03">
         <description>
            <p>Getting things ready for Juno, #27 should be fixed.</p>
