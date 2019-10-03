@@ -1,9 +1,17 @@
 # Image Optimizer
-[![Get it on AppCenter](https://appcenter.elementary.io/badge.svg)](https://appcenter.elementary.io/com.github.gijsgoudzwaard.image-optimizer)
-
-Simple lossless image optimizer built for [elementary OS](https://elementary.io).
+Simple lossless image optimizer built with Vala and Gtk.
 
 ![Screenshot](data/screenshots/welcome-screen.png)
+
+## Get it from the elementary OS AppCenter!
+Image Optimizer, is primarily available from the AppCenter of Elementary OS. Download it from there!
+
+[![Get it on AppCenter](https://appcenter.elementary.io/badge.svg)](https://appcenter.elementary.io/com.github.gijsgoudzwaard.image-optimizer)
+
+## Get it from Flathub!
+You can get Image Optimizer form Flathub no matter what distribution you're using. Download it or follow the instructions to install it from here!
+
+<a href="https://flathub.org/apps/details/com.github.gijsgoudzwaard.image-optimizer" target="_blank"><img src="https://flathub.org/assets/badges/flathub-badge-i-en.svg" width="160px" alt="Get it from Flathub!"></a>
 
 ## Donations
 Do you like the app? Would you like to support its development? Feel free to donate
