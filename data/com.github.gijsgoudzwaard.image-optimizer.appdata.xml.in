@@ -35,6 +35,11 @@
       <value key="x-appcenter-suggested-price">2</value>
    </custom>
    <releases>
+     <release version="0.1.16" date="2019-10-03">
+        <description>
+           <p>Added Italian translations.</p>
+        </description>
+     </release>
      <release version="0.1.15" date="2019-08-10">
         <description>
            <p>Added Ukrainian translations.</p>
