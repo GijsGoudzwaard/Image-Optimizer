@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: com.github.gijsgoudzwaard.image-optimizer\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-03-27 08:17+0100\n"
-"PO-Revision-Date: 2019-03-26 13:49+0100\n"
-"Last-Translator: Automatically generated\n"
+"PO-Revision-Date: 2019-09-02 13:49+0100\n"
+"Last-Translator: Mirko Brombin <send@mirko.pm>\n"
 "Language-Team: none\n"
 "Language: it\n"
 "MIME-Version: 1.0\n"
@@ -19,60 +19,60 @@ msgstr ""
 
 #: src/MainWindow.vala:54
 msgid "Image Optimizer"
-msgstr ""
+msgstr "Image Optimizer"
 
 #: src/MainWindow.vala:129
 msgid "Add Image"
-msgstr ""
+msgstr "Aggiungi immagine"
 
 #: src/MainWindow.vala:218
 msgid "Select image(s)"
-msgstr ""
+msgstr "Seleziona immagini"
 
 #: src/MainWindow.vala:220
 msgid "_Cancel"
-msgstr ""
+msgstr "_Annulla"
 
 #: src/MainWindow.vala:221
 msgid "_Open"
-msgstr ""
+msgstr "_Apri"
 
 #: src/Utils/Image.vala:115
 msgid "kb"
-msgstr ""
+msgstr "kb"
 
 #: src/Utils/Image.vala:118
 msgid "mb"
-msgstr ""
+msgstr "mb"
 
 #: src/Utils/Image.vala:120
 msgid "bytes"
-msgstr ""
+msgstr "bytes"
 
 #: src/Widgets/List.vala:57
 msgid "File"
-msgstr ""
+msgstr "File"
 
 #: src/Widgets/List.vala:58
 msgid "Size"
-msgstr ""
+msgstr "Dimensione"
 
 #: src/Widgets/List.vala:59
 msgid "New size"
-msgstr ""
+msgstr "Nuova dimensione"
 
 #: src/Widgets/List.vala:60
 msgid "Savings"
-msgstr ""
+msgstr "Salvando"
 
 #: src/Widgets/UploadScreen.vala:23
 msgid "Drag and drop images here"
-msgstr ""
+msgstr "Sposta le immagini qui"
 
 #: src/Widgets/UploadScreen.vala:26
 msgid "or"
-msgstr ""
+msgstr "o"
 
 #: src/Widgets/UploadScreen.vala:29
 msgid "Browse files"
-msgstr ""
+msgstr "Seleziona i file"
