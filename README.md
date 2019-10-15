@@ -13,11 +13,6 @@ You can get Image Optimizer form Flathub no matter what distribution you're usin
 
 <a href="https://flathub.org/apps/details/com.github.gijsgoudzwaard.image-optimizer" target="_blank"><img src="https://flathub.org/assets/badges/flathub-badge-i-en.svg" width="160px" alt="Get it from Flathub!"></a>
 
-## Donations
-Do you like the app? Would you like to support its development? Feel free to donate
-
-[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://paypal.me/gijsgoudzwaard)
-
 ## Dependencies
 
 Please make sure you have these dependencies first before building.
