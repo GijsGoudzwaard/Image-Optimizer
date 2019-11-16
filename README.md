@@ -1,4 +1,7 @@
 # Image Optimizer
+
+[![Build Status](https://travis-ci.org/GijsGoudzwaard/Image-Optimizer.svg?branch=master)](https://travis-ci.org/GijsGoudzwaard/Image-Optimizer)
+
 Simple lossless image optimizer built with Vala and Gtk.
 
 ![Screenshot](data/screenshots/welcome-screen.png)
