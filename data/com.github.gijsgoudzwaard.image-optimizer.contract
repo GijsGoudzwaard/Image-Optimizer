@@ -1,5 +1,7 @@
 [Contractor Entry]
 Name=Optimize image
+Name[pl]=Optymalizuj obraz
 Description=Simple lossless image compression
+Description[pl]=Łatwa bezstratna kompresja obrazów
 MimeType=image/jpeg;image/jpg;image/png;image/bmp
 Exec=com.github.gijsgoudzwaard.image-optimizer
