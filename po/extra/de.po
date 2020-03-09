@@ -1,15 +1,15 @@
 # German translations for extra package.
 # Copyright (C) 2019 THE extra'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the extra package.
-# Automatically generated, 2019.
+# Finn (0xhtml), 2020.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: extra\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-03-26 23:12+0100\n"
-"PO-Revision-Date: 2019-03-26 13:52+0100\n"
-"Last-Translator: Automatically generated\n"
+"PO-Revision-Date: 2020-03-09 19:34+0100\n"
+"Last-Translator: Finn (0xhtml)\n"
 "Language-Team: none\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -21,87 +21,97 @@ msgstr ""
 #: data/com.github.gijsgoudzwaard.image-optimizer.desktop.in:3
 #: data/com.github.gijsgoudzwaard.image-optimizer.desktop.in:4
 msgid "Image Optimizer"
-msgstr ""
+msgstr "Bildoptimierung"
 
 #: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:7
 msgid "Gijs Goudzwaard"
-msgstr ""
+msgstr "Gijs Goudzwaard"
 
 #: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:9
 msgid "Simple lossless image compression"
-msgstr ""
+msgstr "Einfache verlustfreie Bildkomprimierung"
 
 #: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:11
 msgid ""
 "Compress your images with ease without the cost of loosing the images "
 "quality using JpegOptim and OptiPng."
 msgstr ""
+"Komprimiere Deine Bilder mit Leichtigkeit und durch JpegOptim und OptiPng "
+"ohne Bildqualität zu verlieren"
 
 #: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:12
 msgid "Features:"
-msgstr ""
+msgstr "Funktionen:"
 
 #: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:14
 msgid "Compress bmp, jpg / jpeg, png, pnm and tiff with lossless compression"
-msgstr ""
+msgstr "Komprimiert bmp, jpg / jpeg, png, pnm und tiff verlustfrei"
 
 #: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:15
 msgid "Works offline, always ready where and whenever needed"
-msgstr ""
+msgstr "Funktioniert offline und ist immer bereit zur Benutzung"
 
 #: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:16
 msgid "A clean interface, optimize your images effortlessly"
-msgstr ""
+msgstr "Ein einfaches Interface, optimiert mühelos Deine Bilder"
 
 #: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:17
 msgid "Easily quit the application by pressing Ctrl + Q"
-msgstr ""
+msgstr "Die Anwendung lässt sich einfach mit Strg + Q beenden"
 
 #: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:40
 msgid "Getting things ready for Juno, #27 should be fixed."
-msgstr ""
+msgstr "Vorbereitungen für Juno, #27 sollte behoben sein."
 
 #: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:45
 msgid "Fixed unmet dependencies."
-msgstr ""
+msgstr "Nicht erfüllte Abhängigkeiten wurden behoben."
 
 #: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:50
 #: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:55
 msgid "Getting things ready for Juno."
-msgstr ""
+msgstr "Vorbereitungen für Juno."
 
 #: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:60
 msgid "This release fixes the context menu in Files."
-msgstr ""
+msgstr "Diese Version behebt das Kontextmenü in Datein."
 
 #: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:65
 msgid ""
 "This release adds a context menu in Files for images that will allow easier "
 "image optimizations."
 msgstr ""
+"Diese Version fügt in Dateien ein Kontextmenü für Bilder hinzu, das "
+"einfachere Bildoptimierungen ermöglicht."
 
 #: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:70
 msgid ""
 "This release changes the upload button to fit the Elementary OS HIG better."
 msgstr ""
+"Diese Version ändert die Upload-Schaltfläche, um sie besser an das "
+"Elementary OS HIG anzupassen."
 
 #: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:75
 msgid ""
 "This release changes the upload icon to fit the Elementary OS HIG better."
 msgstr ""
+"Diese Version ändert das Upload-Symbol, damit es besser zum Elementary OS "
+"HIG passt."
 
 #: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:80
 msgid "This release changes the icon to fit the Elementary OS HIG better."
 msgstr ""
+"Diese Version ändert das Symbol, damit es besser zum Elementary OS "
+"HIG passt."
 
 #: data/com.github.gijsgoudzwaard.image-optimizer.desktop.in:5
 msgid "Simple image optimzer"
-msgstr ""
+msgstr "Einfache Bildoptimierung"
 
 #: data/com.github.gijsgoudzwaard.image-optimizer.desktop.in:8
 msgid "com.github.gijsgoudzwaard.image-optimizer"
-msgstr ""
+msgstr "com.github.gijsgoudzwaard.image-optimizer"
 
 #: data/com.github.gijsgoudzwaard.image-optimizer.desktop.in:12
 msgid "Image;Optimzer;"
-msgstr ""
+msgstr "Bildoptimierung;Image;Optimzer;"
