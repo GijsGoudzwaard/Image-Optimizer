@@ -19,7 +19,7 @@ msgstr ""
 
 #: src/MainWindow.vala:54
 msgid "Image Optimizer"
-msgstr "Bildoptimierung"
+msgstr "Image Optimizer"
 
 #: src/MainWindow.vala:129
 msgid "Add Image"
