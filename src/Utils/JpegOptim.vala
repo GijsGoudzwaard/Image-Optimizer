@@ -73,7 +73,6 @@ public class JpegOptim {
     };
 
     new Thread<void*>.try("thread", run);
-    yield;
   }
 
   /**
