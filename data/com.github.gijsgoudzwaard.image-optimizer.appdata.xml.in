@@ -35,6 +35,11 @@
       <value key="x-appcenter-suggested-price">2</value>
    </custom>
    <releases>
+   <release version="0.1.18" date="2021-07-16">
+        <description>
+           <p>Added the flatpak manifest file for elementary os 6. Also fixes vala 0.48 build issue.</p>
+        </description>
+     </release>
      <release version="0.1.17" date="2019-12-16">
         <description>
            <p>Added Polish translations.</p>
