@@ -77,7 +77,6 @@ public class OptiPng {
     };
 
     new Thread<void*>.try("thread", run);
-    yield;
   }
 
   /**
