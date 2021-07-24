@@ -33,7 +33,7 @@
       <value key="x-appcenter-color-primary">#687ddb</value>
       <value key="x-appcenter-color-primary-text">#ffffff</value>
       <value key="x-appcenter-suggested-price">2</value>
-      <value key="x-appcenter-stripe">pk_live_40ePZY3ASKqIWzz0L5xbDSJf</value>
+      <value key="x-appcenter-stripe">pk_live_02PNQm8caF2t7Jo71pAnWm5l</value>
    </custom>
    <releases>
       <release version="0.1.19" date="2021-07-24">
