@@ -33,9 +33,15 @@
       <value key="x-appcenter-color-primary">#687ddb</value>
       <value key="x-appcenter-color-primary-text">#ffffff</value>
       <value key="x-appcenter-suggested-price">2</value>
+      <value key="x-appcenter-stripe">pk_live_40ePZY3ASKqIWzz0L5xbDSJf</value>
    </custom>
    <releases>
-   <release version="0.1.18" date="2021-07-16">
+      <release version="0.1.19" date="2021-07-24">
+        <description>
+           <p>Getting things ready for Elementary OS 6.</p>
+        </description>
+     </release>
+      <release version="0.1.18" date="2021-07-16">
         <description>
            <p>Added the flatpak manifest file for elementary os 6. Also fixes vala 0.48 build issue.</p>
         </description>
