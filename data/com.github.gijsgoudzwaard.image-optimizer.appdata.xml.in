@@ -36,6 +36,11 @@
       <value key="x-appcenter-stripe">pk_live_02PNQm8caF2t7Jo71pAnWm5l</value>
    </custom>
    <releases>
+      <release version="0.1.20" date="2021-07-24">
+        <description>
+           <p>Getting things ready for Elementary OS 6.</p>
+        </description>
+     </release>
       <release version="0.1.19" date="2021-07-24">
         <description>
            <p>Getting things ready for Elementary OS 6.</p>
