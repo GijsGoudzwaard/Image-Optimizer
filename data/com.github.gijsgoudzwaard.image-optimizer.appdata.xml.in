@@ -39,7 +39,8 @@
    <release version="0.1.21" date="2021-08-20">
         <description>
            <ul>
-               <li>Fixed issue where the close and maximise buttons were shown in white.</li>
+               <li>Updated flatpak runtime to version 6</li>
+               <li>Fixed issue where the close and maximise buttons were shown in white</li>
                <li>Updated screenshots</li>
            </ul>
         </description>
