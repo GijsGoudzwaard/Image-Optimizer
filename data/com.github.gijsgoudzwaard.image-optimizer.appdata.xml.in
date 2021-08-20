@@ -36,6 +36,14 @@
       <value key="x-appcenter-stripe">pk_live_02PNQm8caF2t7Jo71pAnWm5l</value>
    </custom>
    <releases>
+   <release version="0.1.21" date="2021-08-20">
+        <description>
+           <ul>
+               <li>Fixed issue where the close and maximise buttons were shown in white.</li>
+               <li>Updated screenshots</li>
+           </ul>
+        </description>
+     </release>
       <release version="0.1.20" date="2021-07-24">
         <description>
            <p>Getting things ready for Elementary OS 6.</p>
