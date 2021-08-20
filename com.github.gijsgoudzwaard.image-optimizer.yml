@@ -25,6 +25,19 @@ finish-args:
 # If we had external dependencies that weren't included in our SDK, we would list
 # them here.
 modules:
+  - name: jpegoptim
+    sources:
+      - type: archive
+        url: https://github.com/tjko/jpegoptim/archive/RELEASE.1.4.6.tar.gz
+        sha256: c44dcfac0a113c3bec13d0fc60faf57a0f9a31f88473ccad33ecdf210b4c0c52
+  - name: optipng
+    build-options:
+      config-opts:
+      - --with-system-libs
+    sources:
+      - type: archive
+        url: https://netcologne.dl.sourceforge.net/project/optipng/OptiPNG/optipng-0.7.7/optipng-0.7.7.tar.gz
+        sha256: 4f32f233cef870b3f95d3ad6428bfe4224ef34908f1b42b0badf858216654452
   - name: image-optimizer
     buildsystem: meson
     sources:
