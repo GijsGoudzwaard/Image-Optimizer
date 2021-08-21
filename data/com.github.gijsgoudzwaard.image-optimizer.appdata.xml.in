@@ -36,55 +36,60 @@
       <value key="x-appcenter-stripe">pk_live_02PNQm8caF2t7Jo71pAnWm5l</value>
    </custom>
    <releases>
-   <release version="0.1.21" date="2021-08-20">
-        <description>
-           <ul>
+      <release version="0.1.22" date="2021-08-21">
+         <description>
+            <p>Fixed flatpak issue where dragging an image gives a 0 byte sized image and would therefore not be optimized. Also fixed issue where optimizing an image from the home directory would not work.</p>
+         </description>
+      </release>
+      <release version="0.1.21" date="2021-08-20">
+         <description>
+            <ul>
                <li>Updated flatpak runtime to version 6</li>
                <li>Fixed issue where the close and maximise buttons were shown in white</li>
                <li>Updated screenshots</li>
-           </ul>
-        </description>
-     </release>
+            </ul>
+         </description>
+      </release>
       <release version="0.1.20" date="2021-07-24">
-        <description>
-           <p>Getting things ready for Elementary OS 6.</p>
-        </description>
-     </release>
+         <description>
+            <p>Getting things ready for Elementary OS 6.</p>
+         </description>
+      </release>
       <release version="0.1.19" date="2021-07-24">
-        <description>
-           <p>Getting things ready for Elementary OS 6.</p>
-        </description>
-     </release>
+         <description>
+            <p>Getting things ready for Elementary OS 6.</p>
+         </description>
+      </release>
       <release version="0.1.18" date="2021-07-16">
-        <description>
-           <p>Added the flatpak manifest file for elementary os 6. Also fixes vala 0.48 build issue.</p>
-        </description>
-     </release>
-     <release version="0.1.17" date="2019-12-16">
-        <description>
-           <p>Added Polish translations.</p>
-        </description>
-     </release>
-     <release version="0.1.16" date="2019-10-03">
-        <description>
-           <p>Added Italian translations.</p>
-        </description>
-     </release>
-     <release version="0.1.15" date="2019-08-10">
-        <description>
-           <p>Added Ukrainian translations.</p>
-        </description>
-     </release>
-     <release version="0.1.11" date="2018-08-03">
-        <description>
-           <p>Getting things ready for Juno, #27 should be fixed.</p>
-        </description>
-     </release>
-     <release version="0.1.10" date="2018-07-03">
-        <description>
-           <p>Fixed unmet dependencies.</p>
-        </description>
-     </release>
+         <description>
+            <p>Added the flatpak manifest file for elementary os 6. Also fixes vala 0.48 build issue.</p>
+         </description>
+      </release>
+      <release version="0.1.17" date="2019-12-16">
+         <description>
+            <p>Added Polish translations.</p>
+         </description>
+      </release>
+      <release version="0.1.16" date="2019-10-03">
+         <description>
+            <p>Added Italian translations.</p>
+         </description>
+      </release>
+      <release version="0.1.15" date="2019-08-10">
+         <description>
+            <p>Added Ukrainian translations.</p>
+         </description>
+      </release>
+      <release version="0.1.11" date="2018-08-03">
+         <description>
+            <p>Getting things ready for Juno, #27 should be fixed.</p>
+         </description>
+      </release>
+      <release version="0.1.10" date="2018-07-03">
+         <description>
+            <p>Fixed unmet dependencies.</p>
+         </description>
+      </release>
       <release version="0.1.9" date="2018-07-03">
          <description>
             <p>Getting things ready for Juno.</p>
@@ -149,5 +154,5 @@
       <content_attribute id="social-contacts">none</content_attribute>
       <content_attribute id="money-purchasing">none</content_attribute>
       <content_attribute id="money-gambling">none</content_attribute>
-    </content_rating>
+   </content_rating>
 </component>
