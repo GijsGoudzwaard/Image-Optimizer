@@ -22,7 +22,7 @@ msgstr ""
 #: data/com.github.gijsgoudzwaard.image-optimizer.desktop.in:3
 #: data/com.github.gijsgoudzwaard.image-optimizer.desktop.in:4
 msgid "Image Optimizer"
-msgstr "Bildoptimerare"
+msgstr ""
 
 #: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:7
 msgid "Gijs Goudzwaard"
@@ -115,4 +115,4 @@ msgstr "com.github.gijsgoudzwaard.image-optimizer"
 
 #: data/com.github.gijsgoudzwaard.image-optimizer.desktop.in:12
 msgid "Image;Optimzer;"
-msgstr "Bild;Optimering;"
+msgstr ""
