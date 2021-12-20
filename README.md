@@ -16,6 +16,12 @@ You can get Image Optimizer form Flathub no matter what distribution you're usin
 
 <a href="https://flathub.org/apps/details/com.github.gijsgoudzwaard.image-optimizer" target="_blank"><img src="https://flathub.org/assets/badges/flathub-badge-i-en.svg" width="160px" alt="Get it from Flathub!"></a>
 
+## Support us
+
+![Direct Insight screenshot](data/screenshots/direct-insight-screenshot.jpg)
+
+API response invalid? We notify you instantly! [Direct Insight](https://directinsight.io/) monitors your API making sure it behaves like you expect it does. Be the first to know when your API does not work as expected.
+
 ## Dependencies
 
 Please make sure you have these dependencies first before building.
