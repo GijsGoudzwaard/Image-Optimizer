@@ -35,7 +35,7 @@ public class JpegOptim {
    *
    * @return void
    */
-  public void addImage (string image) {
+  public void add_image (string image) {
     this.images += image;
   }
 

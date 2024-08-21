@@ -68,7 +68,7 @@ public class Image {
    * @param  string path
    * @return string
    */
-  public static string getFileName (string path) {
+  public static string get_file_name (string path) {
     var array = path.split ("/");
 
     return array[array.length - 1];
@@ -80,7 +80,7 @@ public class Image {
    * @param  string name
    * @return string
    */
-  public static string getFileType (string name) {
+  public static string get_file_type (string name) {
     var array = name.split (".");
 
     return array[array.length - 1];
