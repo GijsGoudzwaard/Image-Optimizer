@@ -27,9 +27,9 @@ public class Optimizer {
 
     foreach (var image in this.images) {
       if (Utils.in_array ({"jpg", "jpeg"}, image.type)) {
-        jpegoptim.addImage (image.path);
+        jpegoptim.add_image (image.path);
       } else if (Utils.in_array ({"png", "bmp"}, image.type)) {
-        optipng.addImage (image.path);
+        optipng.add_image (image.path);
       }
     }
 

@@ -191,8 +191,8 @@ public class MainWindow : Gtk.Window {
     foreach (string uri in data.get_uris ()) {
       uri = uri.replace ("%20", " "). replace ("file://", "");
 
-      var name = Image.getFileName (uri);
-      var type = Image.getFileType (name);
+      var name = Image.get_file_name (uri);
+      var type = Image.get_file_type (name);
 
       if (Image.is_valid (type.down ())) {
         this.images += new Image (uri, name, type.down ());
@@ -227,8 +227,8 @@ public class MainWindow : Gtk.Window {
 
     if (file_chooser.run () == Gtk.ResponseType.ACCEPT) {
       foreach (string uri in file_chooser.get_filenames ()) {
-        var name = Image.getFileName (uri);
-        var type = Image.getFileType (name);
+        var name = Image.get_file_name (uri);
+        var type = Image.get_file_type (name);
 
         if (Image.is_valid (type.down ())) {
           this.images += new Image (uri, name, type.down ());

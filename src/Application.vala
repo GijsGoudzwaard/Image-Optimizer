@@ -33,8 +33,8 @@ class Application : Granite.Application {
       foreach (File file in files) {
         var uri = file.get_path ().replace ("%20", " ").replace ("file://", "");
 
-        var name = Image.getFileName (uri);
-        var type = Image.getFileType (file.get_basename ());
+        var name = Image.get_file_name (uri);
+        var type = Image.get_file_type (file.get_basename ());
 
         if (Image.is_valid (type.down ())) {
           this.images += new Image (uri, name, type.down ());
