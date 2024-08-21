@@ -55,7 +55,7 @@ public class Image {
       try {
         file_size = file.query_info ("*", FileQueryInfoFlags.NONE).get_size ();
       } catch (Error e) {
-        stdout.printf ("Error occurred");
+        warning ("Failed to get size of \"%s\": %s", this.path, e.message);
       }
     }
 
