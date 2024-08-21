@@ -38,9 +38,14 @@
       <value key="x-appcenter-color-primary">#687ddb</value>
       <value key="x-appcenter-color-primary-text">#ffffff</value>
       <value key="x-appcenter-suggested-price">2</value>
-      <value key="x-appcenter-stripe">pk_live_51AhbXkAINoIuuUE3LsV5o1VPtI8VvRTC6W3VL55MBryJ4Vk8P6jBcoFbGCHeX721ZXnyWVxZtXzdqpoLXcUBEVmq00RS08YvUT</value>
+      <value key="x-appcenter-stripe">pk_live_51AhbXkAINoIuuUE3zGg5JG2PvD3IcxMONFdFJZiMawOTGsCzcxxZAREnvLKeoGyMxEVfJpSYfjFzsDZa2bV6eEEb00nj0bUJl8</value>
    </custom>
    <releases>
+     <release version="0.1.25" date="2024-08-21">
+         <description>
+            <p>Fixed some warnings that happened under the hood.</p>
+         </description>
+      </release>
       <release version="0.1.22" date="2021-08-21">
          <description>
             <p>Fixed flatpak issue where dragging an image gives a 0 byte sized image and would therefore not be optimized. Also fixed issue where optimizing an image from the home directory would not work.</p>
