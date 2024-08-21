@@ -76,7 +76,7 @@ public class OptiPng {
       return null;
     };
 
-    new Thread<void*>.try("thread", run);
+    new Thread<void*>.try("thread", (owned) run);
   }
 
   /**
