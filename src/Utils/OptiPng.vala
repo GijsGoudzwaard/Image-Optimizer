@@ -45,7 +45,7 @@ public class OptiPng {
    * @return void
    */
   public void compress () throws Error {
-    var command = "optipng " + Utils.join(" ", this.args);
+    var command = "optipng " + Utils.join (" ", this.args);
 
     ThreadFunc<void*> run = () => {
       foreach (var image in this.images) {
@@ -55,7 +55,7 @@ public class OptiPng {
 
         try {
           Process.spawn_command_line_sync (
-            command + " " + image.replace(" ", "\\ "),
+            command + " " + image.replace (" ", "\\ "),
             out stderr,
             out stdout,
             out status
@@ -64,10 +64,10 @@ public class OptiPng {
           var new_size = 0;
 
           if (! stdout.contains ("is already optimized")) {
-            new_size = this.getNewSize(stdout);
+            new_size = this.getNewSize (stdout);
           }
 
-          this.list.updateSize(image, new_size);
+          this.list.updateSize (image, new_size);
         } catch (SpawnError e) {
           warning ("Failed to spawn optipng: %s", e.message);
         }
@@ -76,7 +76,7 @@ public class OptiPng {
       return null;
     };
 
-    new Thread<void*>.try("thread", (owned) run);
+    new Thread<void*>.try ("thread", (owned) run);
   }
 
   /**
@@ -87,9 +87,9 @@ public class OptiPng {
    */
   public int getNewSize (string stdout) {
     // After the piece of text and a space there should be the new size in bytes.
-    var text = stdout.split("Output file size = ")[1];
+    var text = stdout.split ("Output file size = ")[1];
 
     // The first integer until a space should be the new size in bytes.
-    return int.parse(text.split(" ")[0]);
+    return int.parse (text.split (" ")[0]);
   }
 }

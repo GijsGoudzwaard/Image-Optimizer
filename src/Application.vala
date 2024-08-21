@@ -5,12 +5,12 @@ class Application : Granite.Application {
   private Image[] images = {};
   private MainWindow app_window;
 
-  public Application() {
+  public Application () {
     Object (application_id: "com.github.gijsgoudzwaard.image-optimizer",
         flags: GLib.ApplicationFlags.HANDLES_OPEN);
   }
 
-  protected override void activate() {
+  protected override void activate () {
     if (this.app_window == null) {
       this.app_window = new MainWindow (this);
       this.app_window.show_all();
@@ -28,7 +28,7 @@ class Application : Granite.Application {
     });
   }
 
-  public override void open(File[] files, string hint) {
+  public override void open (File[] files, string hint) {
     if (files [0].query_exists ()) {
       foreach (File file in files) {
         var uri = file.get_path().replace("%20", " ").replace("file://", "");
@@ -36,7 +36,7 @@ class Application : Granite.Application {
         var name = Image.getFileName (uri);
         var type = Image.getFileType (file.get_basename());
 
-        if (Image.isValid (type.down())) {
+        if (Image.isValid (type.down ())) {
           this.images += new Image (uri, name, type.down());
         } else {
           // TODO: add an error message here
@@ -45,10 +45,10 @@ class Application : Granite.Application {
 
       if (this.app_window == null) {
         this.app_window = new MainWindow (this);
-        this.app_window.show_all();
+        this.app_window.show_all ();
       }
 
-      this.app_window.set_images(this.images);
+      this.app_window.set_images (this.images);
     }
   }
 

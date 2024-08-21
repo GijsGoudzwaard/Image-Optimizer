@@ -69,7 +69,7 @@ public class Image {
    * @return string
    */
   public static string getFileName (string path) {
-    var array = path.split("/");
+    var array = path.split ("/");
 
     return array[array.length - 1];
   }
@@ -81,7 +81,7 @@ public class Image {
    * @return string
    */
   public static string getFileType (string name) {
-    var array = name.split(".");
+    var array = name.split (".");
 
     return array[array.length - 1];
   }
@@ -136,6 +136,6 @@ public class Image {
   public static string calcSavings (float size, float new_size) {
     float savings = 100.00f - (new_size / size * 100.00f);
 
-    return "%.2f%%".printf(savings);
+    return "%.2f%%".printf (savings);
   }
 }
