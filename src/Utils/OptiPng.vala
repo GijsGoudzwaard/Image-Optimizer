@@ -64,10 +64,10 @@ public class OptiPng {
           var new_size = 0;
 
           if (! stdout.contains ("is already optimized")) {
-            new_size = this.getNewSize (stdout);
+            new_size = this.get_new_size (stdout);
           }
 
-          this.list.updateSize (image, new_size);
+          this.list.update_size (image, new_size);
         } catch (SpawnError e) {
           warning ("Failed to spawn optipng: %s", e.message);
         }
@@ -85,7 +85,7 @@ public class OptiPng {
    * @param  string stdout
    * @return int
    */
-  public int getNewSize (string stdout) {
+  public int get_new_size (string stdout) {
     // After the piece of text and a space there should be the new size in bytes.
     var text = stdout.split ("Output file size = ")[1];
 

@@ -92,7 +92,7 @@ public class Image {
    * @param  string type
    * @return bool
    */
-  public static bool isValid (string type) {
+  public static bool is_valid (string type) {
     string[] supported_types = {
       "png",
       "jpg",
@@ -100,7 +100,7 @@ public class Image {
       "bmp"
     };
 
-    return Utils.inArray (supported_types, type);
+    return Utils.in_array (supported_types, type);
   }
 
   /**
@@ -109,7 +109,7 @@ public class Image {
    * @param  int64 bytes
    * @return string
    */
-  public static string getUnit (int64 bytes) {
+  public static string get_unit (int64 bytes) {
     var unit = "";
 
     if (bytes > 1000 && bytes < 1000000) {
@@ -133,7 +133,7 @@ public class Image {
    * @param  float new_size
    * @return string
    */
-  public static string calcSavings (float size, float new_size) {
+  public static string calc_savings (float size, float new_size) {
     float savings = 100.00f - (new_size / size * 100.00f);
 
     return "%.2f%%".printf (savings);

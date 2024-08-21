@@ -61,8 +61,8 @@ public class JpegOptim {
             out status
           );
 
-          var new_size = this.getNewSize (stdout);
-          this.list.updateSize (image, new_size);
+          var new_size = this.get_new_size (stdout);
+          this.list.update_size (image, new_size);
 
         } catch (SpawnError e) {
           warning ("Failed to spawn jpegoptim: %s", e.message);
@@ -81,7 +81,7 @@ public class JpegOptim {
    * @param  string stdout
    * @return int
    */
-  public int getNewSize (string stdout) {
+  public int get_new_size (string stdout) {
     // After the arrow and a space there should be the new size in bytes.
     var text = stdout.split (" --> ")[1];
 
