@@ -69,7 +69,7 @@ public class OptiPng {
 
           this.list.updateSize(image, new_size);
         } catch (SpawnError e) {
-          stdout.printf ("Error: %s\n", e.message);
+          warning ("Failed to spawn optipng: %s", e.message);
         }
       }
 

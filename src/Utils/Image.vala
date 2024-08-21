@@ -51,10 +51,12 @@ public class Image {
     File file = File.new_for_path (path);
     int64 file_size = 0;
 
-    try {
-      file_size = file.query_info ("*", FileQueryInfoFlags.NONE).get_size ();
-    } catch (Error e) {
-      stdout.printf ("Error occurred");
+    if (file.query_exists ()) {
+      try {
+        file_size = file.query_info ("*", FileQueryInfoFlags.NONE).get_size ();
+      } catch (Error e) {
+        warning ("Failed to get size of \"%s\": %s", this.path, e.message);
+      }
     }
 
     this.size = file_size;

@@ -65,7 +65,7 @@ public class JpegOptim {
           this.list.updateSize(image, new_size);
 
         } catch (SpawnError e) {
-          stdout.printf ("Error: %s\n", e.message);
+          warning ("Failed to spawn jpegoptim: %s", e.message);
         }
       }
 
