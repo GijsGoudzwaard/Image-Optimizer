@@ -72,7 +72,7 @@ public class JpegOptim {
       return null;
     };
 
-    new Thread<void*>.try("thread", run);
+    new Thread<void*>.try("thread", (owned) run);
   }
 
   /**

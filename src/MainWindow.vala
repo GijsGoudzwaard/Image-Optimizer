@@ -55,13 +55,18 @@ public class MainWindow : Gtk.Window {
       width_request: 980
     );
 
-    this.images = images;
+    var css_provider = new Gtk.CssProvider ();
+    try {
+      css_provider.load_from_data (Stylesheet.STYLES);
 
-    Granite.Widgets.Utils.set_theming_for_screen (
-      this.get_screen(),
-      Stylesheet.STYLES,
-      Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
-    );
+      Gtk.StyleContext.add_provider_for_screen (
+        this.get_screen(),
+        css_provider,
+        Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+      );
+    } catch (Error e) {
+      stdout.printf ("Error: %s\n", e.message);
+    }
   }
 
   construct {
