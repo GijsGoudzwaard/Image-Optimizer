@@ -36,8 +36,8 @@ public class MainWindow : Gtk.Window {
    *
    * @var Gtk.TargetEntry[]
    */
-  private const Gtk.TargetEntry[] targets = {
-      {"text/uri-list",0,0}
+  private const Gtk.TargetEntry[] TARGETS = {
+      {"text/uri-list", 0, 0}
   };
 
   /**
@@ -60,7 +60,7 @@ public class MainWindow : Gtk.Window {
       css_provider.load_from_data (Stylesheet.STYLES);
 
       Gtk.StyleContext.add_provider_for_screen (
-        this.get_screen(),
+        this.get_screen (),
         css_provider,
         Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
       );
@@ -79,7 +79,7 @@ public class MainWindow : Gtk.Window {
     //    this.images += new Image ("", "", "");
     //  }
 
-    Gtk.drag_dest_set (this, Gtk.DestDefaults.ALL, targets, Gdk.DragAction.COPY);
+    Gtk.drag_dest_set (this, Gtk.DestDefaults.ALL, TARGETS, Gdk.DragAction.COPY);
     this.drag_leave.connect (this.on_drag_leave);
     this.drag_motion.connect (this.on_drag_motion);
     this.drag_data_received.connect (this.on_drag_data_received);
@@ -131,7 +131,7 @@ public class MainWindow : Gtk.Window {
     add (images_list.window ());
 
     var add_image = new Gtk.Button.from_icon_name ("list-add-symbolic", Gtk.IconSize.SMALL_TOOLBAR);
-    add_image.set_tooltip_markup(_("Add Image"));
+    add_image.set_tooltip_markup (_("Add Image"));
     this.toolbar.remove (add_image);
 
     add_image.get_style_context ().add_class ("titlebutton");
@@ -190,13 +190,13 @@ public class MainWindow : Gtk.Window {
   private void on_drag_data_received (Gdk.DragContext drag_context, int x, int y, Gtk.SelectionData data, uint info, uint time)
   {
     foreach (string uri in data.get_uris ()) {
-      uri = uri.replace("%20", " ").replace("file://", "");
+      uri = uri.replace ("%20", " "). replace("file://", "");
 
       var name = Image.getFileName (uri);
       var type = Image.getFileType (name);
 
-      if (Image.isValid (type.down())) {
-        this.images += new Image (uri, name, type.down());
+      if (Image.isValid (type.down ())) {
+        this.images += new Image (uri, name, type.down ());
       } else {
         // TODO: add an error message here
       }
@@ -231,8 +231,8 @@ public class MainWindow : Gtk.Window {
         var name = Image.getFileName (uri);
         var type = Image.getFileType (name);
 
-        if (Image.isValid (type.down())) {
-          this.images += new Image (uri, name, type.down());
+        if (Image.isValid (type.down ())) {
+          this.images += new Image (uri, name, type.down ());
         } else {
           // TODO: add an error message here
         }
@@ -243,7 +243,7 @@ public class MainWindow : Gtk.Window {
       }
 
       if (this.images.length > 0) {
-        this.set_list_window();
+        this.set_list_window ();
       }
 
       this.images = {};
