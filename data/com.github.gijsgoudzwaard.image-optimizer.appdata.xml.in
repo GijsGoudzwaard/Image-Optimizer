@@ -2,9 +2,14 @@
 <!-- Copyright 2019 Gijs Goudzwaard <gijs.goudzwaard@gmail.com> -->
 <component type="desktop">
    <id>com.github.gijsgoudzwaard.image-optimizer</id>
+   <launchable type="desktop-id">com.github.gijsgoudzwaard.image-optimizer.desktop</launchable>
    <metadata_license>CC0-1.0</metadata_license>
    <name>Image Optimizer</name>
+   <!-- developer_name has deprecated since AppStream 1.0 -->
    <developer_name>Gijs Goudzwaard</developer_name>
+   <developer id="com.github.gijsgoudzwaard">
+      <name>Gijs Goudzwaard</name>
+   </developer>
    <project_license>MIT</project_license>
    <summary>Simple lossless image compression</summary>
    <description>
