@@ -23,7 +23,7 @@ public class List {
     this.upload_button.get_style_context().add_class("add");
     this.upload_button.set_valign(Gtk.Align.START);
     this.upload_button.set_halign(Gtk.Align.END);
-    this.upload_button.set_focus_on_click(false);
+    ((Gtk.Widget) this.upload_button).set_focus_on_click(false);
 
     Gtk.TreeIter iter;
     foreach (var image in this.images) {

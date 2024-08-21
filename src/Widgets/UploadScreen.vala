@@ -31,7 +31,7 @@ public class UploadScreen : Gtk.Box {
     this.upload_button.get_style_context().add_class("upload_button");
     this.upload_button.set_valign(Gtk.Align.CENTER);
     this.upload_button.set_halign(Gtk.Align.CENTER);
-    upload_button.set_focus_on_click(false);
+    ((Gtk.Widget) this.upload_button).set_focus_on_click(false);
 
     if (icon != null) {
       upload_area.pack_start(icon, false, false, 0);
