@@ -26,9 +26,9 @@ public class Optimizer {
     var optipng = new OptiPng (list);
 
     foreach (var image in this.images) {
-      if (Utils.inArray ({"jpg", "jpeg"}, image.type)) {
+      if (Utils.in_array ({"jpg", "jpeg"}, image.type)) {
         jpegoptim.addImage (image.path);
-      } else if (Utils.inArray ({"png", "bmp"}, image.type)) {
+      } else if (Utils.in_array ({"png", "bmp"}, image.type)) {
         optipng.addImage (image.path);
       }
     }

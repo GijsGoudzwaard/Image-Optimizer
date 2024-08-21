@@ -32,7 +32,7 @@ public class List {
                     0, true,
                     1, 1,
                     2, image.name,
-                    3, Image.getUnit (image.size),
+                    3, Image.get_unit (image.size),
                     4, "",
                     5, "");
     }
@@ -48,29 +48,29 @@ public class List {
     var spinner = new Gtk.CellRendererSpinner ();
 
     Gtk.TreeViewColumn column = new Gtk.TreeViewColumn ();
-		column.set_title ("");
-		column.pack_start (spinner, false);
-		column.add_attribute (spinner, "active", 0);
-		column.add_attribute (spinner, "pulse", 1);
-		view.append_column (column);
+    column.set_title ("");
+    column.pack_start (spinner, false);
+    column.add_attribute (spinner, "active", 0);
+    column.add_attribute (spinner, "pulse", 1);
+    view.append_column (column);
 
     view.insert_column_with_attributes (2, _("File"), cell, "text", 2);
-		view.insert_column_with_attributes (3, _("Size"), cell, "text", 3);
-		view.insert_column_with_attributes (4, _("New size"), cell, "text", 4);
+    view.insert_column_with_attributes (3, _("Size"), cell, "text", 3);
+    view.insert_column_with_attributes (4, _("New size"), cell, "text", 4);
     view.insert_column_with_attributes (5, _("Savings"), cell, "text", 5);
 
     // Rotate the spinner:
-		Timeout.add (50, () => {
-			listmodel.foreach ((model, path, iter) => {
-				Value val;
-				listmodel.get_value (iter, 1, out val);
-				val.set_int (val.get_int () + 1);
+    Timeout.add (50, () => {
+      listmodel.foreach ((model, path, iter) => {
+        Value val;
+        listmodel.get_value (iter, 1, out val);
+        val.set_int (val.get_int () + 1);
         listmodel.set_value (iter, 1, val);
 
-				return false;
+        return false;
       });
 
-			return true;
+      return true;
     });
 
     var optimizer = new Optimizer (this.images);
@@ -79,7 +79,7 @@ public class List {
     return main;
   }
 
-  public void updateSize (string path, int size) {
+  public void update_size (string path, int size) {
     // Update image with new attributes
     for (var i = 0; i < this.images.length; i++) {
       if (this.images[i].path == path) {
@@ -88,7 +88,7 @@ public class List {
     }
 
     Gtk.TreeIter iter;
-    Image image = new Image("", "", "");
+    Image image = new Image ("", "", "");
     var key = 0;
     for (var i = 0; i < this.images.length; i++) {
       if (this.images[i].path == path) {
@@ -106,12 +106,12 @@ public class List {
               0, false,
               1, 1,
               2, image.name,
-              3, Image.getUnit (image.size),
-              4, Image.getUnit (image.new_size),
-              5, Image.calcSavings ((float) image.size, (float) image.new_size));
+              3, Image.get_unit (image.size),
+              4, Image.get_unit (image.new_size),
+              5, Image.calc_savings ((float) image.size, (float) image.new_size));
   }
 
-  public void updateTreeView (Image[] images) {
+  public void update_tree_view (Image[] images) {
     Gtk.TreeIter iter;
 
     foreach (var image in images) {
@@ -128,7 +128,7 @@ public class List {
                       0, true,
                       1, 1,
                       2, image.name,
-                      3, Image.getUnit (image.size),
+                      3, Image.get_unit (image.size),
                       4, "",
                       5, "");
       }
