@@ -5,7 +5,7 @@ app-id: com.github.gijsgoudzwaard.image-optimizer
 # we can use a convenient pre-made runtime and SDK. For this example, we'll be
 # using the runtime and SDK provided by elementary.
 runtime: io.elementary.Platform
-runtime-version: '6'
+runtime-version: '8'
 sdk: io.elementary.Sdk
 
 # This should match the exec line in your .desktop file and usually is the same
@@ -28,16 +28,16 @@ modules:
   - name: jpegoptim
     sources:
       - type: archive
-        url: https://github.com/tjko/jpegoptim/archive/RELEASE.1.4.6.tar.gz
-        sha256: c44dcfac0a113c3bec13d0fc60faf57a0f9a31f88473ccad33ecdf210b4c0c52
+        url: https://github.com/tjko/jpegoptim/archive/v1.5.5.tar.gz
+        sha256: 90a309d1c092de358bb411d702281ac3039b489d03adb0bc3c4ef04cf0067d38
   - name: optipng
     build-options:
       config-opts:
       - --with-system-libs
     sources:
       - type: archive
-        url: https://netcologne.dl.sourceforge.net/project/optipng/OptiPNG/optipng-0.7.7/optipng-0.7.7.tar.gz
-        sha256: 4f32f233cef870b3f95d3ad6428bfe4224ef34908f1b42b0badf858216654452
+        url: https://netcologne.dl.sourceforge.net/project/optipng/OptiPNG/optipng-0.7.8/optipng-0.7.8.tar.gz
+        sha256: 25a3bd68481f21502ccaa0f4c13f84dcf6b20338e4c4e8c51f2cefbd8513398c
   - name: image-optimizer
     buildsystem: meson
     sources:
