@@ -100,7 +100,7 @@ public class MainWindow : Gtk.Window {
    * @param  Image images
    * @return void
    */
-  public void set_images(Image[] images) {
+  public void set_images (Image[] images) {
     this.images = images;
 
     if (images.length == 0) {
@@ -187,15 +187,14 @@ public class MainWindow : Gtk.Window {
    * @param  uint time
    * @return void
    */
-  private void on_drag_data_received (Gdk.DragContext drag_context, int x, int y, Gtk.SelectionData data, uint info, uint time)
-  {
+  private void on_drag_data_received (Gdk.DragContext drag_context, int x, int y, Gtk.SelectionData data, uint info, uint time) {
     foreach (string uri in data.get_uris ()) {
-      uri = uri.replace ("%20", " "). replace("file://", "");
+      uri = uri.replace ("%20", " "). replace ("file://", "");
 
       var name = Image.getFileName (uri);
       var type = Image.getFileType (name);
 
-      if (Image.isValid (type.down ())) {
+      if (Image.is_valid (type.down ())) {
         this.images += new Image (uri, name, type.down ());
       } else {
         // TODO: add an error message here
@@ -205,7 +204,7 @@ public class MainWindow : Gtk.Window {
     if (images.length > 0 && this.images_list == null) {
       this.set_list_window ();
     } else if (this.images_list != null) {
-      this.images_list.updateTreeView (this.images);
+      this.images_list.update_tree_view (this.images);
     }
 
     this.images = {};
@@ -231,7 +230,7 @@ public class MainWindow : Gtk.Window {
         var name = Image.getFileName (uri);
         var type = Image.getFileType (name);
 
-        if (Image.isValid (type.down ())) {
+        if (Image.is_valid (type.down ())) {
           this.images += new Image (uri, name, type.down ());
         } else {
           // TODO: add an error message here
@@ -239,7 +238,7 @@ public class MainWindow : Gtk.Window {
       }
 
       if (this.images_list != null) {
-        this.images_list.updateTreeView (this.images);
+        this.images_list.update_tree_view (this.images);
       }
 
       if (this.images.length > 0) {

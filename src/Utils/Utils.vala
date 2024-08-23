@@ -5,7 +5,7 @@ public class Utils {
    *
    * @return bool
    */
-  public static bool inArray (string[] haystack, string needle) {
+  public static bool in_array (string[] haystack, string needle) {
     foreach (var item in haystack) {
       if (item == needle) {
         return true;

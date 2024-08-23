@@ -13,7 +13,7 @@ class Application : Granite.Application {
   protected override void activate () {
     if (this.app_window == null) {
       this.app_window = new MainWindow (this);
-      this.app_window.show_all();
+      this.app_window.show_all ();
     }
 
     var quit_action = new SimpleAction ("quit", null);
@@ -31,13 +31,13 @@ class Application : Granite.Application {
   public override void open (File[] files, string hint) {
     if (files [0].query_exists ()) {
       foreach (File file in files) {
-        var uri = file.get_path().replace("%20", " ").replace("file://", "");
+        var uri = file.get_path ().replace ("%20", " ").replace ("file://", "");
 
         var name = Image.getFileName (uri);
-        var type = Image.getFileType (file.get_basename());
+        var type = Image.getFileType (file.get_basename ());
 
-        if (Image.isValid (type.down ())) {
-          this.images += new Image (uri, name, type.down());
+        if (Image.is_valid (type.down ())) {
+          this.images += new Image (uri, name, type.down ());
         } else {
           // TODO: add an error message here
         }

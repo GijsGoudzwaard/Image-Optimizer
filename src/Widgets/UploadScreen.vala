@@ -4,7 +4,7 @@ public class UploadScreen : Gtk.Box {
 
   public Gtk.Button upload_button;
 
-  public Gtk.Box window() {
+  public Gtk.Box window () {
     this.border_width = 10;
     this.get_style_context ().add_class ("main");
 
@@ -13,7 +13,7 @@ public class UploadScreen : Gtk.Box {
     upload_area.set_valign (Gtk.Align.CENTER);
     upload_area.set_halign (Gtk.Align.CENTER);
 
-    Gtk.Image icon = new Gtk.Image();
+    Gtk.Image icon = new Gtk.Image ();
 
     try {
       var icon_pixbuf = new Gdk.Pixbuf.from_file_at_scale ("/usr/share/icons/hicolor/scalable/apps/upload_icon.svg", 64, 64, true);
