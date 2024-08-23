@@ -45,7 +45,7 @@ public class JpegOptim {
    * @return void
    */
   public void compress () throws Error {
-    var command = "jpegoptim " + Utils.join(" ", this.args);
+    var command = "jpegoptim " + Utils.join (" ", this.args);
 
     ThreadFunc<void*> run = () => {
       foreach (var image in this.images) {
@@ -55,14 +55,14 @@ public class JpegOptim {
 
         try {
           Process.spawn_command_line_sync (
-            command + " " + image.replace(" ", "\\ "),
+            command + " " + image.replace (" ", "\\ "),
             out stdout,
             out stderr,
             out status
           );
 
-          var new_size = this.getNewSize(stdout);
-          this.list.updateSize(image, new_size);
+          var new_size = this.getNewSize (stdout);
+          this.list.updateSize (image, new_size);
 
         } catch (SpawnError e) {
           warning ("Failed to spawn jpegoptim: %s", e.message);
@@ -72,7 +72,7 @@ public class JpegOptim {
       return null;
     };
 
-    new Thread<void*>.try("thread", (owned) run);
+    new Thread<void*>.try ("thread", (owned) run);
   }
 
   /**
@@ -83,9 +83,9 @@ public class JpegOptim {
    */
   public int getNewSize (string stdout) {
     // After the arrow and a space there should be the new size in bytes.
-    var text = stdout.split(" --> ")[1];
+    var text = stdout.split (" --> ")[1];
 
     // The first integer until a space should be the new size in bytes.
-    return int.parse(text.split(" ")[0]);
+    return int.parse (text.split (" ")[0]);
   }
 }

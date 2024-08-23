@@ -18,12 +18,12 @@ public class List {
 
     listmodel = new Gtk.ListStore (6, typeof (bool), typeof (int), typeof (string), typeof (string), typeof (string), typeof (string));
 
-    this.upload_button = new Gtk.Button.with_label("+");
-    this.upload_button.get_style_context().add_class("upload_button");
-    this.upload_button.get_style_context().add_class("add");
-    this.upload_button.set_valign(Gtk.Align.START);
-    this.upload_button.set_halign(Gtk.Align.END);
-    ((Gtk.Widget) this.upload_button).set_focus_on_click(false);
+    this.upload_button = new Gtk.Button.with_label ("+");
+    this.upload_button.get_style_context ().add_class ("upload_button");
+    this.upload_button.get_style_context ().add_class ("add");
+    this.upload_button.set_valign (Gtk.Align.START);
+    this.upload_button.set_halign (Gtk.Align.END);
+    ((Gtk.Widget) this.upload_button).set_focus_on_click (false);
 
     Gtk.TreeIter iter;
     foreach (var image in this.images) {
@@ -32,7 +32,7 @@ public class List {
                     0, true,
                     1, 1,
                     2, image.name,
-                    3, Image.getUnit(image.size),
+                    3, Image.getUnit (image.size),
                     4, "",
                     5, "");
     }
@@ -98,7 +98,7 @@ public class List {
       }
     }
 
-    Gtk.TreePath tree_path = new Gtk.TreePath.from_string (key.to_string());
+    Gtk.TreePath tree_path = new Gtk.TreePath.from_string (key.to_string ());
     bool tmp = this.listmodel.get_iter (out iter, tree_path);
     assert (tmp == true);
 
@@ -108,7 +108,7 @@ public class List {
               2, image.name,
               3, Image.getUnit (image.size),
               4, Image.getUnit (image.new_size),
-              5, Image.calcSavings((float) image.size, (float) image.new_size));
+              5, Image.calcSavings ((float) image.size, (float) image.new_size));
   }
 
   public void updateTreeView (Image[] images) {
@@ -128,7 +128,7 @@ public class List {
                       0, true,
                       1, 1,
                       2, image.name,
-                      3, Image.getUnit(image.size),
+                      3, Image.getUnit (image.size),
                       4, "",
                       5, "");
       }
