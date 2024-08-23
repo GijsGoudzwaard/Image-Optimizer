@@ -33,11 +33,6 @@ i18n.merge_file(
     install_dir: join_paths(get_option('datadir'), 'metainfo')
 )
 
-install_data(
-    meson.project_name() + '.contract',
-    install_dir: join_paths(get_option('datadir'), 'contractor')
-)
-
 desktop_file_validate = find_program('desktop-file-validate', required:false)
 
 if desktop_file_validate.found()
