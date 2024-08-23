@@ -63,6 +63,17 @@ public class Image {
   }
 
   /**
+   * Convert a URI to a path.
+   *
+   * @param  string uri  URI e.g. "file:///home/user/Pictures/test_pr%C3%BCfen_%E3%83%86%E3%82%B9%E3%83%88_%E6%B5%8B%E8%AF%95.png"
+   * @return string?     Path e.g. "/home/user/Pictures/prüfen_测试.png" or null if no such file exists
+   */
+  public static string? to_path (string uri) {
+    var file = File.new_for_uri (uri);
+    return file.get_path ();
+  }
+
+  /**
    * Get file name from a path.
    *
    * @param  string path

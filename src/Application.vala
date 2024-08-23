@@ -31,13 +31,13 @@ class Application : Granite.Application {
   public override void open (File[] files, string hint) {
     if (files [0].query_exists ()) {
       foreach (File file in files) {
-        var uri = file.get_path ().replace ("%20", " ").replace ("file://", "");
+        var path = file.get_path ();
 
-        var name = Image.get_file_name (uri);
+        var name = Image.get_file_name (path);
         var type = Image.get_file_type (file.get_basename ());
 
         if (Image.is_valid (type.down ())) {
-          this.images += new Image (uri, name, type.down ());
+          this.images += new Image (path, name, type.down ());
         } else {
           // TODO: add an error message here
         }
