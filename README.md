@@ -1,6 +1,6 @@
 # Image Optimizer
 
-[![Build Status](https://travis-ci.com/GijsGoudzwaard/Image-Optimizer.svg?branch=master)](https://travis-ci.com/GijsGoudzwaard/Image-Optimizer)
+[![Build Status](https://github.com/GijsGoudzwaard/Image-Optimizer/actions/workflows/pipelines.yml/badge.svg?branch=master)](https://github.com/GijsGoudzwaard/Image-Optimizer/actions/workflows/pipelines.yml)
 
 Simple lossless image optimizer built with Vala and Gtk.
 
