@@ -189,13 +189,17 @@ public class MainWindow : Gtk.Window {
    */
   private void on_drag_data_received (Gdk.DragContext drag_context, int x, int y, Gtk.SelectionData data, uint info, uint time) {
     foreach (string uri in data.get_uris ()) {
-      uri = uri.replace ("%20", " "). replace ("file://", "");
+      var path = Image.to_path (uri);
+      if (path == null) {
+        warning ("Failed to convert URI \"%s\" to path", uri);
+        continue;
+      }
 
-      var name = Image.get_file_name (uri);
+      var name = Image.get_file_name (path);
       var type = Image.get_file_type (name);
 
       if (Image.is_valid (type.down ())) {
-        this.images += new Image (uri, name, type.down ());
+        this.images += new Image (path, name, type.down ());
       } else {
         // TODO: add an error message here
       }
@@ -226,12 +230,12 @@ public class MainWindow : Gtk.Window {
     file_chooser.select_multiple = true;
 
     if (file_chooser.run () == Gtk.ResponseType.ACCEPT) {
-      foreach (string uri in file_chooser.get_filenames ()) {
-        var name = Image.get_file_name (uri);
+      foreach (string path in file_chooser.get_filenames ()) {
+        var name = Image.get_file_name (path);
         var type = Image.get_file_type (name);
 
         if (Image.is_valid (type.down ())) {
-          this.images += new Image (uri, name, type.down ());
+          this.images += new Image (path, name, type.down ());
         } else {
           // TODO: add an error message here
         }
