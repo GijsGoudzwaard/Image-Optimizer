@@ -1,6 +1,4 @@
-using Granite.Widgets;
-
-class Application : Granite.Application {
+class Application : Gtk.Application {
 
   private Image[] images = {};
   private MainWindow app_window;
@@ -53,7 +51,6 @@ class Application : Granite.Application {
   }
 
   public static int main (string[] args) {
-    Gtk.init (ref args);
     var app = new Application ();
     return app.run (args);
   }
