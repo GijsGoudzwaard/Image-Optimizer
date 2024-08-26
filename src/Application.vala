@@ -10,11 +10,8 @@ class Application : Granite.Application {
         flags: GLib.ApplicationFlags.HANDLES_OPEN);
   }
 
-  protected override void activate () {
-    if (this.app_window == null) {
-      this.app_window = new MainWindow (this);
-      this.app_window.show_all ();
-    }
+  protected override void startup () {
+    base.startup ();
 
     var quit_action = new SimpleAction ("quit", null);
 
@@ -26,6 +23,13 @@ class Application : Granite.Application {
         this.app_window.destroy ();
       }
     });
+  }
+
+  protected override void activate () {
+    if (this.app_window == null) {
+      this.app_window = new MainWindow (this);
+      this.app_window.show_all ();
+    }
   }
 
   public override void open (File[] files, string hint) {
