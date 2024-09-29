@@ -1,4 +1,5 @@
-project('com.github.gijsgoudzwaard.image-optimizer', 'vala', 'c')
+project('com.github.gijsgoudzwaard.image-optimizer', 'vala', 'c',
+  meson_version: '>= 0.56.0')
 
 gnome = import('gnome')
 i18n = import('i18n')
