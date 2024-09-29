@@ -11,11 +11,6 @@ foreach i : icon_sizes
     )
 endforeach
 
-install_data(
-    join_paths('icons', 'upload_icon.svg'),
-    install_dir: 'share/icons/hicolor/scalable/apps'
-)
-
 i18n.merge_file(
     input: meson.project_name() + '.desktop.in',
     output: meson.project_name() + '.desktop',
