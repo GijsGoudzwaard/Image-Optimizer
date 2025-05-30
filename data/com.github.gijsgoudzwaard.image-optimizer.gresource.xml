@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gresources>
-  <gresource prefix="/com/github/gijsgoudzwaard/image-optimizer">
-    
+  <gresource prefix="/com/github/gijsgoudzwaard/image-optimizer/icons">
+    <file compressed="true" preprocess="xml-stripblanks" alias="upload_icon.svg">icons/upload_icon.svg</file>
   </gresource>
 </gresources>
