@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Copyright 2019 Gijs Goudzwaard <gijs.goudzwaard@gmail.com> -->
-<component type="desktop">
+<component type="desktop-application">
    <id>com.github.gijsgoudzwaard.image-optimizer</id>
    <launchable type="desktop-id">com.github.gijsgoudzwaard.image-optimizer.desktop</launchable>
+   <translation type="gettext">com.github.gijsgoudzwaard.image-optimizer</translation>
    <metadata_license>CC0-1.0</metadata_license>
    <name>Image Optimizer</name>
    <!-- developer_name has deprecated since AppStream 1.0 -->
@@ -25,18 +26,22 @@
    <url type="homepage">https://github.com/gijsgoudzwaard/image-optimizer</url>
    <url type="bugtracker">https://github.com/gijsgoudzwaard/image-optimizer/issues</url>
    <url type="help">https://github.com/gijsgoudzwaard/image-optimizer/issues</url>
+   <url type="vcs-browser">https://github.com/gijsgoudzwaard/image-optimizer</url>
    <update_contact>gijs.goudzwaard@gmail.com</update_contact>
    <screenshots>
       <screenshot type="default">
+         <caption>Welcome screen</caption>
          <image>https://raw.githubusercontent.com/GijsGoudzwaard/Image-Optimizer/master/data/screenshots/welcome-screen.png</image>
       </screenshot>
       <screenshot>
+         <caption>Compress list</caption>
          <image>https://raw.githubusercontent.com/GijsGoudzwaard/Image-Optimizer/master/data/screenshots/treeview.png</image>
       </screenshot>
    </screenshots>
+   <branding>
+      <color type="primary">#687ddb</color>
+   </branding>
    <custom>
-      <value key="x-appcenter-color-primary">#687ddb</value>
-      <value key="x-appcenter-color-primary-text">#ffffff</value>
       <value key="x-appcenter-suggested-price">2</value>
       <value key="x-appcenter-stripe">pk_live_51AhbXkAINoIuuUE3zGg5JG2PvD3IcxMONFdFJZiMawOTGsCzcxxZAREnvLKeoGyMxEVfJpSYfjFzsDZa2bV6eEEb00nj0bUJl8</value>
    </custom>
@@ -136,33 +141,5 @@
          </description>
       </release>
    </releases>
-   <content_rating type="oars-1.1">
-      <content_attribute id="violence-cartoon">none</content_attribute>
-      <content_attribute id="violence-fantasy">none</content_attribute>
-      <content_attribute id="violence-realistic">none</content_attribute>
-      <content_attribute id="violence-bloodshed">none</content_attribute>
-      <content_attribute id="violence-sexual">none</content_attribute>
-      <content_attribute id="violence-desecration">none</content_attribute>
-      <content_attribute id="violence-slavery">none</content_attribute>
-      <content_attribute id="violence-worship">none</content_attribute>
-      <content_attribute id="drugs-alcohol">none</content_attribute>
-      <content_attribute id="drugs-narcotics">none</content_attribute>
-      <content_attribute id="drugs-tobacco">none</content_attribute>
-      <content_attribute id="sex-nudity">none</content_attribute>
-      <content_attribute id="sex-themes">none</content_attribute>
-      <content_attribute id="sex-homosexuality">none</content_attribute>
-      <content_attribute id="sex-prostitution">none</content_attribute>
-      <content_attribute id="sex-adultery">none</content_attribute>
-      <content_attribute id="sex-appearance">none</content_attribute>
-      <content_attribute id="language-profanity">none</content_attribute>
-      <content_attribute id="language-humor">none</content_attribute>
-      <content_attribute id="language-discrimination">none</content_attribute>
-      <content_attribute id="social-chat">none</content_attribute>
-      <content_attribute id="social-info">none</content_attribute>
-      <content_attribute id="social-audio">none</content_attribute>
-      <content_attribute id="social-location">none</content_attribute>
-      <content_attribute id="social-contacts">none</content_attribute>
-      <content_attribute id="money-purchasing">none</content_attribute>
-      <content_attribute id="money-gambling">none</content_attribute>
-   </content_rating>
+   <content_rating type="oars-1.1" />
 </component>
