@@ -3,6 +3,7 @@
 <component type="desktop-application">
    <id>com.github.gijsgoudzwaard.image-optimizer</id>
    <launchable type="desktop-id">com.github.gijsgoudzwaard.image-optimizer.desktop</launchable>
+   <translation type="gettext">com.github.gijsgoudzwaard.image-optimizer</translation>
    <metadata_license>CC0-1.0</metadata_license>
    <name>Image Optimizer</name>
    <!-- developer_name has deprecated since AppStream 1.0 -->
