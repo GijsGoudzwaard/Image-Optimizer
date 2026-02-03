@@ -28,9 +28,11 @@
    <update_contact>gijs.goudzwaard@gmail.com</update_contact>
    <screenshots>
       <screenshot type="default">
+         <caption>Welcome screen</caption>
          <image>https://raw.githubusercontent.com/GijsGoudzwaard/Image-Optimizer/master/data/screenshots/welcome-screen.png</image>
       </screenshot>
       <screenshot>
+         <caption>Compress list</caption>
          <image>https://raw.githubusercontent.com/GijsGoudzwaard/Image-Optimizer/master/data/screenshots/treeview.png</image>
       </screenshot>
    </screenshots>
