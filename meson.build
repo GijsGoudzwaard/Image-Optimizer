@@ -29,8 +29,8 @@ executable(
     dependencies: [
         dependency('gee-0.8'),
         dependency('glib-2.0'),
-        dependency('gtk+-3.0'),
-        dependency('granite'),
+        dependency('gtk4'),
+        dependency('granite-7'),
         meson.get_compiler('c').find_library('m', required : false)
     ],
     install: true
