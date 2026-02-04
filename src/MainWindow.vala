@@ -31,16 +31,6 @@ public class MainWindow : Gtk.Window {
   private List images_list;
 
   /**
-   * Contains a single type of data than can be supplied for by a widget for a
-   * selection or for supplied or received during drag-and-drop.
-   *
-   * @var Gtk.TargetEntry[]
-   */
-  private const Gtk.TargetEntry[] TARGETS = {
-      {"text/uri-list", 0, 0}
-  };
-
-  /**
    * Create a new window.
    *
    * @param Gtk.Application application
@@ -79,10 +69,11 @@ public class MainWindow : Gtk.Window {
     //    this.images += new Image ("", "", "");
     //  }
 
-    Gtk.drag_dest_set (this, Gtk.DestDefaults.ALL, TARGETS, Gdk.DragAction.COPY);
-    this.drag_leave.connect (this.on_drag_leave);
-    this.drag_motion.connect (this.on_drag_motion);
-    this.drag_data_received.connect (this.on_drag_data_received);
+    var drop_target = new Gtk.DropTarget (typeof (Gdk.FileList), Gdk.DragAction.COPY);
+    drop_target.leave.connect (this.on_drag_leave);
+    drop_target.enter.connect (this.on_drag_enter);
+    drop_target.drop.connect (this.on_drop);
+    ((Gtk.Widget) this).add_controller (drop_target);
 
     if (images.length == 0) {
       this.upload_screen = new UploadScreen ();
@@ -147,48 +138,42 @@ public class MainWindow : Gtk.Window {
   /**
    * Gets called while a file is being dragged out of the application.
    *
-   * @param  Gdk.DragContext context
-   * @param  uint time
    * @return void
    */
-  private void on_drag_leave (Gdk.DragContext context, uint time) {
-    if (this.get_style_context ().has_class ("on_drag_motion")) {
-      this.get_style_context ().remove_class ("on_drag_motion");
+  private void on_drag_leave () {
+    if (this.get_style_context ().has_class ("on_drag_enter")) {
+      this.get_style_context ().remove_class ("on_drag_enter");
     }
   }
 
   /**
    * Gets called when a file is being dragged into the application while still holding the file.
    *
-   * @param  Gdk.DragContext context
-   * @param  int x
-   * @param  int y
-   * @param  uint time
-   * @return bool
+   * @param  double x
+   * @param  double y
+   * @return Gdk.DragAction
    */
-  private bool on_drag_motion (Gdk.DragContext context, int x, int y, uint time) {
-    Gtk.drag_unhighlight (this);
-
-    if (! this.get_style_context ().has_class ("on_drag_motion") && ! this.get_style_context ().has_class ("list")) {
-      this.get_style_context ().add_class ("on_drag_motion");
+  private Gdk.DragAction on_drag_enter (double x, double y) {
+    if (! this.get_style_context ().has_class ("on_drag_enter") && ! this.get_style_context ().has_class ("list")) {
+      this.get_style_context ().add_class ("on_drag_enter");
     }
 
-    return true;
+    return Gdk.DragAction.COPY;
   }
 
   /**
    * Gets called when a file gets dropped into the application.
    *
-   * @param  Gdk.DragContext drag_context
-   * @param  int x
-   * @param  int y
-   * @param  Gtk.SelectionData data
-   * @param  uint info
-   * @param  uint time
-   * @return void
+   * @param  Value value
+   * @param  double x
+   * @param  double y
+   * @return bool
    */
-  private void on_drag_data_received (Gdk.DragContext drag_context, int x, int y, Gtk.SelectionData data, uint info, uint time) {
-    foreach (string uri in data.get_uris ()) {
+  private bool on_drop (Value value, double x, double y) {
+    unowned var list = (Gdk.FileList) value;
+
+    list.get_files ().foreach ((file) => {
+      string uri = file.get_uri ();
       var path = Image.to_path (uri);
       if (path == null) {
         warning ("Failed to convert URI \"%s\" to path", uri);
@@ -203,7 +188,7 @@ public class MainWindow : Gtk.Window {
       } else {
         // TODO: add an error message here
       }
-    }
+    });
 
     if (images.length > 0 && this.images_list == null) {
       this.set_list_window ();
@@ -213,7 +198,7 @@ public class MainWindow : Gtk.Window {
 
     this.images = {};
 
-    Gtk.drag_finish (drag_context, true, false, time);
+    return true;
   }
 
   /**

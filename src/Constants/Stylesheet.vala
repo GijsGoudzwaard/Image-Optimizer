@@ -8,11 +8,11 @@ class Stylesheet {
       transition: background-color .1s ease-in-out;
     }
 
-    window.on_drag_motion, window.on_drag_motion .tree_view {
+    window.on_drag_enter, window.on_drag_enter .tree_view {
       background-color: #E8E8E8;
     }
 
-    window.on_drag_motion .default-decoration {
+    window.on_drag_enter .default-decoration {
       background-color: #E8E8E8;
     }
 
