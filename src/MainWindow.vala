@@ -214,7 +214,11 @@ public class MainWindow : Gtk.Window {
 
     file_chooser.select_multiple = true;
 
-    if (file_chooser.run () == Gtk.ResponseType.ACCEPT) {
+    file_chooser.response.connect ((response_id) => {
+      if (response_id != Gtk.ResponseType.ACCEPT) {
+        return;
+      }
+
       ListModel files = file_chooser.get_files ();
       for (int i = 0; i < files.get_n_items (); i++) {
         var file = ((File) files.get_object (i));
@@ -239,8 +243,8 @@ public class MainWindow : Gtk.Window {
       }
 
       this.images = {};
-    }
+    });
 
-    file_chooser.destroy ();
+    file_chooser.present ();
   }
 }
