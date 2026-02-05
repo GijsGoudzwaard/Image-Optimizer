@@ -13,7 +13,7 @@ public class List {
   }
 
   public Gtk.ScrolledWindow window () {
-    var main = new Gtk.ScrolledWindow (null, null);
+    var main = new Gtk.ScrolledWindow ();
     main.set_policy (PolicyType.AUTOMATIC, PolicyType.AUTOMATIC);
 
     listmodel = new Gtk.ListStore (6, typeof (bool), typeof (int), typeof (string), typeof (string), typeof (string), typeof (string));
