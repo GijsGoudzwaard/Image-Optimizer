@@ -49,8 +49,8 @@ public class MainWindow : Gtk.Window {
     try {
       css_provider.load_from_string (Stylesheet.STYLES);
 
-      Gtk.StyleContext.add_provider_for_screen (
-        this.get_screen (),
+      Gtk.StyleContext.add_provider_for_display (
+        this.get_display (),
         css_provider,
         Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
       );
