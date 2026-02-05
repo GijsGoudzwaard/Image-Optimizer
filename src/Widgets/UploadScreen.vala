@@ -19,6 +19,7 @@ public class UploadScreen : Gtk.Box {
     upload_area.set_hexpand (true);
 
     var icon = new Gtk.Image.from_resource ("/com/github/gijsgoudzwaard/image-optimizer/icons/upload_icon.svg");
+    icon.set_pixel_size (64);
 
     var title = new Gtk.Label (_("Drag and drop images here"));
     title.get_style_context ().add_class ("h1");
