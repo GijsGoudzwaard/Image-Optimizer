@@ -114,7 +114,7 @@ public class MainWindow : Gtk.Window {
       return;
     }
 
-    this.get_style_context ().add_class ("list");
+    this.add_css_class ("list");
 
     set_child (null);
 
@@ -125,8 +125,8 @@ public class MainWindow : Gtk.Window {
     add_image.set_tooltip_markup (_("Add Image"));
     this.toolbar.remove (add_image);
 
-    add_image.get_style_context ().add_class ("titlebutton");
-    add_image.get_style_context ().add_class ("add");
+    add_image.add_css_class ("titlebutton");
+    add_image.add_css_class ("add");
     add_image.clicked.connect (on_open_clicked);
 
     this.toolbar.pack_end (add_image);
@@ -138,8 +138,8 @@ public class MainWindow : Gtk.Window {
    * @return void
    */
   private void on_drag_leave () {
-    if (this.get_style_context ().has_class ("on_drag_enter")) {
-      this.get_style_context ().remove_class ("on_drag_enter");
+    if (this.has_css_class ("on_drag_enter")) {
+      this.remove_css_class ("on_drag_enter");
     }
   }
 
@@ -151,8 +151,8 @@ public class MainWindow : Gtk.Window {
    * @return Gdk.DragAction
    */
   private Gdk.DragAction on_drag_enter (double x, double y) {
-    if (! this.get_style_context ().has_class ("on_drag_enter") && ! this.get_style_context ().has_class ("list")) {
-      this.get_style_context ().add_class ("on_drag_enter");
+    if (! this.has_css_class ("on_drag_enter") && ! this.has_css_class ("list")) {
+      this.add_css_class ("on_drag_enter");
     }
 
     return Gdk.DragAction.COPY;
