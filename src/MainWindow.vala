@@ -46,17 +46,13 @@ public class MainWindow : Gtk.Window {
     );
 
     var css_provider = new Gtk.CssProvider ();
-    try {
-      css_provider.load_from_string (Stylesheet.STYLES);
+    css_provider.load_from_string (Stylesheet.STYLES);
 
-      Gtk.StyleContext.add_provider_for_display (
-        this.get_display (),
-        css_provider,
-        Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
-      );
-    } catch (Error e) {
-      stdout.printf ("Error: %s\n", e.message);
-    }
+    Gtk.StyleContext.add_provider_for_display (
+      this.get_display (),
+      css_provider,
+      Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+    );
   }
 
   construct {
