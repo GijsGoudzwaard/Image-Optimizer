@@ -172,7 +172,7 @@ public class MainWindow : Gtk.Window {
       var path = Image.to_path (uri);
       if (path == null) {
         warning ("Failed to convert URI \"%s\" to path", uri);
-        continue;
+        return;
       }
 
       var name = Image.get_file_name (path);
