@@ -9,7 +9,7 @@ public class UploadScreen : Gtk.Box {
     this.margin_bottom = 10;
     this.margin_start = 10;
     this.margin_end = 10;
-    this.get_style_context ().add_class ("main");
+    this.add_css_class ("main");
 
     var upload_area = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
     upload_area.set_spacing (15);
@@ -22,14 +22,14 @@ public class UploadScreen : Gtk.Box {
     icon.set_pixel_size (64);
 
     var title = new Gtk.Label (_("Drag and drop images here"));
-    title.get_style_context ().add_class ("h1");
+    title.add_css_class ("h1");
 
     var otherwise = new Gtk.Label (_("or"));
-    otherwise.get_style_context ().add_class ("h4");
+    otherwise.add_css_class ("h4");
 
     this.upload_button = new Gtk.Button.with_label (_("Browse files"));
-    this.upload_button.get_style_context ().add_class ("suggested-action");
-    this.upload_button.get_style_context ().add_class ("upload_button");
+    this.upload_button.add_css_class ("suggested-action");
+    this.upload_button.add_css_class ("upload_button");
     this.upload_button.set_valign (Gtk.Align.CENTER);
     this.upload_button.set_halign (Gtk.Align.CENTER);
     ((Gtk.Widget) this.upload_button).set_focus_on_click (false);
