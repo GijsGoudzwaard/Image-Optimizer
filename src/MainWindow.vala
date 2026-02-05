@@ -60,7 +60,9 @@ public class MainWindow : Gtk.Window {
   }
 
   construct {
-    this.toolbar = new Toolbar ();
+    this.toolbar = new Gtk.HeaderBar ();
+    toolbar.add_css_class ("default-decoration");
+    toolbar.add_css_class ("flat");
     this.set_titlebar (this.toolbar);
 
     //  for (int a = 0; a < 10; a++) {
