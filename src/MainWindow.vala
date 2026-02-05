@@ -130,9 +130,6 @@ public class MainWindow : Gtk.Window {
     add_image.clicked.connect (on_open_clicked);
 
     this.toolbar.pack_end (add_image);
-    this.toolbar.show_all ();
-
-    show_all ();
   }
 
   /**
