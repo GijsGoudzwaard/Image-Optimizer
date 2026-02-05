@@ -215,7 +215,11 @@ public class MainWindow : Gtk.Window {
     file_chooser.select_multiple = true;
 
     if (file_chooser.run () == Gtk.ResponseType.ACCEPT) {
-      foreach (string path in file_chooser.get_filenames ()) {
+      ListModel files = file_chooser.get_files ();
+      for (int i = 0; i < files.get_n_items (); i++) {
+        var file = ((File) files.get_object (i));
+        string path = file.get_path ();
+
         var name = Image.get_file_name (path);
         var type = Image.get_file_type (name);
 
