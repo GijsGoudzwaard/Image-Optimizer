@@ -77,7 +77,7 @@ public class MainWindow : Gtk.Window {
 
     if (images.length == 0) {
       this.upload_screen = new UploadScreen ();
-      add (this.upload_screen.window ());
+      set_child (this.upload_screen.window ());
 
       this.upload_screen.upload_button.clicked.connect (on_open_clicked);
     } else {
@@ -96,7 +96,7 @@ public class MainWindow : Gtk.Window {
 
     if (images.length == 0) {
       this.upload_screen = new UploadScreen ();
-      add (this.upload_screen.window ());
+      set_child (this.upload_screen.window ());
 
       this.upload_screen.upload_button.clicked.connect (on_open_clicked);
     } else {
@@ -116,10 +116,10 @@ public class MainWindow : Gtk.Window {
 
     this.get_style_context ().add_class ("list");
 
-    remove (this.upload_screen);
+    set_child (null);
 
     images_list = new List (this.images);
-    add (images_list.window ());
+    set_child (images_list.window ());
 
     var add_image = new Gtk.Button.from_icon_name ("list-add-symbolic", Gtk.IconSize.SMALL_TOOLBAR);
     add_image.set_tooltip_markup (_("Add Image"));

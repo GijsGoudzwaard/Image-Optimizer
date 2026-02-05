@@ -39,7 +39,7 @@ public class List {
 
     var view = new Gtk.TreeView.with_model (listmodel);
     view.get_style_context ().add_class ("tree_view");
-    main.add (view);
+    main.set_child (view);
 
     var cell = new Gtk.CellRendererText ();
     cell.height = 50;
