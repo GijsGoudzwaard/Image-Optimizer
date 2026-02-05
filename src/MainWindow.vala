@@ -213,6 +213,7 @@ public class MainWindow : Gtk.Window {
 
     file_chooser.response.connect ((response_id) => {
       if (response_id != Gtk.ResponseType.ACCEPT) {
+        file_chooser.destroy ();
         return;
       }
 
@@ -240,6 +241,8 @@ public class MainWindow : Gtk.Window {
       }
 
       this.images = {};
+
+      file_chooser.destroy ();
     });
 
     file_chooser.present ();
