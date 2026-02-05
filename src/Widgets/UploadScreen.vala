@@ -15,6 +15,8 @@ public class UploadScreen : Gtk.Box {
     upload_area.set_spacing (15);
     upload_area.set_valign (Gtk.Align.CENTER);
     upload_area.set_halign (Gtk.Align.CENTER);
+    upload_area.set_vexpand (true);
+    upload_area.set_hexpand (true);
 
     var icon = new Gtk.Image.from_resource ("/com/github/gijsgoudzwaard/image-optimizer/icons/upload_icon.svg");
 
