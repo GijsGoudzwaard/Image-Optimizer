@@ -203,48 +203,45 @@ public class MainWindow : Gtk.Window {
    *
    * @return void
    */
-  public void on_open_clicked () {
-    var file_chooser = new Gtk.FileChooserDialog (_("Select image(s)"), this,
-                                  Gtk.FileChooserAction.OPEN,
-                                  _("_Cancel"), Gtk.ResponseType.CANCEL,
-                                  _("_Open"), Gtk.ResponseType.ACCEPT);
+  public async void on_open_clicked () {
+    var file_dialog = new Gtk.FileDialog ();
+    file_dialog.title = _("Select image(s)");
 
-    file_chooser.select_multiple = true;
-
-    file_chooser.response.connect ((response_id) => {
-      if (response_id != Gtk.ResponseType.ACCEPT) {
-        file_chooser.destroy ();
+    ListModel files;
+    try {
+      files = yield file_dialog.open_multiple (this, null);
+    } catch (Error err) {
+      if (err.domain == Gtk.DialogError.quark () && err.code == Gtk.DialogError.DISMISSED) {
+        // Don't show the warning log and do nothing when the dialog is dismissed
         return;
       }
 
-      ListModel files = file_chooser.get_files ();
-      for (int i = 0; i < files.get_n_items (); i++) {
-        var file = ((File) files.get_object (i));
-        string path = file.get_path ();
+      warning ("Failed to open multiple files: %s", err.message);
+      return;
+    }
 
-        var name = Image.get_file_name (path);
-        var type = Image.get_file_type (name);
+    for (int i = 0; i < files.get_n_items (); i++) {
+      var file = ((File) files.get_object (i));
+      string path = file.get_path ();
 
-        if (Image.is_valid (type.down ())) {
-          this.images += new Image (path, name, type.down ());
-        } else {
-          // TODO: add an error message here
-        }
+      var name = Image.get_file_name (path);
+      var type = Image.get_file_type (name);
+
+      if (Image.is_valid (type.down ())) {
+        this.images += new Image (path, name, type.down ());
+      } else {
+        // TODO: add an error message here
       }
+    }
 
-      if (this.images_list != null) {
-        this.images_list.update_tree_view (this.images);
-      }
+    if (this.images_list != null) {
+      this.images_list.update_tree_view (this.images);
+    }
 
-      if (this.images.length > 0) {
-        this.set_list_window ();
-      }
+    if (this.images.length > 0) {
+      this.set_list_window ();
+    }
 
-      this.images = {};
-
-      file_chooser.destroy ();
-    });
-
-    file_chooser.present ();
+    this.images = {};
   }
 }
