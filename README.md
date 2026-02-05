@@ -21,8 +21,8 @@ You can get Image Optimizer form Flathub no matter what distribution you're usin
 Please make sure you have these dependencies first before building.
 
 ```
-granite
-gtk+-3.0
+granite-7
+gtk4 >= 4.12
 glib-2.0
 jpegoptim
 optipng
