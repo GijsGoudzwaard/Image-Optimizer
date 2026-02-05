@@ -119,7 +119,7 @@ public class MainWindow : Gtk.Window {
     images_list = new List (this.images);
     set_child (images_list.window ());
 
-    var add_image = new Gtk.Button.from_icon_name ("list-add-symbolic", Gtk.IconSize.SMALL_TOOLBAR);
+    var add_image = new Gtk.Button.from_icon_name ("list-add-symbolic");
     add_image.set_tooltip_markup (_("Add Image"));
     this.toolbar.remove (add_image);
 
