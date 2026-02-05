@@ -31,12 +31,12 @@ public class UploadScreen : Gtk.Box {
     this.upload_button.set_halign (Gtk.Align.CENTER);
     ((Gtk.Widget) this.upload_button).set_focus_on_click (false);
 
-    upload_area.pack_start (icon, false, false, 0);
-    upload_area.pack_start (title, false, false, 0);
-    upload_area.pack_start (otherwise, false, false, 0);
-    upload_area.pack_start (this.upload_button, false, false, 0);
+    upload_area.append (icon);
+    upload_area.append (title);
+    upload_area.append (otherwise);
+    upload_area.append (this.upload_button);
 
-    pack_start (upload_area);
+    append (upload_area);
 
     return this;
   }
