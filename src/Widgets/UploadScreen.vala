@@ -5,7 +5,10 @@ public class UploadScreen : Gtk.Box {
   public Gtk.Button upload_button;
 
   public Gtk.Box window () {
-    this.border_width = 10;
+    this.margin_top = 10;
+    this.margin_bottom = 10;
+    this.margin_start = 10;
+    this.margin_end = 10;
     this.get_style_context ().add_class ("main");
 
     var upload_area = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
