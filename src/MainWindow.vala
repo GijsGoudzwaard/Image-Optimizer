@@ -60,8 +60,6 @@ public class MainWindow : Gtk.Window {
   }
 
   construct {
-    this.window_position = Gtk.WindowPosition.CENTER;
-
     this.toolbar = new Toolbar ();
     this.set_titlebar (this.toolbar);
 
