@@ -8,7 +8,6 @@ public class Toolbar : Gtk.HeaderBar {
     header_context.add_class ("flat");
 
     this.show_close_button = true;
-    this.show_all ();
   }
 
 }
