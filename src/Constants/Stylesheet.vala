@@ -67,6 +67,11 @@ class Stylesheet {
       -gtk-icon-shadow: none;
     }
 
+    .list .default-decoration image:backdrop, .list .default-decoration label:backdrop, .list .default-decoration button:backdrop {
+      /* Disable default style for seamless style with headerbar */
+      background-image: none;
+    }
+
     .tree_view {
       background-color: #fff;
       color: #000;
@@ -90,6 +95,11 @@ class Stylesheet {
       border: 1px solid transparent;
       border-color: @primary_color;
       box-shadow: inset 0 0, inset 0 0;
+    }
+
+    .tree_view button:backdrop {
+      /* Disable default style for seamless style with headerbar */
+      filter: none;
     }
 
     .tree_view button label {
