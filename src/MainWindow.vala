@@ -112,8 +112,6 @@ public class MainWindow : Gtk.Window {
 
     this.add_css_class ("list");
 
-    set_child (null);
-
     images_list = new List (this.images);
     set_child (images_list.window ());
 
