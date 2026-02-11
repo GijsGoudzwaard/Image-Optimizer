@@ -206,7 +206,7 @@ public class MainWindow : Gtk.Window {
       files = yield file_dialog.open_multiple (this, null);
     } catch (Error err) {
       if (err.domain == Gtk.DialogError.quark () && err.code == Gtk.DialogError.DISMISSED) {
-        // Don't show the warning log and do nothing when the dialog is dismissed
+        // Don't show the warning log and do nothing when the dialog is just dismissed by the user
         return;
       }
 
