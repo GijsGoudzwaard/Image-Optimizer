@@ -8,11 +8,11 @@ class Stylesheet {
       transition: background-color .1s ease-in-out;
     }
 
-    window.on_drag_motion, window.on_drag_motion .tree_view {
+    window.on_drag_enter, window.on_drag_enter .tree_view {
       background-color: #E8E8E8;
     }
 
-    window.on_drag_motion .default-decoration {
+    window.on_drag_enter .default-decoration {
       background-color: #E8E8E8;
     }
 
@@ -67,6 +67,11 @@ class Stylesheet {
       -gtk-icon-shadow: none;
     }
 
+    .list .default-decoration image:backdrop, .list .default-decoration label:backdrop, .list .default-decoration button:backdrop {
+      /* Disable default style for seamless style with headerbar */
+      background-image: none;
+    }
+
     .tree_view {
       background-color: #fff;
       color: #000;
@@ -90,6 +95,11 @@ class Stylesheet {
       border: 1px solid transparent;
       border-color: @primary_color;
       box-shadow: inset 0 0, inset 0 0;
+    }
+
+    .tree_view button:backdrop {
+      /* Disable default style for seamless style with headerbar */
+      filter: none;
     }
 
     .tree_view button label {

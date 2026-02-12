@@ -13,14 +13,14 @@ public class List {
   }
 
   public Gtk.ScrolledWindow window () {
-    var main = new Gtk.ScrolledWindow (null, null);
+    var main = new Gtk.ScrolledWindow ();
     main.set_policy (PolicyType.AUTOMATIC, PolicyType.AUTOMATIC);
 
     listmodel = new Gtk.ListStore (6, typeof (bool), typeof (int), typeof (string), typeof (string), typeof (string), typeof (string));
 
     this.upload_button = new Gtk.Button.with_label ("+");
-    this.upload_button.get_style_context ().add_class ("upload_button");
-    this.upload_button.get_style_context ().add_class ("add");
+    this.upload_button.add_css_class ("upload_button");
+    this.upload_button.add_css_class ("add");
     this.upload_button.set_valign (Gtk.Align.START);
     this.upload_button.set_halign (Gtk.Align.END);
     ((Gtk.Widget) this.upload_button).set_focus_on_click (false);
@@ -38,8 +38,8 @@ public class List {
     }
 
     var view = new Gtk.TreeView.with_model (listmodel);
-    view.get_style_context ().add_class ("tree_view");
-    main.add (view);
+    view.add_css_class ("tree_view");
+    main.set_child (view);
 
     var cell = new Gtk.CellRendererText ();
     cell.height = 50;
