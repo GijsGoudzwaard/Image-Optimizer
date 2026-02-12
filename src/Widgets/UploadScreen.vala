@@ -5,35 +5,41 @@ public class UploadScreen : Gtk.Box {
   public Gtk.Button upload_button;
 
   public Gtk.Box window () {
-    this.border_width = 10;
-    this.get_style_context ().add_class ("main");
+    this.margin_top = 10;
+    this.margin_bottom = 10;
+    this.margin_start = 10;
+    this.margin_end = 10;
+    this.add_css_class ("main");
 
     var upload_area = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
     upload_area.set_spacing (15);
     upload_area.set_valign (Gtk.Align.CENTER);
     upload_area.set_halign (Gtk.Align.CENTER);
+    upload_area.set_vexpand (true);
+    upload_area.set_hexpand (true);
 
     var icon = new Gtk.Image.from_resource ("/com/github/gijsgoudzwaard/image-optimizer/icons/upload_icon.svg");
+    icon.set_pixel_size (64);
 
     var title = new Gtk.Label (_("Drag and drop images here"));
-    title.get_style_context ().add_class ("h1");
+    title.add_css_class ("h1");
 
     var otherwise = new Gtk.Label (_("or"));
-    otherwise.get_style_context ().add_class ("h4");
+    otherwise.add_css_class ("h4");
 
     this.upload_button = new Gtk.Button.with_label (_("Browse files"));
-    this.upload_button.get_style_context ().add_class ("suggested-action");
-    this.upload_button.get_style_context ().add_class ("upload_button");
+    this.upload_button.add_css_class ("suggested-action");
+    this.upload_button.add_css_class ("upload_button");
     this.upload_button.set_valign (Gtk.Align.CENTER);
     this.upload_button.set_halign (Gtk.Align.CENTER);
     ((Gtk.Widget) this.upload_button).set_focus_on_click (false);
 
-    upload_area.pack_start (icon, false, false, 0);
-    upload_area.pack_start (title, false, false, 0);
-    upload_area.pack_start (otherwise, false, false, 0);
-    upload_area.pack_start (this.upload_button, false, false, 0);
+    upload_area.append (icon);
+    upload_area.append (title);
+    upload_area.append (otherwise);
+    upload_area.append (this.upload_button);
 
-    pack_start (upload_area);
+    append (upload_area);
 
     return this;
   }

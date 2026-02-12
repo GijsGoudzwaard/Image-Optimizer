@@ -31,16 +31,6 @@ public class MainWindow : Gtk.Window {
   private List images_list;
 
   /**
-   * Contains a single type of data than can be supplied for by a widget for a
-   * selection or for supplied or received during drag-and-drop.
-   *
-   * @var Gtk.TargetEntry[]
-   */
-  private const Gtk.TargetEntry[] TARGETS = {
-      {"text/uri-list", 0, 0}
-  };
-
-  /**
    * Create a new window.
    *
    * @param Gtk.Application application
@@ -56,37 +46,34 @@ public class MainWindow : Gtk.Window {
     );
 
     var css_provider = new Gtk.CssProvider ();
-    try {
-      css_provider.load_from_data (Stylesheet.STYLES);
+    css_provider.load_from_string (Stylesheet.STYLES);
 
-      Gtk.StyleContext.add_provider_for_screen (
-        this.get_screen (),
-        css_provider,
-        Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
-      );
-    } catch (Error e) {
-      stdout.printf ("Error: %s\n", e.message);
-    }
+    Gtk.StyleContext.add_provider_for_display (
+      this.get_display (),
+      css_provider,
+      Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+    );
   }
 
   construct {
-    this.window_position = Gtk.WindowPosition.CENTER;
-
-    this.toolbar = new Toolbar ();
+    this.toolbar = new Gtk.HeaderBar ();
+    toolbar.add_css_class ("default-decoration");
+    toolbar.add_css_class ("flat");
     this.set_titlebar (this.toolbar);
 
     //  for (int a = 0; a < 10; a++) {
     //    this.images += new Image ("", "", "");
     //  }
 
-    Gtk.drag_dest_set (this, Gtk.DestDefaults.ALL, TARGETS, Gdk.DragAction.COPY);
-    this.drag_leave.connect (this.on_drag_leave);
-    this.drag_motion.connect (this.on_drag_motion);
-    this.drag_data_received.connect (this.on_drag_data_received);
+    var drop_target = new Gtk.DropTarget (typeof (Gdk.FileList), Gdk.DragAction.COPY);
+    drop_target.leave.connect (this.on_drag_leave);
+    drop_target.enter.connect (this.on_drag_enter);
+    drop_target.drop.connect (this.on_drop);
+    ((Gtk.Widget) this).add_controller (drop_target);
 
     if (images.length == 0) {
       this.upload_screen = new UploadScreen ();
-      add (this.upload_screen.window ());
+      set_child (this.upload_screen.window ());
 
       this.upload_screen.upload_button.clicked.connect (on_open_clicked);
     } else {
@@ -105,7 +92,7 @@ public class MainWindow : Gtk.Window {
 
     if (images.length == 0) {
       this.upload_screen = new UploadScreen ();
-      add (this.upload_screen.window ());
+      set_child (this.upload_screen.window ());
 
       this.upload_screen.upload_button.clicked.connect (on_open_clicked);
     } else {
@@ -123,77 +110,113 @@ public class MainWindow : Gtk.Window {
       return;
     }
 
-    this.get_style_context ().add_class ("list");
-
-    remove (this.upload_screen);
+    this.add_css_class ("list");
 
     images_list = new List (this.images);
-    add (images_list.window ());
+    set_child (images_list.window ());
 
-    var add_image = new Gtk.Button.from_icon_name ("list-add-symbolic", Gtk.IconSize.SMALL_TOOLBAR);
+    var add_image = new Gtk.Button.from_icon_name ("list-add-symbolic");
     add_image.set_tooltip_markup (_("Add Image"));
     this.toolbar.remove (add_image);
 
-    add_image.get_style_context ().add_class ("titlebutton");
-    add_image.get_style_context ().add_class ("add");
+    add_image.add_css_class ("titlebutton");
+    add_image.add_css_class ("add");
     add_image.clicked.connect (on_open_clicked);
 
     this.toolbar.pack_end (add_image);
-    this.toolbar.show_all ();
-
-    show_all ();
   }
 
   /**
    * Gets called while a file is being dragged out of the application.
    *
-   * @param  Gdk.DragContext context
-   * @param  uint time
    * @return void
    */
-  private void on_drag_leave (Gdk.DragContext context, uint time) {
-    if (this.get_style_context ().has_class ("on_drag_motion")) {
-      this.get_style_context ().remove_class ("on_drag_motion");
+  private void on_drag_leave () {
+    if (this.has_css_class ("on_drag_enter")) {
+      this.remove_css_class ("on_drag_enter");
     }
   }
 
   /**
    * Gets called when a file is being dragged into the application while still holding the file.
    *
-   * @param  Gdk.DragContext context
-   * @param  int x
-   * @param  int y
-   * @param  uint time
-   * @return bool
+   * @param  double x
+   * @param  double y
+   * @return Gdk.DragAction
    */
-  private bool on_drag_motion (Gdk.DragContext context, int x, int y, uint time) {
-    Gtk.drag_unhighlight (this);
-
-    if (! this.get_style_context ().has_class ("on_drag_motion") && ! this.get_style_context ().has_class ("list")) {
-      this.get_style_context ().add_class ("on_drag_motion");
+  private Gdk.DragAction on_drag_enter (double x, double y) {
+    if (! this.has_css_class ("on_drag_enter") && ! this.has_css_class ("list")) {
+      this.add_css_class ("on_drag_enter");
     }
 
-    return true;
+    return Gdk.DragAction.COPY;
   }
 
   /**
    * Gets called when a file gets dropped into the application.
    *
-   * @param  Gdk.DragContext drag_context
-   * @param  int x
-   * @param  int y
-   * @param  Gtk.SelectionData data
-   * @param  uint info
-   * @param  uint time
-   * @return void
+   * @param  Value value
+   * @param  double x
+   * @param  double y
+   * @return bool
    */
-  private void on_drag_data_received (Gdk.DragContext drag_context, int x, int y, Gtk.SelectionData data, uint info, uint time) {
-    foreach (string uri in data.get_uris ()) {
+  private bool on_drop (Value value, double x, double y) {
+    unowned var list = (Gdk.FileList) value;
+
+    list.get_files ().foreach ((file) => {
+      string uri = file.get_uri ();
       var path = Image.to_path (uri);
       if (path == null) {
         warning ("Failed to convert URI \"%s\" to path", uri);
-        continue;
+        return;
       }
+
+      var name = Image.get_file_name (path);
+      var type = Image.get_file_type (name);
+
+      if (Image.is_valid (type.down ())) {
+        this.images += new Image (path, name, type.down ());
+      } else {
+        // TODO: add an error message here
+      }
+    });
+
+    if (images.length > 0 && this.images_list == null) {
+      this.set_list_window ();
+    } else if (this.images_list != null) {
+      this.images_list.update_tree_view (this.images);
+    }
+
+    this.images = {};
+
+    return true;
+  }
+
+  /**
+   * Gets called when the button 'Browse files' or '+' gets clicked.
+   *
+   * @return void
+   */
+  public async void on_open_clicked () {
+    var file_dialog = new Gtk.FileDialog ();
+    file_dialog.title = _("Select image(s)");
+
+    ListModel files;
+    try {
+      files = yield file_dialog.open_multiple (this, null);
+    } catch (Error err) {
+      if (err.domain == Gtk.DialogError.quark () && err.code == Gtk.DialogError.DISMISSED) {
+        // Don't show the warning log and do nothing when the dialog is just dismissed by the user
+        return;
+      }
+
+      warning ("Failed to open multiple files: %s", err.message);
+      return;
+    }
+
+    for (int i = 0; i < files.get_n_items (); i++) {
+      var file = ((File) files.get_object (i));
+      string path = file.get_path ();
 
       var name = Image.get_file_name (path);
       var type = Image.get_file_type (name);
@@ -205,53 +228,14 @@ public class MainWindow : Gtk.Window {
       }
     }
 
-    if (images.length > 0 && this.images_list == null) {
-      this.set_list_window ();
-    } else if (this.images_list != null) {
+    if (this.images_list != null) {
       this.images_list.update_tree_view (this.images);
     }
 
-    this.images = {};
-
-    Gtk.drag_finish (drag_context, true, false, time);
-  }
-
-  /**
-   * Gets called when the button 'Browse files' or '+' gets clicked.
-   *
-   * @return void
-   */
-  public void on_open_clicked () {
-    var file_chooser = new Gtk.FileChooserDialog (_("Select image(s)"), this,
-                                  Gtk.FileChooserAction.OPEN,
-                                  _("_Cancel"), Gtk.ResponseType.CANCEL,
-                                  _("_Open"), Gtk.ResponseType.ACCEPT);
-
-    file_chooser.select_multiple = true;
-
-    if (file_chooser.run () == Gtk.ResponseType.ACCEPT) {
-      foreach (string path in file_chooser.get_filenames ()) {
-        var name = Image.get_file_name (path);
-        var type = Image.get_file_type (name);
-
-        if (Image.is_valid (type.down ())) {
-          this.images += new Image (path, name, type.down ());
-        } else {
-          // TODO: add an error message here
-        }
-      }
-
-      if (this.images_list != null) {
-        this.images_list.update_tree_view (this.images);
-      }
-
-      if (this.images.length > 0) {
-        this.set_list_window ();
-      }
-
-      this.images = {};
+    if (this.images.length > 0) {
+      this.set_list_window ();
     }
 
-    file_chooser.destroy ();
+    this.images = {};
   }
 }

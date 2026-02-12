@@ -26,7 +26,7 @@ class Application : Gtk.Application {
   protected override void activate () {
     if (this.app_window == null) {
       this.app_window = new MainWindow (this);
-      this.app_window.show_all ();
+      this.app_window.present ();
     }
   }
 
@@ -47,7 +47,7 @@ class Application : Gtk.Application {
 
       if (this.app_window == null) {
         this.app_window = new MainWindow (this);
-        this.app_window.show_all ();
+        this.app_window.present ();
       }
 
       this.app_window.set_images (this.images);
