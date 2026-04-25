@@ -32,7 +32,7 @@ public class List {
                     0, true,
                     1, 1,
                     2, image.name,
-                    3, Image.get_unit (image.size),
+                    3, GLib.format_size (image.size),
                     4, "",
                     5, "");
     }
@@ -106,8 +106,8 @@ public class List {
               0, false,
               1, 1,
               2, image.name,
-              3, Image.get_unit (image.size),
-              4, Image.get_unit (image.new_size),
+              3, GLib.format_size (image.size),
+              4, GLib.format_size (image.new_size),
               5, Image.calc_savings ((float) image.size, (float) image.new_size));
   }
 
@@ -128,7 +128,7 @@ public class List {
                       0, true,
                       1, 1,
                       2, image.name,
-                      3, Image.get_unit (image.size),
+                      3, GLib.format_size (image.size),
                       4, "",
                       5, "");
       }
