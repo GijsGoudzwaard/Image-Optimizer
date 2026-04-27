@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: com.github.gijsgoudzwaard.image-optimizer\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-27 08:17+0100\n"
+"POT-Creation-Date: 2026-04-25 22:04+0900\n"
 "PO-Revision-Date: 2020-03-09 19:23+0100\n"
 "Last-Translator: Finn (0xhtml)\n"
 "Language-Team: none\n"
@@ -17,37 +17,17 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: src/MainWindow.vala:54
+#: src/MainWindow.vala:44
 msgid "Image Optimizer"
 msgstr "Image Optimizer"
 
-#: src/MainWindow.vala:129
+#: src/MainWindow.vala:119
 msgid "Add Image"
 msgstr "Bild hinzufügen"
 
-#: src/MainWindow.vala:218
+#: src/MainWindow.vala:202
 msgid "Select image(s)"
 msgstr "Bild(er) auswählen"
-
-#: src/MainWindow.vala:220
-msgid "_Cancel"
-msgstr "_Schließen"
-
-#: src/MainWindow.vala:221
-msgid "_Open"
-msgstr "_Öffnen"
-
-#: src/Utils/Image.vala:115
-msgid "kb"
-msgstr "kB"
-
-#: src/Utils/Image.vala:118
-msgid "mb"
-msgstr "MB"
-
-#: src/Utils/Image.vala:120
-msgid "bytes"
-msgstr "Bytes"
 
 #: src/Widgets/List.vala:57
 msgid "File"
@@ -65,14 +45,29 @@ msgstr "Neue Größe"
 msgid "Savings"
 msgstr "Ersparnis"
 
-#: src/Widgets/UploadScreen.vala:23
+#: src/Widgets/UploadScreen.vala:24
 msgid "Drag and drop images here"
 msgstr "Bilder hier per Drag & Drop ablegen"
 
-#: src/Widgets/UploadScreen.vala:26
+#: src/Widgets/UploadScreen.vala:27
 msgid "or"
 msgstr "oder"
 
-#: src/Widgets/UploadScreen.vala:29
+#: src/Widgets/UploadScreen.vala:30
 msgid "Browse files"
 msgstr "Datein durchsuchen"
+
+#~ msgid "_Cancel"
+#~ msgstr "_Schließen"
+
+#~ msgid "_Open"
+#~ msgstr "_Öffnen"
+
+#~ msgid "kb"
+#~ msgstr "kB"
+
+#~ msgid "mb"
+#~ msgstr "MB"
+
+#~ msgid "bytes"
+#~ msgstr "Bytes"

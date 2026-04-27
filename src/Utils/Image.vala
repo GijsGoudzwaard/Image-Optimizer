@@ -115,28 +115,6 @@ public class Image {
   }
 
   /**
-   * Get size in bytes and return in proper units (bytes, KB, MB).
-   *
-   * @param  int64 bytes
-   * @return string
-   */
-  public static string get_unit (int64 bytes) {
-    var unit = "";
-
-    if (bytes > 1000 && bytes < 1000000) {
-      var size = "%.2f".printf (((double) bytes) / 1000);
-      unit = size.to_string ().replace (".", ",") + " " + _("kb");
-    } else if (bytes > 1000000) {
-      var size = "%.2f".printf (((double) bytes) / 1000000);
-      unit = size.to_string ().replace (".", ",") + " " + _("mb");
-    } else {
-      unit = bytes.to_string () + " " + _("bytes");
-    }
-
-    return unit;
-  }
-
-  /**
    * Calculate the savings from the new size compared to the old size.
    * Returns a percentage.
    *
