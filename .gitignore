@@ -2,3 +2,7 @@ build/
 .vscode/
 *~
 .flatpak-builder/
+parts/
+prime/
+stage/
+*.snap
