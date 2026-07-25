@@ -13,8 +13,14 @@ description: |
   - A clean interface, optimize your images effortlessly
   - Easily quit the application by pressing Ctrl + Q
 license: MIT
-# Shown as a Donate link on the Snap Store listing. Same address as the
-# donation URL in the MetaInfo file and the Ko-fi badge in the README.
+# Link buttons on the Snap Store listing. The donation address is the same one
+# the MetaInfo file, the README badge and GitHub's sponsor button use.
+website:
+  - https://github.com/GijsGoudzwaard/Image-Optimizer
+source-code:
+  - https://github.com/GijsGoudzwaard/Image-Optimizer
+issues:
+  - https://github.com/GijsGoudzwaard/Image-Optimizer/issues
 donation:
   - https://ko-fi.com/imageoptimizer
 grade: stable
