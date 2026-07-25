@@ -42,3 +42,14 @@ To install, use `ninja install`, then execute with `com.github.gijsgoudzwaard.im
 
     sudo ninja install
     com.github.gijsgoudzwaard.image-optimizer
+
+## Support this project
+
+Image Optimizer is free and open source. If you find it useful, you can support
+its development with a one-off or recurring donation:
+
+[![Support on Ko-fi](https://img.shields.io/badge/Ko--fi-Support%20this%20project-FF5E5B?logo=ko-fi&logoColor=white)](https://ko-fi.com/imageoptimizer)
+
+Contributions are just as welcome — bug reports, translations and pull requests
+all help. See the [issue tracker](https://github.com/GijsGoudzwaard/Image-Optimizer/issues)
+to get started.
