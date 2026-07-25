@@ -5,11 +5,15 @@ on: [push]
 jobs:
   flatpak:
     name: Flatpak
-    runs-on: ubuntu-22.04
+    runs-on: ${{ matrix.runner }}
 
     strategy:
       matrix:
-        arch: [x86_64, aarch64]
+        include:
+          - arch: x86_64
+            runner: ubuntu-22.04
+          - arch: aarch64
+            runner: ubuntu-24.04-arm
       # Don't fail the whole workflow if one architecture fails
       fail-fast: false
 
@@ -21,10 +25,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
 
-      # No QEMU setup step: every step of this job already runs inside the
-      # aarch64 container, so the runner has binfmt emulation working before
-      # the first step starts. docker/setup-qemu-action cannot run here
-      # anyway, it shells out to the docker CLI and the container has none.
+      # Each architecture builds on a runner of its own architecture, so there
+      # is no QEMU to set up. That is deliberate: docker/setup-qemu-action used
+      # to install a capable QEMU here, but it shells out to the docker CLI and
+      # this container has neither docker nor a package manager to add one. The
+      # runner's own binfmt is enough to start an emulated container but not to
+      # build in it, which is why the emulated aarch64 build failed.
 
       - name: Build
         uses: flatpak/flatpak-github-actions/flatpak-builder@v6
