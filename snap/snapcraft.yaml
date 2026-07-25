@@ -33,6 +33,12 @@ parts:
     parse-info:
       - usr/share/metainfo/com.github.gijsgoudzwaard.image-optimizer.appdata.xml
     build-packages:
+      # meson and ninja are listed on purpose instead of being taken from the
+      # gnome extension's SDK snap. That snap happens to carry them on amd64 but
+      # not on arm64, which failed the arm64 build with "'meson' not found"
+      # before it even started pulling.
+      - meson
+      - ninja-build
       # meson.build ends in gnome.post_install (), which needs
       # update-desktop-database from desktop-file-utils.
       - desktop-file-utils
