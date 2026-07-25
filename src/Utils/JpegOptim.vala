@@ -12,7 +12,18 @@ public class JpegOptim {
    *
    * @var string[]
    */
-  private string[] args = {"--strip-all", "--totals"};
+  private string[] args = {
+    // Not --strip-all: that takes the ICC colour profile with it, which makes a
+    // wide gamut image render as sRGB afterwards. These four drop the metadata
+    // that costs bytes and leave the profile alone.
+    "--strip-com",
+    "--strip-exif",
+    "--strip-iptc",
+    "--strip-xmp",
+    // Reorders the scans without touching a single coefficient. Lossless, free,
+    // and by far the largest win available here.
+    "--all-progressive"
+  };
 
   /**
    * Used to update the treeview when done compressing.

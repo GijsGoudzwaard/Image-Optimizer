@@ -12,7 +12,16 @@ public class OptiPng {
    *
    * @var string[]
    */
-  private string[] args = {"-o3", "-preserve"};
+  private string[] args = {
+    // -o3 stays. Measured on a mixed set, -o4 and -o5 gain nothing over it and
+    // -o6 only pays off on smooth gradients while costing four to ten times the
+    // time: 104 seconds for a single 3000x2000 image against 15 for -o3.
+    "-o3",
+    // Free, and it brings PNG in line with what the app already does to JPEG
+    // metadata. The gain is exactly the size of the metadata carried.
+    "-strip", "all",
+    "-preserve"
+  };
 
   /**
    * Used to update the treeview when done compressing.
