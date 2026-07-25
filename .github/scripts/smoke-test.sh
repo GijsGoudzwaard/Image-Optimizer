@@ -37,12 +37,12 @@ trap cleanup EXIT
 # one of them to shrink, so optimizing the screenshots one day weakens this
 # test but does not break it.
 cp "$REPO_ROOT/data/screenshots/welcome-screen.png" "$WORK/fixture.png"
-cp "$REPO_ROOT/data/screenshots/treeview.jpg" "$WORK/fixture.jpg"
+cp "$REPO_ROOT/data/screenshots/treeview.png" "$WORK/fixture2.png"
 
 size () { stat -c%s "$1"; }
 
 png_before=$(size "$WORK/fixture.png")
-jpg_before=$(size "$WORK/fixture.jpg")
+png2_before=$(size "$WORK/fixture2.png")
 
 display_num=99
 Xvfb ":$display_num" -screen 0 1200x900x24 -nolisten tcp >"$WORK/xvfb.log" 2>&1 &
@@ -65,16 +65,16 @@ fi
 # exactly this rather than warning about it.
 set +e
 DISPLAY=":$display_num" GDK_BACKEND=x11 GTK_A11Y=none \
-  timeout 60 dbus-run-session -- "$APP" "$WORK/fixture.png" "$WORK/fixture.jpg" \
+  timeout 60 dbus-run-session -- "$APP" "$WORK/fixture.png" "$WORK/fixture2.png" \
   >"$WORK/app.log" 2>&1
 status=$?
 set -e
 
 png_after=$(size "$WORK/fixture.png")
-jpg_after=$(size "$WORK/fixture.jpg")
+png2_after=$(size "$WORK/fixture2.png")
 
 echo "smoke: png $png_before -> $png_after"
-echo "smoke: jpg $jpg_before -> $jpg_after"
+echo "smoke: png $png2_before -> $png2_after"
 echo "smoke: exit status $status"
 echo "--- application output ---"
 cat "$WORK/app.log"
@@ -87,7 +87,7 @@ if [ "$status" -ne 124 ] && [ "$status" -ne 0 ]; then
   failed=1
 fi
 
-if [ "$png_after" -ge "$png_before" ] && [ "$jpg_after" -ge "$jpg_before" ]; then
+if [ "$png_after" -ge "$png_before" ] && [ "$png2_after" -ge "$png2_before" ]; then
   echo "smoke: FAIL neither fixture got smaller, so the optimizers never ran" >&2
   failed=1
 fi
