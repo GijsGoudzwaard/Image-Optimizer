@@ -37,11 +37,17 @@ if desktop_file_validate.found()
         args: join_paths(meson.current_build_dir (), meson.project_name() + '.desktop')
     )
 endif
-appstreamcli = find_program(['appstreamcli', 'appstream-util'], required:false)
+# Only appstreamcli, not appstream-util: the --no-net switch below is specific
+# to appstreamcli, appstream-util spells it --nonet.
+appstreamcli = find_program('appstreamcli', required:false)
 if appstreamcli.found()
+    # --no-net keeps the check to the file itself. Without it appstreamcli tries
+    # to fetch every <url> and <screenshot>, which fails inside the flatpak
+    # build sandbox because it has no network. Whether an upstream host happens
+    # to answer is not something the build should depend on either way.
     test (
         'Validate appdata file',
         appstreamcli,
-        args: ['validate', join_paths(meson.current_build_dir (), meson.project_name() + '.appdata.xml')]
+        args: ['validate', '--no-net', join_paths(meson.current_build_dir (), meson.project_name() + '.appdata.xml')]
     )
 endif
