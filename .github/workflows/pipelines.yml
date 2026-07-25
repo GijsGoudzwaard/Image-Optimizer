@@ -43,6 +43,95 @@ jobs:
           cache-key: "flatpak-builder-${{ github.sha }}"
           arch: ${{ matrix.arch }}
 
+  snap:
+    name: Snap
+    runs-on: ${{ matrix.runner }}
+
+    strategy:
+      matrix:
+        include:
+          - arch: amd64
+            runner: ubuntu-24.04
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+      # Don't fail the whole workflow if one architecture fails
+      fail-fast: false
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      # Until this job existed the snap was only ever built on Launchpad, after
+      # a merge. That is how an arm64 build that could not find meson reached
+      # master while amd64 was green.
+      - name: Build
+        id: build
+        uses: snapcore/action-build@v1
+
+      - name: Upload the snap
+        uses: actions/upload-artifact@v4
+        with:
+          name: snap-${{ matrix.arch }}
+          path: ${{ steps.build.outputs.snap }}
+
+  smoke:
+    name: Smoke test
+    runs-on: ${{ matrix.runner }}
+
+    strategy:
+      matrix:
+        include:
+          - arch: amd64
+            runner: ubuntu-24.04
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+      # Don't fail the whole workflow if one architecture fails
+      fail-fast: false
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      # Ubuntu 24.04 on purpose: it is the base of core24, so this is the same
+      # dependency set the snap builds against.
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            appstream \
+            build-essential \
+            dbus \
+            desktop-file-utils \
+            gettext \
+            jpegoptim \
+            libgee-0.8-dev \
+            libglib2.0-dev \
+            libgranite-7-dev \
+            libgtk-4-bin \
+            libgtk-4-dev \
+            meson \
+            ninja-build \
+            optipng \
+            pkg-config \
+            valac \
+            xvfb
+
+      - name: Build
+        run: |
+          meson setup build --prefix=/usr --buildtype=release
+          ninja -C build
+
+      - name: Validate desktop and metainfo files
+        run: meson test -C build --print-errorlogs
+
+      - name: Install into a staging tree
+        run: DESTDIR="$PWD/dest" ninja -C build install
+
+      # Compiling is not enough. The GTK4 port of the image list once built with
+      # zero errors while the list never refreshed at all.
+      - name: Run the app headless and check it optimizes
+        run: .github/scripts/smoke-test.sh dest/usr/bin/com.github.gijsgoudzwaard.image-optimizer
+
   lint:
     name: Lint
     runs-on: ubuntu-22.04
