@@ -53,7 +53,12 @@ public class Image {
 
     if (file.query_exists ()) {
       try {
-        file_size = file.query_info ("*", FileQueryInfoFlags.NONE).get_size ();
+        // Only the size is wanted, so do not make gio collect every attribute
+        // it can find for every image that gets added.
+        file_size = file.query_info (
+          FileAttribute.STANDARD_SIZE,
+          FileQueryInfoFlags.NONE
+        ).get_size ();
       } catch (Error e) {
         warning ("Failed to get size of \"%s\": %s", this.path, e.message);
       }
@@ -123,6 +128,12 @@ public class Image {
    * @return string
    */
   public static string calc_savings (float size, float new_size) {
+    // A size of 0 means the file could not be read when it was added. Dividing
+    // by it put a literal "-nan%" in the Savings column.
+    if (size <= 0) {
+      return "0.00%";
+    }
+
     float savings = 100.00f - (new_size / size * 100.00f);
 
     return "%.2f%%".printf (savings);
