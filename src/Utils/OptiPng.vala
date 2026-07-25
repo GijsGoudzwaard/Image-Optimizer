@@ -31,6 +31,14 @@ public class OptiPng {
   private List list;
 
   /**
+   * Index of the next image to pick up. Workers bump it atomically, which is
+   * all the coordination they need.
+   *
+   * @var int
+   */
+  private int next_image = 0;
+
+  /**
    * Create a new instance.
    *
    * @param List list
@@ -53,16 +61,26 @@ public class OptiPng {
    *
    * @return void
    */
-  public void compress () throws Error {
-    ThreadFunc<void*> run = () => {
-      foreach (var image in this.images) {
-        this.compress_one (image);
-      }
+  public void compress (int max_workers) throws Error {
+    var workers = int.min (max_workers, this.images.length);
 
-      return null;
-    };
+    for (var i = 0; i < workers; i++) {
+      ThreadFunc<void*> run = () => {
+        while (true) {
+          var index = AtomicInt.add (ref this.next_image, 1);
 
-    new Thread<void*>.try ("optipng", (owned) run);
+          if (index >= this.images.length) {
+            break;
+          }
+
+          this.compress_one (this.images[index]);
+        }
+
+        return null;
+      };
+
+      new Thread<void*>.try ("optipng", (owned) run);
+    }
   }
 
   /**
