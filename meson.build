@@ -19,6 +19,7 @@ executable(
     'src/MainWindow.vala',
     'src/Widgets/UploadScreen.vala',
     'src/Widgets/List.vala',
+    'src/Widgets/ImageRow.vala',
     'src/Utils/Utils.vala',
     'src/Utils/Image.vala',
     'src/Utils/Optimizer.vala',
