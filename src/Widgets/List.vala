@@ -2,11 +2,26 @@ using Gtk;
 
 public class List {
 
+  /**
+   * The images that are currently known to the list.
+   *
+   * @var Image[]
+   */
   private Image[] images;
 
-  private Gtk.ListStore listmodel;
+  /**
+   * Backing model of the column view. Holds one ImageRow per image.
+   *
+   * @var GLib.ListStore
+   */
+  private GLib.ListStore listmodel;
 
   public Gtk.Button upload_button;
+
+  /**
+   * Returns the text a column should show for a given row.
+   */
+  private delegate string CellText (ImageRow row);
 
   public List (Image[] images) {
     this.images = images;
@@ -16,7 +31,7 @@ public class List {
     var main = new Gtk.ScrolledWindow ();
     main.set_policy (PolicyType.AUTOMATIC, PolicyType.AUTOMATIC);
 
-    listmodel = new Gtk.ListStore (6, typeof (bool), typeof (int), typeof (string), typeof (string), typeof (string), typeof (string));
+    this.listmodel = new GLib.ListStore (typeof (ImageRow));
 
     this.upload_button = new Gtk.Button.with_label ("+");
     this.upload_button.add_css_class ("upload_button");
@@ -25,53 +40,20 @@ public class List {
     this.upload_button.set_halign (Gtk.Align.END);
     ((Gtk.Widget) this.upload_button).set_focus_on_click (false);
 
-    Gtk.TreeIter iter;
     foreach (var image in this.images) {
-      listmodel.append (out iter);
-      listmodel.set (iter,
-                    0, true,
-                    1, 1,
-                    2, image.name,
-                    3, GLib.format_size (image.size),
-                    4, "",
-                    5, "");
+      this.listmodel.append (new ImageRow (image));
     }
 
-    var view = new Gtk.TreeView.with_model (listmodel);
+    // NoSelection: the list is a progress report, there is nothing to select.
+    var view = new Gtk.ColumnView (new Gtk.NoSelection (this.listmodel));
     view.add_css_class ("tree_view");
     main.set_child (view);
 
-    var cell = new Gtk.CellRendererText ();
-    cell.height = 50;
-    cell.width = 150;
-    cell.wrap_width = 10;
-    var spinner = new Gtk.CellRendererSpinner ();
-
-    Gtk.TreeViewColumn column = new Gtk.TreeViewColumn ();
-    column.set_title ("");
-    column.pack_start (spinner, false);
-    column.add_attribute (spinner, "active", 0);
-    column.add_attribute (spinner, "pulse", 1);
-    view.append_column (column);
-
-    view.insert_column_with_attributes (2, _("File"), cell, "text", 2);
-    view.insert_column_with_attributes (3, _("Size"), cell, "text", 3);
-    view.insert_column_with_attributes (4, _("New size"), cell, "text", 4);
-    view.insert_column_with_attributes (5, _("Savings"), cell, "text", 5);
-
-    // Rotate the spinner:
-    Timeout.add (50, () => {
-      listmodel.foreach ((model, path, iter) => {
-        Value val;
-        listmodel.get_value (iter, 1, out val);
-        val.set_int (val.get_int () + 1);
-        listmodel.set_value (iter, 1, val);
-
-        return false;
-      });
-
-      return true;
-    });
+    view.append_column (this.spinner_column ());
+    view.append_column (this.text_column (_("File"), (row) => row.image.name));
+    view.append_column (this.text_column (_("Size"), (row) => row.size_text));
+    view.append_column (this.text_column (_("New size"), (row) => row.new_size_text));
+    view.append_column (this.text_column (_("Savings"), (row) => row.savings_text));
 
     var optimizer = new Optimizer (this.images);
     optimizer.optimize (this);
@@ -79,41 +61,134 @@ public class List {
     return main;
   }
 
+  /**
+   * Build the column holding the spinner that runs while an image is being
+   * optimized. Gtk.Spinner animates itself, so unlike Gtk.CellRendererSpinner
+   * it does not need to be pulsed from a timeout.
+   *
+   * @return Gtk.ColumnViewColumn
+   */
+  private Gtk.ColumnViewColumn spinner_column () {
+    var factory = new Gtk.SignalListItemFactory ();
+
+    factory.setup.connect ((object) => {
+      var item = (Gtk.ListItem) object;
+
+      var spinner = new Gtk.Spinner ();
+      spinner.set_valign (Gtk.Align.CENTER);
+      spinner.set_margin_start (6);
+      spinner.set_margin_end (6);
+
+      item.set_child (spinner);
+    });
+
+    factory.bind.connect ((object) => {
+      var item = (Gtk.ListItem) object;
+      var row = (ImageRow) item.get_item ();
+      var spinner = (Gtk.Spinner) item.get_child ();
+
+      spinner.set_visible (row.optimizing);
+
+      if (row.optimizing) {
+        spinner.start ();
+      } else {
+        spinner.stop ();
+      }
+    });
+
+    return new Gtk.ColumnViewColumn ("", factory);
+  }
+
+  /**
+   * Build a column that shows a piece of text per row.
+   *
+   * @param  string title
+   * @param  CellText get_text
+   * @return Gtk.ColumnViewColumn
+   */
+  private Gtk.ColumnViewColumn text_column (string title, owned CellText get_text) {
+    var factory = new Gtk.SignalListItemFactory ();
+
+    factory.setup.connect ((object) => {
+      var item = (Gtk.ListItem) object;
+
+      var label = new Gtk.Label (null);
+      label.set_xalign (0);
+      label.set_margin_top (14);
+      label.set_margin_bottom (14);
+      label.set_margin_start (6);
+      label.set_margin_end (6);
+
+      item.set_child (label);
+    });
+
+    factory.bind.connect ((object) => {
+      var item = (Gtk.ListItem) object;
+      var row = (ImageRow) item.get_item ();
+
+      ((Gtk.Label) item.get_child ()).set_label (get_text (row));
+    });
+
+    var column = new Gtk.ColumnViewColumn (title, factory);
+    column.set_expand (true);
+
+    return column;
+  }
+
+  /**
+   * Store the optimized size for an image and refresh its row.
+   *
+   * This is called from the optimizer worker threads, so the actual model
+   * update is deferred to the main loop where GTK is safe to touch.
+   *
+   * @param  string path
+   * @param  int size
+   * @return void
+   */
   public void update_size (string path, int size) {
-    // Update image with new attributes
-    for (var i = 0; i < this.images.length; i++) {
-      if (this.images[i].path == path) {
-        this.images[i].new_size = (size == 0 || this.images[i].size < size) ? this.images[i].size : size;
+    // Owned copy, the closure outlives this call.
+    string image_path = path;
+
+    Idle.add (() => {
+      this.apply_size (image_path, size);
+
+      return Source.REMOVE;
+    });
+  }
+
+  /**
+   * Apply a new size to the row belonging to a path. Runs on the main loop.
+   *
+   * @param  string path
+   * @param  int size
+   * @return void
+   */
+  private void apply_size (string path, int size) {
+    for (uint i = 0; i < this.listmodel.get_n_items (); i++) {
+      var row = (ImageRow) this.listmodel.get_item (i);
+
+      if (row.image.path != path) {
+        continue;
       }
+
+      var image = row.image;
+      image.new_size = (size == 0 || image.size < size) ? image.size : size;
+
+      // A GLib.ListStore has no "this item changed" signal. Splicing the same
+      // object back in is not enough either: the column view sees an identical
+      // item and skips rebinding it. Hand it a fresh row so it rebinds.
+      var updated = new ImageRow (image);
+      updated.optimizing = false;
+      updated.new_size_text = GLib.format_size (image.new_size);
+      updated.savings_text = Image.calc_savings ((float) image.size, (float) image.new_size);
+
+      this.listmodel.splice (i, 1, {updated});
+
+      return;
     }
-
-    Gtk.TreeIter iter;
-    Image image = new Image ("", "", "");
-    var key = 0;
-    for (var i = 0; i < this.images.length; i++) {
-      if (this.images[i].path == path) {
-        image = this.images[i];
-        key = i;
-        break;
-      }
-    }
-
-    Gtk.TreePath tree_path = new Gtk.TreePath.from_string (key.to_string ());
-    bool tmp = this.listmodel.get_iter (out iter, tree_path);
-    assert (tmp == true);
-
-    this.listmodel.set (iter,
-              0, false,
-              1, 1,
-              2, image.name,
-              3, GLib.format_size (image.size),
-              4, GLib.format_size (image.new_size),
-              5, Image.calc_savings ((float) image.size, (float) image.new_size));
   }
 
   public void update_tree_view (Image[] images) {
-    Gtk.TreeIter iter;
-
     foreach (var image in images) {
       var duplicate = false;
       for (int i = 0; i < this.images.length; i++) {
@@ -123,17 +198,9 @@ public class List {
       }
 
       if (! duplicate) {
-        listmodel.append (out iter);
-        listmodel.set (iter,
-                      0, true,
-                      1, 1,
-                      2, image.name,
-                      3, GLib.format_size (image.size),
-                      4, "",
-                      5, "");
+        this.listmodel.append (new ImageRow (image));
+        this.images += image;
       }
-
-      this.images += image;
     }
 
     var optimizer = new Optimizer (images);
