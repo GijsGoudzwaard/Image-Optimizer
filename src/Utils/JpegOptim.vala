@@ -13,13 +13,13 @@ public class JpegOptim {
    * @var string[]
    */
   private string[] args = {
-    // Not --strip-all: that takes the ICC colour profile with it, which makes a
-    // wide gamut image render as sRGB afterwards. These four drop the metadata
-    // that costs bytes and leave the profile alone.
-    "--strip-com",
-    "--strip-exif",
-    "--strip-iptc",
-    "--strip-xmp",
+    // Strip everything, then put back the one marker that is not just weight:
+    // without the ICC profile a wide gamut image renders as sRGB afterwards.
+    // Naming what to keep beats naming what to drop, because jpegoptim also
+    // knows Adobe APP14 and JFXX markers that a list of individual --strip-*
+    // flags would silently leave behind.
+    "--strip-all",
+    "--keep-icc",
     // Reorders the scans without touching a single coefficient. Lossless, free,
     // and by far the largest win available here.
     "--all-progressive",
