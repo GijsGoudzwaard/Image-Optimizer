@@ -37,7 +37,7 @@ trap cleanup EXIT
 # one of them to shrink, so optimizing the screenshots one day weakens this
 # test but does not break it.
 cp "$REPO_ROOT/data/screenshots/welcome-screen.png" "$WORK/fixture.png"
-cp "$REPO_ROOT/data/screenshots/direct-insight-screenshot.jpg" "$WORK/fixture.jpg"
+cp "$REPO_ROOT/data/screenshots/treeview.jpg" "$WORK/fixture.jpg"
 
 size () { stat -c%s "$1"; }
 
