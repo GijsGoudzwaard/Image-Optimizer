@@ -48,6 +48,10 @@ public class MainWindow : Gtk.Window {
     var css_provider = new Gtk.CssProvider ();
     css_provider.load_from_string (Stylesheet.STYLES);
 
+    // valac warns that Gtk.StyleContext is deprecated since 4.10, but the
+    // static function below is not: it is declared GDK_AVAILABLE_IN_ALL in
+    // gtkstyleprovider.h and is still the documented way to install a
+    // display wide provider. There is nothing to migrate to yet.
     Gtk.StyleContext.add_provider_for_display (
       this.get_display (),
       css_provider,
