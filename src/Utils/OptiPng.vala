@@ -80,16 +80,23 @@ public class OptiPng {
   }
 
   /**
-   * Get the optimized image size from stdout.
+   * Get the optimized image size from the optipng output.
    *
-   * @param  string stdout
+   * optipng prints "Output file size = 19906 bytes" on stderr. A file it cannot
+   * read gets "Error: Unrecognized image file format" and no size at all, which
+   * yields 0 here. The already optimized case never reaches this method, the
+   * caller checks for it first, so a 0 really is a failure worth reporting.
+   *
+   * @param  string output
    * @return int
    */
-  public int get_new_size (string stdout) {
-    // After the piece of text and a space there should be the new size in bytes.
-    var text = stdout.split ("Output file size = ")[1];
+  public int get_new_size (string output) {
+    var size = Utils.size_after (output, "Output file size = ");
 
-    // The first integer until a space should be the new size in bytes.
-    return int.parse (text.split (" ")[0]);
+    if (size == 0) {
+      warning ("Could not read a size from the optipng output: %s", output);
+    }
+
+    return size;
   }
 }

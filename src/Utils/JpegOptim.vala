@@ -76,16 +76,22 @@ public class JpegOptim {
   }
 
   /**
-   * Get the optimized image size from stdout.
+   * Get the optimized image size from the jpegoptim output.
    *
-   * @param  string stdout
+   * jpegoptim prints "41777 --> 33746 bytes" on stdout, so the size sits right
+   * after the arrow. A file it cannot read gets "[ERROR]" and no arrow at all,
+   * which yields 0 here.
+   *
+   * @param  string output
    * @return int
    */
-  public int get_new_size (string stdout) {
-    // After the arrow and a space there should be the new size in bytes.
-    var text = stdout.split (" --> ")[1];
+  public int get_new_size (string output) {
+    var size = Utils.size_after (output, " --> ");
 
-    // The first integer until a space should be the new size in bytes.
-    return int.parse (text.split (" ")[0]);
+    if (size == 0) {
+      warning ("Could not read a size from the jpegoptim output: %s", output);
+    }
+
+    return size;
   }
 }
