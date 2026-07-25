@@ -12,7 +12,24 @@ public class JpegOptim {
    *
    * @var string[]
    */
-  private string[] args = {"--strip-all", "--totals"};
+  private string[] args = {
+    // Strip everything, then put back the one marker that is not just weight:
+    // without the ICC profile a wide gamut image renders as sRGB afterwards.
+    // Naming what to keep beats naming what to drop, because jpegoptim also
+    // knows Adobe APP14 and JFXX markers that a list of individual --strip-*
+    // flags would silently leave behind.
+    "--strip-all",
+    "--keep-icc",
+    // Reorders the scans without touching a single coefficient. Lossless, free,
+    // and by far the largest win available here.
+    "--all-progressive",
+    // Keeps the modification time, which optipng was already doing through its
+    // own -preserve. Without it a JPEG comes back stamped with the time it was
+    // optimized, which reorders any photo library sorted by date.
+    // --preserve-perms is deliberately not here: the mode survives without it,
+    // and it would switch jpegoptim to overwriting the file in place.
+    "--preserve"
+  };
 
   /**
    * Used to update the treeview when done compressing.
@@ -20,6 +37,14 @@ public class JpegOptim {
    * @var List
    */
   private List list;
+
+  /**
+   * Index of the next image to pick up. Workers bump it atomically, which is
+   * all the coordination they need.
+   *
+   * @var int
+   */
+  private int next_image = 0;
 
   /**
    * Create a new instance.
@@ -44,48 +69,83 @@ public class JpegOptim {
    *
    * @return void
    */
-  public void compress () throws Error {
-    var command = "jpegoptim " + Utils.join (" ", this.args);
+  public void compress (int max_workers) throws Error {
+    var workers = int.min (max_workers, this.images.length);
 
-    ThreadFunc<void*> run = () => {
-      foreach (var image in this.images) {
-        string stdout;
-        string stderr;
-        int status;
+    for (var i = 0; i < workers; i++) {
+      ThreadFunc<void*> run = () => {
+        while (true) {
+          var index = AtomicInt.add (ref this.next_image, 1);
 
-        try {
-          Process.spawn_command_line_sync (
-            command + " " + image.replace (" ", "\\ "),
-            out stdout,
-            out stderr,
-            out status
-          );
+          if (index >= this.images.length) {
+            break;
+          }
 
-          var new_size = this.get_new_size (stdout);
-          this.list.update_size (image, new_size);
-
-        } catch (SpawnError e) {
-          warning ("Failed to spawn jpegoptim: %s", e.message);
+          this.compress_one (this.images[index]);
         }
-      }
 
-      return null;
-    };
+        return null;
+      };
 
-    new Thread<void*>.try ("thread", (owned) run);
+      new Thread<void*>.try ("jpegoptim", (owned) run);
+    }
   }
 
   /**
-   * Get the optimized image size from stdout.
+   * Compress a single image and hand its new size to the list.
    *
-   * @param  string stdout
+   * @param  string image
+   * @return void
+   */
+  private void compress_one (string image) {
+    string[] argv = { "jpegoptim" };
+
+    foreach (var arg in this.args) {
+      argv += arg;
+    }
+
+    argv += image;
+
+    try {
+      string standard_output;
+      string standard_error;
+      int status;
+
+      Process.spawn_sync (
+        null,
+        argv,
+        null,
+        SpawnFlags.SEARCH_PATH,
+        null,
+        out standard_output,
+        out standard_error,
+        out status
+      );
+
+      // jpegoptim reports on stdout.
+      this.list.update_size (image, this.get_new_size (standard_output));
+    } catch (Error e) {
+      warning ("Failed to run jpegoptim on \"%s\": %s", image, e.message);
+    }
+  }
+
+  /**
+   * Get the optimized image size from the jpegoptim output.
+   *
+   * jpegoptim prints "41777 --> 33746 bytes" on stdout, so the size sits right
+   * after the arrow. A file it cannot read gets "[ERROR]" and no arrow at all,
+   * which yields 0 here.
+   *
+   * @param  string output
    * @return int
    */
-  public int get_new_size (string stdout) {
-    // After the arrow and a space there should be the new size in bytes.
-    var text = stdout.split (" --> ")[1];
+  public int get_new_size (string output) {
+    var size = Utils.size_after (output, " --> ");
 
-    // The first integer until a space should be the new size in bytes.
-    return int.parse (text.split (" ")[0]);
+    if (size == 0) {
+      warning ("Could not read a size from the jpegoptim output: %s", output);
+    }
+
+    return size;
   }
 }

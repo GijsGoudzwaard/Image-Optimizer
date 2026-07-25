@@ -113,6 +113,7 @@ jobs:
             ninja-build \
             optipng \
             pkg-config \
+            util-linux \
             valac \
             xvfb
 
@@ -131,6 +132,12 @@ jobs:
       # zero errors while the list never refreshed at all.
       - name: Run the app headless and check it optimizes
         run: .github/scripts/smoke-test.sh dest/usr/bin/com.github.gijsgoudzwaard.image-optimizer
+
+      # Covers what has actually broken before: awkward filenames, unreadable
+      # files, whole batches being skipped, and parallel output drifting from
+      # sequential. Pins to one core with taskset for the single core case.
+      - name: Run the regression suite
+        run: .github/scripts/regression-test.sh dest/usr/bin/com.github.gijsgoudzwaard.image-optimizer
 
   lint:
     name: Lint

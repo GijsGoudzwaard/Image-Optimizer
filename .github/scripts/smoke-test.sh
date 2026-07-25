@@ -32,17 +32,18 @@ cleanup() {
 }
 trap cleanup EXIT
 
-# Fixtures come from the repository so the test needs no binary blobs of its
-# own. Both currently shrink by 9% or more. The assertion below only requires
-# one of them to shrink, so optimizing the screenshots one day weakens this
-# test but does not break it.
+# One fixture per optimizer, so a change to either tool's flags is covered.
+# The JPEG is a dedicated fixture rather than a screenshot: it has to stay
+# baseline and keep its comment marker for the strip and progressive flags to
+# have anything to do, which is not something data/screenshots should have to
+# guarantee. The assertion below only requires one of the two to shrink.
 cp "$REPO_ROOT/data/screenshots/welcome-screen.png" "$WORK/fixture.png"
-cp "$REPO_ROOT/data/screenshots/treeview.png" "$WORK/fixture2.png"
+cp "$REPO_ROOT/.github/fixtures/fixture.jpg" "$WORK/fixture.jpg"
 
 size () { stat -c%s "$1"; }
 
 png_before=$(size "$WORK/fixture.png")
-png2_before=$(size "$WORK/fixture2.png")
+jpg_before=$(size "$WORK/fixture.jpg")
 
 display_num=99
 Xvfb ":$display_num" -screen 0 1200x900x24 -nolisten tcp >"$WORK/xvfb.log" 2>&1 &
@@ -65,16 +66,16 @@ fi
 # exactly this rather than warning about it.
 set +e
 DISPLAY=":$display_num" GDK_BACKEND=x11 GTK_A11Y=none \
-  timeout 60 dbus-run-session -- "$APP" "$WORK/fixture.png" "$WORK/fixture2.png" \
+  timeout 60 dbus-run-session -- "$APP" "$WORK/fixture.png" "$WORK/fixture.jpg" \
   >"$WORK/app.log" 2>&1
 status=$?
 set -e
 
 png_after=$(size "$WORK/fixture.png")
-png2_after=$(size "$WORK/fixture2.png")
+jpg_after=$(size "$WORK/fixture.jpg")
 
 echo "smoke: png $png_before -> $png_after"
-echo "smoke: png $png2_before -> $png2_after"
+echo "smoke: jpg $jpg_before -> $jpg_after"
 echo "smoke: exit status $status"
 echo "--- application output ---"
 cat "$WORK/app.log"
@@ -87,7 +88,7 @@ if [ "$status" -ne 124 ] && [ "$status" -ne 0 ]; then
   failed=1
 fi
 
-if [ "$png_after" -ge "$png_before" ] && [ "$png2_after" -ge "$png2_before" ]; then
+if [ "$png_after" -ge "$png_before" ] && [ "$jpg_after" -ge "$jpg_before" ]; then
   echo "smoke: FAIL neither fixture got smaller, so the optimizers never ran" >&2
   failed=1
 fi

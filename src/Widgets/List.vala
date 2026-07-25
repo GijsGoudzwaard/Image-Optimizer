@@ -189,6 +189,8 @@ public class List {
   }
 
   public void update_tree_view (Image[] images) {
+    Image[] fresh = {};
+
     foreach (var image in images) {
       var duplicate = false;
       for (int i = 0; i < this.images.length; i++) {
@@ -197,13 +199,23 @@ public class List {
         }
       }
 
-      if (! duplicate) {
-        this.listmodel.append (new ImageRow (image));
-        this.images += image;
+      if (duplicate) {
+        continue;
       }
+
+      this.listmodel.append (new ImageRow (image));
+      this.images += image;
+      fresh += image;
     }
 
-    var optimizer = new Optimizer (images);
+    // Only the images that were actually added. Handing over the whole batch
+    // sent duplicates through the optimizers a second time, and an all
+    // duplicate drop started workers with nothing to do.
+    if (fresh.length == 0) {
+      return;
+    }
+
+    var optimizer = new Optimizer (fresh);
     optimizer.optimize (this);
   }
 }
