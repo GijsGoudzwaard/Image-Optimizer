@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=Image Optimizer
+GenericName=Image Optimizer
+Comment=Simple image optimizer
+Categories=GTK;Utility;Development;Graphics;
+Exec=image-optimizer %F
+Icon=${SNAP}/meta/gui/icon.svg
+Terminal=false
+Type=Application
+Keywords=Image;Optimizer;
+MimeType=image/jpeg;image/jpg;image/png;image/bmp;

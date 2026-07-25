@@ -1,0 +1,70 @@
+name: image-optimizer
+base: core24
+adopt-info: image-optimizer
+summary: Simple lossless image compression
+description: |
+  Compress your images with ease without the cost of losing the images quality
+  using JpegOptim and OptiPng.
+
+  Features:
+
+  - Compress bmp, jpg / jpeg and png with lossless compression
+  - Works offline, always ready where and whenever needed
+  - A clean interface, optimize your images effortlessly
+  - Easily quit the application by pressing Ctrl + Q
+license: MIT
+grade: stable
+confinement: strict
+icon: data/icons/128/com.github.gijsgoudzwaard.image-optimizer.svg
+
+platforms:
+  amd64:
+  arm64:
+
+parts:
+  image-optimizer:
+    plugin: meson
+    source: .
+    meson-parameters:
+      - --prefix=/usr
+      - --buildtype=release
+    # The version comes out of the MetaInfo release list, so a release only has
+    # to be bumped in meson.build and the MetaInfo file, not here as well.
+    parse-info:
+      - usr/share/metainfo/com.github.gijsgoudzwaard.image-optimizer.appdata.xml
+    build-packages:
+      # meson.build ends in gnome.post_install (), which needs
+      # update-desktop-database from desktop-file-utils.
+      - desktop-file-utils
+      - gettext
+      - libglib2.0-dev
+      - valac
+      # Build only. meson.build asks for both, but nothing in src/ uses them, so
+      # the linker drops them again and they are not in the binary's DT_NEEDED.
+      # If Granite or Gee ever gets used for real, add the matching runtime
+      # libraries (libgranite-7-7, libgee-0.8-2) to stage-packages.
+      - libgee-0.8-dev
+      - libgranite-7-dev
+    stage-packages:
+      # The two tools the app shells out to. GTK4 and GLib deliberately are not
+      # here: the gnome extension provides those from its content snap.
+      - jpegoptim
+      - optipng
+
+slots:
+  # GtkApplication claims this well known name on the session bus. Without the
+  # slot, snapd's D-Bus mediation refuses it.
+  dbus-svc:
+    interface: dbus
+    bus: session
+    name: com.github.gijsgoudzwaard.image-optimizer
+
+apps:
+  image-optimizer:
+    command: usr/bin/com.github.gijsgoudzwaard.image-optimizer
+    extensions: [gnome]
+    common-id: com.github.gijsgoudzwaard.image-optimizer
+    plugs:
+      - home
+    slots:
+      - dbus-svc
