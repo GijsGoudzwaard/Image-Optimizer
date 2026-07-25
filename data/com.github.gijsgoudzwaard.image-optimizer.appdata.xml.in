@@ -48,7 +48,19 @@
       <value key="x-appcenter-stripe">pk_live_51AhbXkAINoIuuUE3zGg5JG2PvD3IcxMONFdFJZiMawOTGsCzcxxZAREnvLKeoGyMxEVfJpSYfjFzsDZa2bV6eEEb00nj0bUJl8</value>
    </custom>
    <releases>
-     <release version="0.1.25" date="2024-08-21">
+      <release version="0.2.0" date="2026-07-25">
+         <description>
+            <ul>
+               <li>Image Optimizer has been rebuilt on GTK4, so it fits in with current elementary OS releases</li>
+               <li>Browsing for images now opens the system file chooser</li>
+               <li>Drag and drop has been rebuilt for the new toolkit</li>
+               <li>File sizes are now formatted the way the rest of your system formats them</li>
+               <li>The image list no longer refreshes on a repeating timer, which lowers idle processor use</li>
+               <li>Added a donation link for anyone who would like to support development</li>
+            </ul>
+         </description>
+      </release>
+      <release version="0.1.25" date="2024-08-21">
          <description>
             <p>Fixed some warnings that happened under the hood.</p>
          </description>
