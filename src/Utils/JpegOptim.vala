@@ -22,7 +22,13 @@ public class JpegOptim {
     "--strip-xmp",
     // Reorders the scans without touching a single coefficient. Lossless, free,
     // and by far the largest win available here.
-    "--all-progressive"
+    "--all-progressive",
+    // Keeps the modification time, which optipng was already doing through its
+    // own -preserve. Without it a JPEG comes back stamped with the time it was
+    // optimized, which reorders any photo library sorted by date.
+    // --preserve-perms is deliberately not here: the mode survives without it,
+    // and it would switch jpegoptim to overwriting the file in place.
+    "--preserve"
   };
 
   /**
