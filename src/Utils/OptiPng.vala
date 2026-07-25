@@ -54,38 +54,59 @@ public class OptiPng {
    * @return void
    */
   public void compress () throws Error {
-    var command = "optipng " + Utils.join (" ", this.args);
-
     ThreadFunc<void*> run = () => {
       foreach (var image in this.images) {
-        string stdout;
-        string stderr;
-        int status;
-
-        try {
-          Process.spawn_command_line_sync (
-            command + " " + image.replace (" ", "\\ "),
-            out stderr,
-            out stdout,
-            out status
-          );
-
-          var new_size = 0;
-
-          if (! stdout.contains ("is already optimized")) {
-            new_size = this.get_new_size (stdout);
-          }
-
-          this.list.update_size (image, new_size);
-        } catch (SpawnError e) {
-          warning ("Failed to spawn optipng: %s", e.message);
-        }
+        this.compress_one (image);
       }
 
       return null;
     };
 
-    new Thread<void*>.try ("thread", (owned) run);
+    new Thread<void*>.try ("optipng", (owned) run);
+  }
+
+  /**
+   * Compress a single image and hand its new size to the list.
+   *
+   * @param  string image
+   * @return void
+   */
+  private void compress_one (string image) {
+    string[] argv = { "optipng" };
+
+    foreach (var arg in this.args) {
+      argv += arg;
+    }
+
+    argv += image;
+
+    try {
+      string standard_output;
+      string standard_error;
+      int status;
+
+      Process.spawn_sync (
+        null,
+        argv,
+        null,
+        SpawnFlags.SEARCH_PATH,
+        null,
+        out standard_output,
+        out standard_error,
+        out status
+      );
+
+      var new_size = 0;
+
+      // optipng reports on stderr, stdout stays empty.
+      if (! standard_error.contains ("is already optimized")) {
+        new_size = this.get_new_size (standard_error);
+      }
+
+      this.list.update_size (image, new_size);
+    } catch (Error e) {
+      warning ("Failed to run optipng on \"%s\": %s", image, e.message);
+    }
   }
 
   /**
