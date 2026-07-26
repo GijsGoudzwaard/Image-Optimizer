@@ -55,13 +55,17 @@ class Stylesheet {
       color: #fff;
     }
 
-    .list .default-decoration image, .list .default-decoration label, .list .default-decoration button {
+    .list .default-decoration image,
+    .list .default-decoration label,
+    .list .default-decoration button {
       color: #fff;
       text-shadow: none;
       -gtk-icon-shadow: none;
     }
 
-    .list .default-decoration image:backdrop, .list .default-decoration label:backdrop, .list .default-decoration button:backdrop {
+    .list .default-decoration image:backdrop,
+    .list .default-decoration label:backdrop,
+    .list .default-decoration button:backdrop {
       /* Disable default style for seamless style with headerbar */
       background-image: none;
     }
