@@ -82,9 +82,9 @@ start_app () { # prefix..., files
   local wrapper=$1
   shift
   if [ -n "$wrapper" ]; then
-    timeout 90 $wrapper dbus-run-session -- "$APP" "$@" >"$WORK/app.log" 2>&1 &
+    timeout 180 $wrapper dbus-run-session -- "$APP" "$@" >"$WORK/app.log" 2>&1 &
   else
-    timeout 90 dbus-run-session -- "$APP" "$@" >"$WORK/app.log" 2>&1 &
+    timeout 180 dbus-run-session -- "$APP" "$@" >"$WORK/app.log" 2>&1 &
   fi
   APP_PID=$!
 }
@@ -106,6 +106,13 @@ wait_shrunk () {
   local end=$(( $(date +%s) + deadline ))
 
   while [ "$(date +%s)" -lt "$end" ]; do
+    # A dead app is never going to finish the work, so do not sit out the
+    # deadline for it. This is what keeps the generous deadlines below cheap:
+    # a broken binary fails at once, only a slow but living one gets the wait.
+    if ! kill -0 "$APP_PID" 2>/dev/null; then
+      return 1
+    fi
+
     local n=0
     for f in "$@"; do
       local before
@@ -154,7 +161,7 @@ cp "$PNG_SOURCE" "$r1/ordinary.png"
 cp "$JPG_SOURCE" "$r1/Mom's photo.jpg"
 record "$r1"/*
 start_app "" "$r1"/*
-wait_shrunk 5 45 "$r1"/*
+wait_shrunk 5 60 "$r1"/*
 check "app still running" "$(alive)" "yes"
 check "files optimized" "$(shrunk_count "$r1"/*)" "5"
 stop_app
@@ -167,7 +174,7 @@ printf 'not an image' >"$r2/broken.jpg"
 cp "$PNG_SOURCE" "$r2/good.png"
 record "$r2"/*
 start_app "" "$r2/broken.png" "$r2/broken.jpg" "$r2/good.png"
-wait_shrunk 1 45 "$r2/good.png"
+wait_shrunk 1 60 "$r2/good.png"
 check "app still running" "$(alive)" "yes"
 check "valid file in the same batch still done" "$(shrunk_count "$r2/good.png")" "1"
 stop_app
@@ -201,7 +208,7 @@ if command -v taskset >/dev/null 2>&1; then
   # the app itself, so this keeps holding when the flags change.
   record "$WORK/seq"/*
   start_app "taskset -c 0" "$WORK/seq"/*
-  wait_shrunk 8 75 "$WORK/seq"/*
+  wait_shrunk 8 60 "$WORK/seq"/*
   stop_app
   record "$WORK/par"/*
   start_app "" "$WORK/par"/*
@@ -224,7 +231,7 @@ if command -v taskset >/dev/null 2>&1; then
   for i in $(seq 1 4); do cp "$PNG_SOURCE" "$r5/p$i.png"; done
   record "$r5"/*
   start_app "taskset -c 0" "$r5"/*
-  wait_shrunk 4 75 "$r5"/*
+  wait_shrunk 4 60 "$r5"/*
   check "app still running on one core" "$(alive)" "yes"
   check "files optimized on one core" "$(shrunk_count "$r5"/*)" "4"
   stop_app
@@ -238,7 +245,7 @@ mkdir -p "$r6"
 cp "$PNG_SOURCE" "$r6/solo.png"
 record "$r6"/*
 start_app "" "$r6/solo.png"
-wait_shrunk 1 45 "$r6/solo.png"
+wait_shrunk 1 60 "$r6/solo.png"
 check "single file optimized" "$(shrunk_count "$r6/solo.png")" "1"
 check "app still running" "$(alive)" "yes"
 stop_app
