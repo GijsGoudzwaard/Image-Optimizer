@@ -123,7 +123,12 @@ public class MainWindow : Gtk.Window {
     add_image.set_tooltip_markup (_("Add Image"));
     this.toolbar.remove (add_image);
 
-    add_image.add_css_class ("titlebutton");
+    // "flat" and not "titlebutton": titlebutton is meant for window controls and
+    // brought the theme's light button background with it, while the stylesheet
+    // forces icons in this header bar white. That put a white plus on a white
+    // button. Flat leaves the purple header bar showing through and keeps the
+    // hover and pressed states the theme provides.
+    add_image.add_css_class ("flat");
     add_image.add_css_class ("add");
     add_image.clicked.connect (on_open_clicked);
 

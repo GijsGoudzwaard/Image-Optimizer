@@ -50,12 +50,6 @@ class Stylesheet {
       transition: background-color .1s ease-in-out;
     }
 
-    .default-decoration .titlebutton.add {
-      font-size: 16px;
-      font-weight: 700;
-      padding: 0;
-    }
-
     .list .default-decoration {
       background: @primary_color;
       color: #fff;
