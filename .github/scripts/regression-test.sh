@@ -54,17 +54,30 @@ check () { # description, actual, expected
   fi
 }
 
-# A display of its own, so this can run next to smoke-test.sh.
-display_num=98
-Xvfb ":$display_num" -screen 0 1200x900x24 -nolisten tcp >"$WORK/xvfb.log" 2>&1 &
-XVFB_PID=$!
+# Starts Xvfb on the first display it can actually claim. Checking only for the
+# socket file is not enough: the file survives the server, so a stale one from a
+# previous run reads as "ready" and every test then fails to open a display.
+# Whether the Xvfb process is still alive is the real signal.
+start_xvfb () {
+  local n
+  for n in $(seq 90 99); do
+    rm -f "/tmp/.X11-unix/X$n" 2>/dev/null
+    Xvfb ":$n" -screen 0 1200x900x24 -nolisten tcp >"$WORK/xvfb.log" 2>&1 &
+    XVFB_PID=$!
+    sleep 1
+    if kill -0 "$XVFB_PID" 2>/dev/null && [ -e "/tmp/.X11-unix/X$n" ]; then
+      display_num=$n
+      return 0
+    fi
+    kill "$XVFB_PID" 2>/dev/null
+    XVFB_PID=""
+  done
+  return 1
+}
 
-for _ in $(seq 1 40); do
-  [ -e "/tmp/.X11-unix/X$display_num" ] && break
-  sleep 0.25
-done
-if [ ! -e "/tmp/.X11-unix/X$display_num" ]; then
-  echo "regression: Xvfb never came up" >&2
+display_num=""
+if ! start_xvfb; then
+  echo "regression: could not start Xvfb on any display from 90 to 99" >&2
   cat "$WORK/xvfb.log" >&2
   exit 1
 fi
@@ -259,6 +272,40 @@ if [ "$noise" != "0" ]; then
 fi
 check "diagnostics for valid input" "$noise" "0"
 
+echo "### R8 Ctrl+Q quits the app ###"
+# Listed as a feature in the app description and never covered by anything.
+if command -v xdotool >/dev/null 2>&1; then
+  r8="$WORK/r8"
+  mkdir -p "$r8"
+  cp "$PNG_SOURCE" "$r8/quit.png"
+  record "$r8"/*
+  start_app "" "$r8/quit.png"
+  wait_shrunk 1 60 "$r8/quit.png"
+  window=$(xdotool search --name "Image Optimizer" 2>/dev/null | head -1)
+  if [ -n "$window" ]; then
+    xdotool key --window "$window" --clearmodifiers ctrl+q 2>/dev/null
+    gone=no
+    for _ in $(seq 1 100); do
+      kill -0 "$APP_PID" 2>/dev/null || { gone=yes; break; }
+      sleep 0.1
+    done
+    check "Ctrl+Q closed the app" "$gone" "yes"
+  else
+    echo "  FAIL no window named 'Image Optimizer' to send Ctrl+Q to"
+    failed=$((failed + 1))
+  fi
+  stop_app
+else
+  echo "  SKIP xdotool is not available"
+fi
+
 echo
+if [ "$failed" -ne 0 ]; then
+  # Whatever went wrong, the app's own output from the last group is usually
+  # the fastest way to see it, so do not make anyone reproduce it to find out.
+  echo "--- output of the last run of the app ---"
+  cat "$WORK/app.log" 2>/dev/null
+  echo "--- end ---"
+fi
 echo "regression: $passed passed, $failed failed"
 exit "$failed"
