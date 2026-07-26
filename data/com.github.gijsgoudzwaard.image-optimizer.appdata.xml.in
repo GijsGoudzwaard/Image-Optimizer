@@ -48,6 +48,21 @@
       <value key="x-appcenter-stripe">pk_live_51AhbXkAINoIuuUE3zGg5JG2PvD3IcxMONFdFJZiMawOTGsCzcxxZAREnvLKeoGyMxEVfJpSYfjFzsDZa2bV6eEEb00nj0bUJl8</value>
    </custom>
    <releases>
+      <release version="0.3.0" date="2026-07-26">
+         <description>
+            <ul>
+               <li>Optimizing a folder full of images is several times faster, because they are now handled at the same time instead of one after another</li>
+               <li>Images are compressed further than before, JPEGs in particular</li>
+               <li>Colour profiles are now kept, so wide-gamut photos no longer shift colour after optimizing</li>
+               <li>Modification times are kept on JPEGs as well, so a photo library sorted by date stays in order</li>
+               <li>Fixed a batch stopping early when one file had a quote or a bracket in its name</li>
+               <li>Fixed a crash when a selected file turned out not to be an image</li>
+               <li>Fixed the button for adding more images being invisible on some systems</li>
+               <li>Bitmap files are no longer accepted, because they cannot be optimized in place</li>
+               <li>Image Optimizer is now available from the Snap Store, and takes up less room once installed</li>
+            </ul>
+         </description>
+      </release>
       <release version="0.2.0" date="2026-07-25">
          <description>
             <ul>
