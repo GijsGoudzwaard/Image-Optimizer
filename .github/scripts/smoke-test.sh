@@ -45,16 +45,30 @@ size () { stat -c%s "$1"; }
 png_before=$(size "$WORK/fixture.png")
 jpg_before=$(size "$WORK/fixture.jpg")
 
-display_num=99
-Xvfb ":$display_num" -screen 0 1200x900x24 -nolisten tcp >"$WORK/xvfb.log" 2>&1 &
-XVFB_PID=$!
+# Starts Xvfb on the first display it can actually claim. Checking only for the
+# socket file is not enough: the file survives the server, so a stale one from a
+# previous run reads as "ready" and every test then fails to open a display.
+# Whether the Xvfb process is still alive is the real signal.
+start_xvfb () {
+  local n
+  for n in $(seq 90 99); do
+    rm -f "/tmp/.X11-unix/X$n" 2>/dev/null
+    Xvfb ":$n" -screen 0 1200x900x24 -nolisten tcp >"$WORK/xvfb.log" 2>&1 &
+    XVFB_PID=$!
+    sleep 1
+    if kill -0 "$XVFB_PID" 2>/dev/null && [ -e "/tmp/.X11-unix/X$n" ]; then
+      display_num=$n
+      return 0
+    fi
+    kill "$XVFB_PID" 2>/dev/null
+    XVFB_PID=""
+  done
+  return 1
+}
 
-for _ in $(seq 1 40); do
-  [ -e "/tmp/.X11-unix/X$display_num" ] && break
-  sleep 0.25
-done
-if [ ! -e "/tmp/.X11-unix/X$display_num" ]; then
-  echo "smoke: Xvfb never came up" >&2
+display_num=""
+if ! start_xvfb; then
+  echo "smoke: could not start Xvfb on any display from 90 to 99" >&2
   cat "$WORK/xvfb.log" >&2
   exit 1
 fi

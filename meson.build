@@ -28,10 +28,8 @@ executable(
     'src/Utils/OptiPng.vala',
     'src/Constants/Stylesheet.vala',
     dependencies: [
-        dependency('gee-0.8'),
         dependency('glib-2.0'),
         dependency('gtk4', version: '>= 4.12'),
-        dependency('granite-7'),
         meson.get_compiler('c').find_library('m', required : false)
     ],
     install: true

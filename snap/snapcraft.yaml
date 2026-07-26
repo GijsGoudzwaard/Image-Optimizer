@@ -55,12 +55,6 @@ parts:
       - gettext
       - libglib2.0-dev
       - valac
-      # Build only. meson.build asks for both, but nothing in src/ uses them, so
-      # the linker drops them again and they are not in the binary's DT_NEEDED.
-      # If Granite or Gee ever gets used for real, add the matching runtime
-      # libraries (libgranite-7-7, libgee-0.8-2) to stage-packages.
-      - libgee-0.8-dev
-      - libgranite-7-dev
     stage-packages:
       # The two tools the app shells out to. GTK4 and GLib deliberately are not
       # here: the gnome extension provides those from its content snap.

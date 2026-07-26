@@ -1,13 +1,13 @@
 icon_sizes = ['16', '24', '32', '48', '64', '128']
 
+# Every size is installed once. There used to be a second copy in an @2
+# directory, but @2 exists so a raster icon can carry twice the pixels, and
+# these are SVG: the same file in both places told GTK nothing it could not
+# work out by scaling, and doubled the icons in every package.
 foreach i : icon_sizes
     install_data(
         join_paths('icons', i, meson.project_name() + '.svg'),
         install_dir: join_paths(get_option('datadir'), 'icons', 'hicolor', i + 'x' + i, 'apps')
-    )
-    install_data(
-        join_paths('icons', i, meson.project_name() + '.svg'),
-        install_dir: join_paths(get_option('datadir'), 'icons', 'hicolor', i + 'x' + i + '@2', 'apps')
     )
 endforeach
 

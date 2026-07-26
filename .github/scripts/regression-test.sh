@@ -54,17 +54,30 @@ check () { # description, actual, expected
   fi
 }
 
-# A display of its own, so this can run next to smoke-test.sh.
-display_num=98
-Xvfb ":$display_num" -screen 0 1200x900x24 -nolisten tcp >"$WORK/xvfb.log" 2>&1 &
-XVFB_PID=$!
+# Starts Xvfb on the first display it can actually claim. Checking only for the
+# socket file is not enough: the file survives the server, so a stale one from a
+# previous run reads as "ready" and every test then fails to open a display.
+# Whether the Xvfb process is still alive is the real signal.
+start_xvfb () {
+  local n
+  for n in $(seq 90 99); do
+    rm -f "/tmp/.X11-unix/X$n" 2>/dev/null
+    Xvfb ":$n" -screen 0 1200x900x24 -nolisten tcp >"$WORK/xvfb.log" 2>&1 &
+    XVFB_PID=$!
+    sleep 1
+    if kill -0 "$XVFB_PID" 2>/dev/null && [ -e "/tmp/.X11-unix/X$n" ]; then
+      display_num=$n
+      return 0
+    fi
+    kill "$XVFB_PID" 2>/dev/null
+    XVFB_PID=""
+  done
+  return 1
+}
 
-for _ in $(seq 1 40); do
-  [ -e "/tmp/.X11-unix/X$display_num" ] && break
-  sleep 0.25
-done
-if [ ! -e "/tmp/.X11-unix/X$display_num" ]; then
-  echo "regression: Xvfb never came up" >&2
+display_num=""
+if ! start_xvfb; then
+  echo "regression: could not start Xvfb on any display from 90 to 99" >&2
   cat "$WORK/xvfb.log" >&2
   exit 1
 fi
@@ -82,9 +95,9 @@ start_app () { # prefix..., files
   local wrapper=$1
   shift
   if [ -n "$wrapper" ]; then
-    timeout 90 $wrapper dbus-run-session -- "$APP" "$@" >"$WORK/app.log" 2>&1 &
+    timeout 180 $wrapper dbus-run-session -- "$APP" "$@" >"$WORK/app.log" 2>&1 &
   else
-    timeout 90 dbus-run-session -- "$APP" "$@" >"$WORK/app.log" 2>&1 &
+    timeout 180 dbus-run-session -- "$APP" "$@" >"$WORK/app.log" 2>&1 &
   fi
   APP_PID=$!
 }
@@ -106,6 +119,13 @@ wait_shrunk () {
   local end=$(( $(date +%s) + deadline ))
 
   while [ "$(date +%s)" -lt "$end" ]; do
+    # A dead app is never going to finish the work, so do not sit out the
+    # deadline for it. This is what keeps the generous deadlines below cheap:
+    # a broken binary fails at once, only a slow but living one gets the wait.
+    if ! kill -0 "$APP_PID" 2>/dev/null; then
+      return 1
+    fi
+
     local n=0
     for f in "$@"; do
       local before
@@ -154,7 +174,7 @@ cp "$PNG_SOURCE" "$r1/ordinary.png"
 cp "$JPG_SOURCE" "$r1/Mom's photo.jpg"
 record "$r1"/*
 start_app "" "$r1"/*
-wait_shrunk 5 45 "$r1"/*
+wait_shrunk 5 60 "$r1"/*
 check "app still running" "$(alive)" "yes"
 check "files optimized" "$(shrunk_count "$r1"/*)" "5"
 stop_app
@@ -167,7 +187,7 @@ printf 'not an image' >"$r2/broken.jpg"
 cp "$PNG_SOURCE" "$r2/good.png"
 record "$r2"/*
 start_app "" "$r2/broken.png" "$r2/broken.jpg" "$r2/good.png"
-wait_shrunk 1 45 "$r2/good.png"
+wait_shrunk 1 60 "$r2/good.png"
 check "app still running" "$(alive)" "yes"
 check "valid file in the same batch still done" "$(shrunk_count "$r2/good.png")" "1"
 stop_app
@@ -201,7 +221,7 @@ if command -v taskset >/dev/null 2>&1; then
   # the app itself, so this keeps holding when the flags change.
   record "$WORK/seq"/*
   start_app "taskset -c 0" "$WORK/seq"/*
-  wait_shrunk 8 75 "$WORK/seq"/*
+  wait_shrunk 8 60 "$WORK/seq"/*
   stop_app
   record "$WORK/par"/*
   start_app "" "$WORK/par"/*
@@ -224,7 +244,7 @@ if command -v taskset >/dev/null 2>&1; then
   for i in $(seq 1 4); do cp "$PNG_SOURCE" "$r5/p$i.png"; done
   record "$r5"/*
   start_app "taskset -c 0" "$r5"/*
-  wait_shrunk 4 75 "$r5"/*
+  wait_shrunk 4 60 "$r5"/*
   check "app still running on one core" "$(alive)" "yes"
   check "files optimized on one core" "$(shrunk_count "$r5"/*)" "4"
   stop_app
@@ -238,7 +258,7 @@ mkdir -p "$r6"
 cp "$PNG_SOURCE" "$r6/solo.png"
 record "$r6"/*
 start_app "" "$r6/solo.png"
-wait_shrunk 1 45 "$r6/solo.png"
+wait_shrunk 1 60 "$r6/solo.png"
 check "single file optimized" "$(shrunk_count "$r6/solo.png")" "1"
 check "app still running" "$(alive)" "yes"
 stop_app
@@ -252,6 +272,40 @@ if [ "$noise" != "0" ]; then
 fi
 check "diagnostics for valid input" "$noise" "0"
 
+echo "### R8 Ctrl+Q quits the app ###"
+# Listed as a feature in the app description and never covered by anything.
+if command -v xdotool >/dev/null 2>&1; then
+  r8="$WORK/r8"
+  mkdir -p "$r8"
+  cp "$PNG_SOURCE" "$r8/quit.png"
+  record "$r8"/*
+  start_app "" "$r8/quit.png"
+  wait_shrunk 1 60 "$r8/quit.png"
+  window=$(xdotool search --name "Image Optimizer" 2>/dev/null | head -1)
+  if [ -n "$window" ]; then
+    xdotool key --window "$window" --clearmodifiers ctrl+q 2>/dev/null
+    gone=no
+    for _ in $(seq 1 100); do
+      kill -0 "$APP_PID" 2>/dev/null || { gone=yes; break; }
+      sleep 0.1
+    done
+    check "Ctrl+Q closed the app" "$gone" "yes"
+  else
+    echo "  FAIL no window named 'Image Optimizer' to send Ctrl+Q to"
+    failed=$((failed + 1))
+  fi
+  stop_app
+else
+  echo "  SKIP xdotool is not available"
+fi
+
 echo
+if [ "$failed" -ne 0 ]; then
+  # Whatever went wrong, the app's own output from the last group is usually
+  # the fastest way to see it, so do not make anyone reproduce it to find out.
+  echo "--- output of the last run of the app ---"
+  cat "$WORK/app.log" 2>/dev/null
+  echo "--- end ---"
+fi
 echo "regression: $passed passed, $failed failed"
 exit "$failed"

@@ -11,7 +11,7 @@ jobs:
       matrix:
         include:
           - arch: x86_64
-            runner: ubuntu-22.04
+            runner: ubuntu-24.04
           - arch: aarch64
             runner: ubuntu-24.04-arm
       # Don't fail the whole workflow if one architecture fails
@@ -69,7 +69,7 @@ jobs:
         uses: snapcore/action-build@v1
 
       - name: Upload the snap
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: snap-${{ matrix.arch }}
           path: ${{ steps.build.outputs.snap }}
@@ -104,9 +104,7 @@ jobs:
             desktop-file-utils \
             gettext \
             jpegoptim \
-            libgee-0.8-dev \
             libglib2.0-dev \
-            libgranite-7-dev \
             libgtk-4-bin \
             libgtk-4-dev \
             meson \
@@ -115,6 +113,7 @@ jobs:
             pkg-config \
             util-linux \
             valac \
+            xdotool \
             xvfb
 
       - name: Build
@@ -141,7 +140,7 @@ jobs:
 
   lint:
     name: Lint
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
 
     container:
       image: valalang/lint
