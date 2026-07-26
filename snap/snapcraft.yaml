@@ -8,7 +8,7 @@ description: |
 
   Features:
 
-  - Compress bmp, jpg / jpeg and png with lossless compression
+  - Compress jpg / jpeg and png with lossless compression
   - Works offline, always ready where and whenever needed
   - A clean interface, optimize your images effortlessly
   - Easily quit the application by pressing Ctrl + Q

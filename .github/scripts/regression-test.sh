@@ -9,7 +9,10 @@
 #   R3  a larger mixed batch, where every single file has to be dealt with.
 #   R4  parallel output has to equal sequential output, byte for byte.
 #   R5  a single core machine has to behave like it always did.
-#   R6  no diagnostics for input that is perfectly fine.
+#   R6  a single file, so a single worker.
+#   R7  no diagnostics for input that is perfectly fine.
+#   R8  Ctrl+Q, which the app description promises.
+#   R9  a bmp, which the app used to accept and then not optimize.
 #
 # Usage, against an installed tree:
 #
@@ -28,6 +31,7 @@ APP=$(cd "$(dirname "$APP")" && pwd)/$(basename "$APP")
 REPO_ROOT=$(cd "$(dirname "$0")/../.." && pwd)
 PNG_SOURCE="$REPO_ROOT/data/screenshots/welcome-screen.png"
 JPG_SOURCE="$REPO_ROOT/.github/fixtures/fixture.jpg"
+BMP_SOURCE="$REPO_ROOT/.github/fixtures/fixture.bmp"
 
 WORK=$(mktemp -d)
 XVFB_PID=""
@@ -298,6 +302,26 @@ if command -v xdotool >/dev/null 2>&1; then
 else
   echo "  SKIP xdotool is not available"
 fi
+
+echo "### R9 an unsupported type is left alone ###"
+# bmp was accepted once. optipng cannot write one, so it produced a new .png
+# beside the file and left the .bmp exactly as it was, while the list reported a
+# 99% saving on the file the user had actually selected. The fixture has to be a
+# real bmp for that: optipng goes by content, so a png carrying a .bmp name gets
+# rewritten in place instead and the second file never appears.
+r9="$WORK/r9"
+mkdir -p "$r9"
+cp "$BMP_SOURCE" "$r9/photo.bmp"
+record "$r9"/*
+start_app "" "$r9/photo.bmp"
+# Nothing should happen, so there is no event to wait for. Give it the time a
+# single file would have taken and then look at the directory.
+sleep 5
+check "app still running" "$(alive)" "yes"
+check "the file is unchanged" "$(cmp -s "$BMP_SOURCE" "$r9/photo.bmp" && echo yes || echo no)" "yes"
+# The one that catches the old behaviour: it left a second file behind.
+check "files in the directory" "$(find "$r9" -type f | wc -l | tr -d ' ')" "1"
+stop_app
 
 echo
 if [ "$failed" -ne 0 ]; then

@@ -9,4 +9,4 @@ Terminal=false
 Type=Application
 X-GNOME-Gettext-Domain=Image Optimizer
 Keywords=Image;Optimzer;
-MimeType=image/jpeg;image/jpg;image/png;image/bmp;
+MimeType=image/jpeg;image/jpg;image/png;
