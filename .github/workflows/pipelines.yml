@@ -104,9 +104,7 @@ jobs:
             desktop-file-utils \
             gettext \
             jpegoptim \
-            libgee-0.8-dev \
             libglib2.0-dev \
-            libgranite-7-dev \
             libgtk-4-bin \
             libgtk-4-dev \
             meson \
