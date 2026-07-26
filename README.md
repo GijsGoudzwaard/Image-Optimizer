@@ -50,6 +50,17 @@ You can get Image Optimizer from Flathub no matter what distribution you're usin
 
 <a href="https://flathub.org/apps/details/com.github.gijsgoudzwaard.image-optimizer" target="_blank"><img src="https://flathub.org/assets/badges/flathub-badge-i-en.svg" width="160px" alt="Get it from Flathub!"></a>
 
+## Get it from the Snap Store!
+
+On Ubuntu and anywhere else snaps run, Image Optimizer is one command away:
+
+    sudo snap install image-optimizer
+
+[![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-black.svg)](https://snapcraft.io/image-optimizer)
+
+Builds are published for amd64 and arm64, which between them cover almost
+every install the store reports.
+
 ## Dependencies
 
 To build you need GTK 4.12 or newer, GLib, a C compiler, Vala, Meson, Ninja,

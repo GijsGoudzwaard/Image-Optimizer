@@ -31,7 +31,7 @@ public class Optimizer {
       if (Utils.in_array ({"jpg", "jpeg"}, image.type)) {
         jpegoptim.add_image (image.path);
         jpegs++;
-      } else if (Utils.in_array ({"png", "bmp"}, image.type)) {
+      } else if (image.type == "png") {
         optipng.add_image (image.path);
         pngs++;
       }
