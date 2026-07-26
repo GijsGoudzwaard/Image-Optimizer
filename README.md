@@ -52,28 +52,39 @@ You can get Image Optimizer from Flathub no matter what distribution you're usin
 
 ## Dependencies
 
-Please make sure you have these dependencies first before building.
+To build you need GTK 4.12 or newer, GLib, a C compiler, Vala, Meson, Ninja,
+`msgfmt` for the translations and `update-desktop-database` for the install
+step. On Ubuntu 24.04 and other Debian derivatives that is:
 
-```
-gtk4 >= 4.12
-glib-2.0
-jpegoptim
-optipng
-```
+    sudo apt install build-essential meson ninja-build valac gettext \
+                    desktop-file-utils libgtk-4-dev libglib2.0-dev
+
+To run, the app needs the two optimizers it drives. They are not needed to
+build, but without them nothing gets compressed:
+
+    sudo apt install jpegoptim optipng
+
+Two more are optional. Install them before configuring, because Meson looks
+them up once at that point:
+
+    sudo apt install appstream xvfb xdotool
+
+`appstream` adds the MetaInfo validation to `ninja test`, which otherwise runs
+one test instead of two. `xvfb` and `xdotool` are for the scripts under
+[Tests](#tests).
 
 ## Building
 
 Simply clone this repo, then:
 
-Run `meson build` to configure the build environment and run `ninja test` to build and run automated tests
+Run `meson setup build` to configure the build environment and `ninja -C build test` to build and run the automated tests
 
-    meson build --prefix=/usr
-    cd build
-    ninja test
+    meson setup build --prefix=/usr
+    ninja -C build test
 
 To install, use `ninja install`, then execute with `com.github.gijsgoudzwaard.image-optimizer`
 
-    sudo ninja install
+    sudo ninja -C build install
     com.github.gijsgoudzwaard.image-optimizer
 
 ## Tests
