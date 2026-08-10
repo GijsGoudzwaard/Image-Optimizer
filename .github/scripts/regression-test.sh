@@ -13,6 +13,7 @@
 #   R7  no diagnostics for input that is perfectly fine.
 #   R8  Ctrl+Q, which the app description promises.
 #   R9  a bmp, which the app used to accept and then not optimize.
+#   R10 a file that cannot be rewritten, which used to report a fake saving.
 #
 # Usage, against an installed tree:
 #
@@ -325,6 +326,36 @@ check "the file is unchanged" "$(cmp -s "$BMP_SOURCE" "$r9/photo.bmp" && echo ye
 # The one that catches the old behaviour: it left a second file behind.
 check "files in the directory" "$(find "$r9" -type f | wc -l | tr -d ' ')" "1"
 stop_app
+
+echo "### R10 a file that cannot be rewritten is reported as unchanged ###"
+# Both optimizers replace a file by writing a temporary one next to it and
+# renaming, so a directory they cannot write to fails the whole operation. What
+# made that dangerous is that jpegoptim still prints "11261 --> 11067 bytes,
+# optimized." on stdout before it tries, and the app used to parse that line
+# without looking at the exit status. The row then claimed a saving on a file
+# that was untouched. This is also what a document portal path behaves like.
+if [ "$(id -u)" = "0" ]; then
+  # root is exempt from directory permissions, so the write succeeds and the case
+  # proves nothing. CI runs the suite as an ordinary user, where it does apply.
+  echo "  SKIP running as root, which ignores directory permissions"
+else
+  r10="$WORK/r10"
+  mkdir -p "$r10"
+  cp "$PNG_SOURCE" "$r10/locked.png"
+  cp "$JPG_SOURCE" "$r10/locked.jpg"
+  record "$r10"/*
+  chmod a-w "$r10"
+  start_app "" "$r10/locked.png" "$r10/locked.jpg"
+  # Nothing can be written, so wait out the time an optimization would have taken.
+  sleep 8
+  check "app still running" "$(alive)" "yes"
+  check "files left untouched" "$(shrunk_count "$r10"/*)" "0"
+  # The point of the case: the log has to say it failed rather than stay silent.
+  check "failure was logged" \
+    "$(grep -qE "exited with status" "$WORK/app.log" && echo yes || echo no)" "yes"
+  stop_app
+  chmod u+w "$r10"
+fi
 
 echo
 if [ "$failed" -ne 0 ]; then

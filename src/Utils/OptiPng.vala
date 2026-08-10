@@ -98,6 +98,8 @@ public class OptiPng {
 
     argv += image;
 
+    var new_size = 0;
+
     try {
       string standard_output;
       string standard_error;
@@ -114,17 +116,28 @@ public class OptiPng {
         out status
       );
 
-      var new_size = 0;
-
-      // optipng reports on stderr, stdout stays empty.
-      if (! standard_error.contains ("is already optimized")) {
+      // Same reasoning as in JpegOptim: only the exit status says whether the
+      // result reached the disk. optipng fails with "Can't back up the input
+      // file" when it cannot write next to the original, and without this check
+      // that turned into a reported saving on an untouched file.
+      if (status != 0) {
+        warning (
+          "optipng exited with status %d for \"%s\": %s",
+          status,
+          image,
+          standard_error
+        );
+      } else if (! standard_error.contains ("is already optimized")) {
+        // optipng reports on stderr, stdout stays empty.
         new_size = this.get_new_size (standard_error);
       }
-
-      this.list.update_size (image, new_size);
     } catch (Error e) {
       warning ("Failed to run optipng on \"%s\": %s", image, e.message);
     }
+
+    // A zero means "nothing was written", which the list turns back into the
+    // original size, so the row reports no saving instead of a made up one.
+    this.list.update_size (image, new_size);
   }
 
   /**

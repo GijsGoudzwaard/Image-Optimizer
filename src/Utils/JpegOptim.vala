@@ -106,6 +106,8 @@ public class JpegOptim {
 
     argv += image;
 
+    var new_size = 0;
+
     try {
       string standard_output;
       string standard_error;
@@ -122,11 +124,30 @@ public class JpegOptim {
         out status
       );
 
-      // jpegoptim reports on stdout.
-      this.list.update_size (image, this.get_new_size (standard_output));
+      // jpegoptim prints its " --> " line before it tries to put the result in
+      // place, so that line is not proof that anything was written. A directory
+      // it cannot create its temporary file in gets the optimistic line on
+      // stdout and exit code 3, and parsing the line anyway made the list report
+      // a saving on a file that was never touched. The status is the only honest
+      // signal, so read it.
+      if (status == 0) {
+        // jpegoptim reports on stdout.
+        new_size = this.get_new_size (standard_output);
+      } else {
+        warning (
+          "jpegoptim exited with status %d for \"%s\": %s",
+          status,
+          image,
+          standard_error
+        );
+      }
     } catch (Error e) {
       warning ("Failed to run jpegoptim on \"%s\": %s", image, e.message);
     }
+
+    // A zero means "nothing was written", which the list turns back into the
+    // original size, so the row reports no saving instead of a made up one.
+    this.list.update_size (image, new_size);
   }
 
   /**
