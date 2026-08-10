@@ -98,13 +98,23 @@ public class JpegOptim {
    * @return void
    */
   private void compress_one (string image) {
+    // The optimizer runs on a copy inside the sandbox, never on the file the
+    // user picked. See Rewrite for why.
+    var rewrite = new Rewrite (image);
+
+    if (rewrite.working_path == null) {
+      this.list.update_size (image, 0);
+
+      return;
+    }
+
     string[] argv = { "jpegoptim" };
 
     foreach (var arg in this.args) {
       argv += arg;
     }
 
-    argv += image;
+    argv += rewrite.working_path;
 
     var new_size = 0;
 
@@ -131,8 +141,12 @@ public class JpegOptim {
       // a saving on a file that was never touched. The status is the only honest
       // signal, so read it.
       if (status == 0) {
-        // jpegoptim reports on stdout.
-        new_size = this.get_new_size (standard_output);
+        // jpegoptim reports on stdout. The size it prints describes the copy, so
+        // it is only used to tell "it did something" from "already optimal"; the
+        // size that reaches the list is the number of bytes actually written.
+        if (this.get_new_size (standard_output) > 0) {
+          new_size = rewrite.commit ();
+        }
       } else {
         warning (
           "jpegoptim exited with status %d for \"%s\": %s",
@@ -144,6 +158,10 @@ public class JpegOptim {
     } catch (Error e) {
       warning ("Failed to run jpegoptim on \"%s\": %s", image, e.message);
     }
+
+    // Always, so a failure or a quit halfway through does not leave the copy
+    // behind.
+    rewrite.cleanup ();
 
     // A zero means "nothing was written", which the list turns back into the
     // original size, so the row reports no saving instead of a made up one.

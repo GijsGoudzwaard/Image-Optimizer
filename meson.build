@@ -22,6 +22,7 @@ executable(
     'src/Widgets/List.vala',
     'src/Widgets/ImageRow.vala',
     'src/Utils/Utils.vala',
+    'src/Utils/Rewrite.vala',
     'src/Utils/Image.vala',
     'src/Utils/Optimizer.vala',
     'src/Utils/JpegOptim.vala',
