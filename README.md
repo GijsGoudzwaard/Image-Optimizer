@@ -2,9 +2,33 @@
 
 [![Build Status](https://github.com/GijsGoudzwaard/Image-Optimizer/actions/workflows/pipelines.yml/badge.svg?branch=master)](https://github.com/GijsGoudzwaard/Image-Optimizer/actions/workflows/pipelines.yml) [![Support on Ko-fi](https://img.shields.io/badge/Ko--fi-Support%20this%20project-FF5E5B?logo=ko-fi&logoColor=white)](https://ko-fi.com/imageoptimizer)
 
-Simple lossless image optimizer built with Vala and GTK.
+Shrink PNG and JPEG files losslessly. The pixels come out identical, only the
+file gets smaller. Runs on any Linux distribution through Flathub or the Snap
+Store.
 
 ![Screenshot](data/screenshots/welcome-screen.png)
+
+## Install
+
+**Flathub**, for any distribution:
+
+    flatpak install flathub com.github.gijsgoudzwaard.image-optimizer
+
+<a href="https://flathub.org/apps/details/com.github.gijsgoudzwaard.image-optimizer" target="_blank"><img src="https://flathub.org/assets/badges/flathub-badge-i-en.svg" width="160px" alt="Get it from Flathub"></a>
+
+**Snap Store**, for Ubuntu and anywhere else snaps run:
+
+    sudo snap install image-optimizer
+
+[![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-black.svg)](https://snapcraft.io/image-optimizer)
+
+**elementary OS AppCenter**. Note that this channel may lag behind the releases
+above.
+
+[![Get it on AppCenter](https://appcenter.elementary.io/badge.svg)](https://appcenter.elementary.io/com.github.gijsgoudzwaard.image-optimizer)
+
+Both the Flathub and Snap builds are published for amd64 and arm64, and both
+bundle the two optimizers, so there is nothing else to install.
 
 ## Supported formats
 
@@ -39,27 +63,6 @@ Two details worth knowing:
   wide-gamut image render as sRGB afterwards.
 - Modification times are preserved, so optimizing a folder does not reshuffle a
   photo library sorted by date.
-
-## Get it from the elementary OS AppCenter!
-Image Optimizer is primarily available from the AppCenter of elementary OS. Download it from there!
-
-[![Get it on AppCenter](https://appcenter.elementary.io/badge.svg)](https://appcenter.elementary.io/com.github.gijsgoudzwaard.image-optimizer)
-
-## Get it from Flathub!
-You can get Image Optimizer from Flathub no matter what distribution you're using. Download it or follow the instructions to install it from here!
-
-<a href="https://flathub.org/apps/details/com.github.gijsgoudzwaard.image-optimizer" target="_blank"><img src="https://flathub.org/assets/badges/flathub-badge-i-en.svg" width="160px" alt="Get it from Flathub!"></a>
-
-## Get it from the Snap Store!
-
-On Ubuntu and anywhere else snaps run, Image Optimizer is one command away:
-
-    sudo snap install image-optimizer
-
-[![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-black.svg)](https://snapcraft.io/image-optimizer)
-
-Builds are published for amd64 and arm64, which between them cover almost
-every install the store reports.
 
 ## Dependencies
 
@@ -135,6 +138,6 @@ its development with a one-off or recurring donation:
 
 [![Support on Ko-fi](https://img.shields.io/badge/Ko--fi-Support%20this%20project-FF5E5B?logo=ko-fi&logoColor=white)](https://ko-fi.com/imageoptimizer)
 
-Contributions are just as welcome — bug reports, translations and pull requests
+Contributions are just as welcome. Bug reports, translations and pull requests
 all help. See the [issue tracker](https://github.com/GijsGoudzwaard/Image-Optimizer/issues)
 to get started.

@@ -12,36 +12,68 @@
       <name>Gijs Goudzwaard</name>
    </developer>
    <project_license>MIT</project_license>
-   <summary>Simple lossless image compression</summary>
+   <summary>Shrink images losslessly</summary>
    <description>
-      <p>Compress your images with ease without the cost of loosing the images quality using JpegOptim and OptiPng.</p>
+      <p>Image Optimizer makes PNG and JPEG files smaller without changing how they look. It rewrites the files you pick in place, so the file you selected is the one that gets smaller.</p>
+      <p>The compression is lossless, which means the pixels come out identical and nothing is re-encoded at a lower quality. What comes off is whatever the encoder left on the table, so screenshots and interface images usually gain the most and photos straight out of a camera the least.</p>
       <p>Features:</p>
       <ul>
-         <li>Compress jpg / jpeg and png with lossless compression</li>
-         <li>Works offline, always ready where and whenever needed</li>
-         <li>A clean interface, optimize your images effortlessly</li>
-         <li>Easily quit the application by pressing Ctrl + Q</li>
+         <li>Compress PNG and JPEG images without losing quality</li>
+         <li>Optimize a whole batch at once, several files at a time</li>
+         <li>Works offline, with no account and nothing uploaded</li>
+         <li>Keeps the colour profile, so wide-gamut images still look right</li>
+         <li>Keeps modification times, so a library sorted by date stays in order</li>
+         <li>Quit quickly by pressing Ctrl + Q</li>
       </ul>
    </description>
+   <keywords>
+      <keyword>compress</keyword>
+      <keyword>compressor</keyword>
+      <keyword>shrink</keyword>
+      <keyword>reduce</keyword>
+      <keyword>file size</keyword>
+      <keyword>optimize</keyword>
+      <keyword>optimise</keyword>
+      <keyword>png</keyword>
+      <keyword>jpeg</keyword>
+      <keyword>jpg</keyword>
+      <keyword>photo</keyword>
+      <keyword>picture</keyword>
+      <keyword>batch</keyword>
+      <keyword>lossless</keyword>
+   </keywords>
    <url type="homepage">https://github.com/gijsgoudzwaard/image-optimizer</url>
    <url type="bugtracker">https://github.com/gijsgoudzwaard/image-optimizer/issues</url>
    <url type="help">https://github.com/gijsgoudzwaard/image-optimizer/issues</url>
    <url type="vcs-browser">https://github.com/gijsgoudzwaard/image-optimizer</url>
    <url type="contribute">https://github.com/gijsgoudzwaard/image-optimizer</url>
    <url type="donation">https://ko-fi.com/imageoptimizer</url>
+   <!-- The snap adopts its Contact link from here. Without one the Snap Store
+        listing shows no way to reach the author, which reads as abandonware. -->
+   <url type="contact">https://github.com/gijsgoudzwaard/image-optimizer/issues</url>
    <update_contact>gijs.goudzwaard@gmail.com</update_contact>
+   <!-- Order matters: the first screenshot is what Flathub shows first and may
+        reuse in banners, so it leads with the app doing its job. The empty
+        welcome screen is last on purpose. -->
    <screenshots>
       <screenshot type="default">
-         <caption>Welcome screen</caption>
-         <image>https://raw.githubusercontent.com/GijsGoudzwaard/Image-Optimizer/master/data/screenshots/welcome-screen.png</image>
+         <caption>Optimizing a batch of images</caption>
+         <image>https://raw.githubusercontent.com/GijsGoudzwaard/Image-Optimizer/master/data/screenshots/optimizing.png</image>
       </screenshot>
       <screenshot>
-         <caption>Compress list</caption>
-         <image>https://raw.githubusercontent.com/GijsGoudzwaard/Image-Optimizer/master/data/screenshots/treeview.png</image>
+         <caption>Every image with its old size, new size and savings</caption>
+         <image>https://raw.githubusercontent.com/GijsGoudzwaard/Image-Optimizer/master/data/screenshots/completed.png</image>
+      </screenshot>
+      <screenshot>
+         <caption>Drag and drop images to get started</caption>
+         <image>https://raw.githubusercontent.com/GijsGoudzwaard/Image-Optimizer/master/data/screenshots/welcome-screen.png</image>
       </screenshot>
    </screenshots>
+   <!-- Both taken from the app icon: the sky gradient for light, the night sky
+        base for dark. Flathub's quality checks want a light and a dark variant. -->
    <branding>
-      <color type="primary">#687ddb</color>
+      <color type="primary" scheme_preference="light">#687ddb</color>
+      <color type="primary" scheme_preference="dark">#161650</color>
    </branding>
    <custom>
       <value key="x-appcenter-suggested-price">2</value>
