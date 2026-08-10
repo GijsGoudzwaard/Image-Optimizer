@@ -1,30 +1,15 @@
 name: image-optimizer
 base: core24
+# title, version, summary, description, license, contact, issues, source-code,
+# website and donation are all deliberately absent: parse-info below adopts them
+# from the MetaInfo file, which makes that file the single source of truth for
+# both this store and Flathub. Spelling any of them out here would silently win
+# over the adopted value and let the two listings drift apart again.
 adopt-info: image-optimizer
-summary: Simple lossless image compression
-description: |
-  Compress your images with ease without the cost of losing the images quality
-  using JpegOptim and OptiPng.
-
-  Features:
-
-  - Compress jpg / jpeg and png with lossless compression
-  - Works offline, always ready where and whenever needed
-  - A clean interface, optimize your images effortlessly
-  - Easily quit the application by pressing Ctrl + Q
-license: MIT
-# Link buttons on the Snap Store listing. The donation address is the same one
-# the MetaInfo file, the README badge and GitHub's sponsor button use.
-website:
-  - https://github.com/GijsGoudzwaard/Image-Optimizer
-source-code:
-  - https://github.com/GijsGoudzwaard/Image-Optimizer
-issues:
-  - https://github.com/GijsGoudzwaard/Image-Optimizer/issues
-donation:
-  - https://ko-fi.com/imageoptimizer
 grade: stable
 confinement: strict
+# The one piece of listing metadata that is not adopted: the MetaInfo file names
+# no <icon>, so the Snap Store would have nothing to show without this path.
 icon: data/icons/128/com.github.gijsgoudzwaard.image-optimizer.svg
 
 platforms:

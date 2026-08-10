@@ -29,7 +29,10 @@ fi
 APP=$(cd "$(dirname "$APP")" && pwd)/$(basename "$APP")
 
 REPO_ROOT=$(cd "$(dirname "$0")/../.." && pwd)
-PNG_SOURCE="$REPO_ROOT/data/screenshots/welcome-screen.png"
+# Deliberately its own fixture and not a file from data/screenshots. Those are
+# store listing assets and get run through optipng before they are published, at
+# which point they cannot shrink any further and every assertion here fails.
+PNG_SOURCE="$REPO_ROOT/.github/fixtures/fixture.png"
 JPG_SOURCE="$REPO_ROOT/.github/fixtures/fixture.jpg"
 BMP_SOURCE="$REPO_ROOT/.github/fixtures/fixture.bmp"
 

@@ -1,12 +1,12 @@
 [Desktop Entry]
 Name=Image Optimizer
 GenericName=Image Optimizer
-Comment=Simple image optimzer
-Categories=GTK;Utility;Development;Graphics;
+Comment=Shrink images losslessly
+Categories=GTK;Graphics;
 Exec=com.github.gijsgoudzwaard.image-optimizer %F
 Icon=com.github.gijsgoudzwaard.image-optimizer
 Terminal=false
 Type=Application
 X-GNOME-Gettext-Domain=Image Optimizer
-Keywords=Image;Optimzer;
+Keywords=compress;compressor;shrink;reduce;file size;optimize;optimise;png;jpeg;jpg;photo;picture;batch;lossless;
 MimeType=image/jpeg;image/jpg;image/png;
