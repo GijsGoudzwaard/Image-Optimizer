@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Row icon for an image that came out smaller. Green is fixed on purpose,
+     like every other colour in this app's stylesheet. -->
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+  <path d="M3.2 8.6 L6.3 11.7 L12.8 5.2" fill="none" stroke="#2ea45c" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

@@ -114,11 +114,15 @@ public class List {
     view.add_css_class ("tree_view");
     main.set_child (view);
 
-    view.append_column (this.spinner_column ());
-    view.append_column (this.text_column (_("File"), (row) => row.image.name));
-    view.append_column (this.text_column (_("Size"), (row) => row.size_text));
-    view.append_column (this.text_column (_("New size"), (row) => row.new_size_text));
-    view.append_column (this.text_column (_("Savings"), (row) => row.savings_text));
+    view.append_column (this.status_column ());
+    view.append_column (this.text_column (_("File"), 0, (row) => row.image.name));
+    view.append_column (this.text_column (_("Size"), 1, (row) => row.size_text));
+    view.append_column (this.text_column (_("New size"), 1, (row) => row.new_size_text));
+    view.append_column (this.text_column (_("Savings"), 1, (row) => row.savings_text));
+
+    // Everything from the third column on holds a number, so its heading lines
+    // up with it on the right.
+    this.align_headers (view, 2);
 
     this.start (this.images);
 
@@ -189,30 +193,45 @@ public class List {
   }
 
   /**
-   * Build the column holding the spinner that runs while an image is being
-   * optimized. Gtk.Spinner animates itself, so unlike Gtk.CellRendererSpinner
-   * it does not need to be pulsed from a timeout.
+   * Build the column in front of every row: a spinner while the image is being
+   * worked on, and afterwards an icon saying how it went. Gtk.Spinner animates
+   * itself, so unlike Gtk.CellRendererSpinner it does not need to be pulsed
+   * from a timeout.
    *
    * @return Gtk.ColumnViewColumn
    */
-  private Gtk.ColumnViewColumn spinner_column () {
+  private Gtk.ColumnViewColumn status_column () {
     var factory = new Gtk.SignalListItemFactory ();
 
     factory.setup.connect ((object) => {
       var item = (Gtk.ListItem) object;
 
-      var spinner = new Gtk.Spinner ();
-      spinner.set_valign (Gtk.Align.CENTER);
-      spinner.set_margin_start (6);
-      spinner.set_margin_end (6);
+      // Both children live in the row and only their visibility changes. A
+      // Gtk.Stack would do the same for more code, and the factory reuses these
+      // widgets across rows either way.
+      var box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
+      box.set_valign (Gtk.Align.CENTER);
+      box.set_margin_start (14);
+      box.set_margin_end (2);
 
-      item.set_child (spinner);
+      var spinner = new Gtk.Spinner ();
+
+      var icon = new Gtk.Image ();
+      icon.set_pixel_size (16);
+      icon.set_visible (false);
+
+      box.append (spinner);
+      box.append (icon);
+
+      item.set_child (box);
     });
 
     factory.bind.connect ((object) => {
       var item = (Gtk.ListItem) object;
       var row = (ImageRow) item.get_item ();
-      var spinner = (Gtk.Spinner) item.get_child ();
+      var box = (Gtk.Box) item.get_child ();
+      var spinner = (Gtk.Spinner) box.get_first_child ();
+      var icon = (Gtk.Image) box.get_last_child ();
 
       var pending = row.status == Status.PENDING;
 
@@ -223,6 +242,12 @@ public class List {
       } else {
         spinner.stop ();
       }
+
+      if (row.icon_resource != null) {
+        icon.set_from_resource (row.icon_resource);
+      }
+
+      icon.set_visible (! pending && row.icon_resource != null);
     });
 
     return new Gtk.ColumnViewColumn ("", factory);
@@ -232,21 +257,25 @@ public class List {
    * Build a column that shows a piece of text per row.
    *
    * @param  string title
+   * @param  float xalign  0 to read as text, 1 to line up as a number
    * @param  CellText get_text
    * @return Gtk.ColumnViewColumn
    */
-  private Gtk.ColumnViewColumn text_column (string title, owned CellText get_text) {
+  private Gtk.ColumnViewColumn text_column (string title, float xalign, owned CellText get_text) {
     var factory = new Gtk.SignalListItemFactory ();
 
     factory.setup.connect ((object) => {
       var item = (Gtk.ListItem) object;
 
       var label = new Gtk.Label (null);
-      label.set_xalign (0);
+      label.set_xalign (xalign);
+      // Without this the label is only as wide as its text, and then xalign has
+      // nothing to align inside.
+      label.set_hexpand (true);
       label.set_margin_top (14);
       label.set_margin_bottom (14);
       label.set_margin_start (6);
-      label.set_margin_end (6);
+      label.set_margin_end (14);
 
       item.set_child (label);
     });
@@ -262,6 +291,69 @@ public class List {
     column.set_expand (true);
 
     return column;
+  }
+
+  /**
+   * Line the headings of the numeric columns up with their values.
+   *
+   * Gtk.ColumnViewColumn exposes no widget for its heading, so this walks to the
+   * labels the column view built for them. It is written to give up quietly
+   * rather than to fail: if that structure ever changes the headings stay where
+   * GTK put them, which is the way they looked before this existed.
+   *
+   * @param  Gtk.ColumnView view
+   * @param  int from  index of the first column to align
+   * @return void
+   */
+  private void align_headers (Gtk.ColumnView view, int from) {
+    var header = view.get_first_child ();
+
+    if (header == null) {
+      return;
+    }
+
+    var child = header.get_first_child ();
+    var index = 0;
+
+    while (child != null) {
+      if (index >= from) {
+        var label = this.find_label (child);
+
+        if (label != null) {
+          label.set_hexpand (true);
+          label.set_xalign (1);
+        }
+      }
+
+      child = child.get_next_sibling ();
+      index++;
+    }
+  }
+
+  /**
+   * The first Gtk.Label at or below a widget, or null if there is none.
+   *
+   * @param  Gtk.Widget widget
+   * @return Gtk.Label?
+   */
+  private Gtk.Label? find_label (Gtk.Widget widget) {
+    if (widget is Gtk.Label) {
+      return (Gtk.Label) widget;
+    }
+
+    var child = widget.get_first_child ();
+
+    while (child != null) {
+      var found = this.find_label (child);
+
+      if (found != null) {
+        return found;
+      }
+
+      child = child.get_next_sibling ();
+    }
+
+    return null;
   }
 
   /**

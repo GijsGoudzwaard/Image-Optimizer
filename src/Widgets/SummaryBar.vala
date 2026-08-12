@@ -9,6 +9,16 @@
 public class SummaryBar : Gtk.Box {
 
   /**
+   * Shown when every file was dealt with without trouble.
+   */
+  private const string ICON_OK = "/com/github/gijsgoudzwaard/image-optimizer/icons/check-circle.svg";
+
+  /**
+   * Shown when the batch held something the app could not handle.
+   */
+  private const string ICON_PROBLEM = "/com/github/gijsgoudzwaard/image-optimizer/icons/error.svg";
+
+  /**
    * Runs while there is still work, hidden afterwards.
    *
    * @var Gtk.Spinner
@@ -62,21 +72,22 @@ public class SummaryBar : Gtk.Box {
     this.set_spacing (0);
     this.add_css_class ("summary_bar");
 
+    // The text sits in its own padded box so the progress bar underneath can run
+    // the full width of the window instead of stopping at the padding.
     var row = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 10);
+    row.add_css_class ("summary_content");
 
     this.spinner = new Gtk.Spinner ();
     this.spinner.set_valign (Gtk.Align.CENTER);
     this.spinner.start ();
 
-    // These two names were picked by rendering them, not by reading a list.
-    // process-completed-symbolic reads better but is elementary only, and
-    // emblem-ok-symbolic exists in Adwaita yet still painted the missing icon
-    // placeholder on Ubuntu, where the emblems directory does not resolve even
-    // though IconTheme.has_icon claims it does. object-select and dialog-warning
-    // both come out of actions and status, which do resolve everywhere the app
-    // ships: elementary's theme on Flathub and Adwaita on the GNOME runtime the
-    // snap builds against.
-    this.icon = new Gtk.Image.from_icon_name ("object-select-symbolic");
+    // Bundled with the app rather than looked up in the icon theme. The two
+    // themes it ships against do not agree on which of the obvious names exist,
+    // and emblem-ok-symbolic painted a missing icon placeholder on Ubuntu even
+    // though IconTheme.has_icon said it was there. These also carry their own
+    // colour, which a symbolic icon from the theme would not.
+    this.icon = new Gtk.Image.from_resource (SummaryBar.ICON_OK);
+    this.icon.set_pixel_size (16);
     this.icon.set_valign (Gtk.Align.CENTER);
     this.icon.set_visible (false);
 
@@ -118,7 +129,6 @@ public class SummaryBar : Gtk.Box {
 
     this.progress = new Gtk.ProgressBar ();
     this.progress.add_css_class ("summary_progress");
-    this.progress.set_margin_top (10);
 
     this.append (row);
     this.append (this.progress);
@@ -164,7 +174,7 @@ public class SummaryBar : Gtk.Box {
       return;
     }
 
-    this.done (optimized, skipped, failed, unsupported, before, after, saved);
+    this.done (total, optimized, skipped, failed, unsupported, before, after, saved);
   }
 
   /**
@@ -176,6 +186,10 @@ public class SummaryBar : Gtk.Box {
    * @return void
    */
   private void working (uint finished, uint total, int64 saved) {
+    // The figure is the app's own colour while it is working and green once it
+    // has something to show, so the state is readable without reading a word.
+    this.remove_css_class ("done");
+
     this.spinner.set_visible (true);
     this.spinner.start ();
     this.icon.set_visible (false);
@@ -197,6 +211,7 @@ public class SummaryBar : Gtk.Box {
   /**
    * The state once every file has been dealt with.
    *
+   * @param  uint total
    * @param  uint optimized
    * @param  uint skipped
    * @param  uint failed
@@ -207,6 +222,7 @@ public class SummaryBar : Gtk.Box {
    * @return void
    */
   private void done (
+    uint total,
     uint optimized,
     uint skipped,
     uint failed,
@@ -215,17 +231,19 @@ public class SummaryBar : Gtk.Box {
     int64 after,
     int64 saved
   ) {
+    this.add_css_class ("done");
+
     this.spinner.stop ();
     this.spinner.set_visible (false);
 
-    // A warning icon whenever something did not go the way it was meant to, so
-    // the bar never claims a clean run over files it could not handle.
-    this.icon.set_from_icon_name (
-      (failed > 0 || unsupported > 0) ? "dialog-warning-symbolic" : "object-select-symbolic"
+    // The red icon whenever something did not go the way it was meant to, so the
+    // bar never claims a clean run over files it could not handle.
+    this.icon.set_from_resource (
+      (failed > 0 || unsupported > 0) ? SummaryBar.ICON_PROBLEM : SummaryBar.ICON_OK
     );
     this.icon.set_visible (true);
 
-    this.sub.set_label (this.counts (optimized, skipped, failed, unsupported));
+    this.sub.set_label (this.counts (total, optimized, skipped, failed, unsupported));
 
     this.progress.set_visible (false);
 
@@ -273,19 +291,24 @@ public class SummaryBar : Gtk.Box {
   /**
    * The file counts as one sentence, leaving out whatever did not happen.
    *
+   * @param  uint total
    * @param  uint optimized
    * @param  uint skipped
    * @param  uint failed
    * @param  uint unsupported
    * @return string
    */
-  private string counts (uint optimized, uint skipped, uint failed, uint unsupported) {
+  private string counts (uint total, uint optimized, uint skipped, uint failed, uint unsupported) {
     string[] parts = {};
 
-    // "0 files optimized" only earns its place when there is nothing else to
-    // report. Next to "3 already optimal" it is noise.
+    // "0 of 3 files optimized" only earns its place when there is nothing else
+    // to report. Next to "3 already optimal" it is noise.
     if (optimized > 0 || (skipped == 0 && failed == 0 && unsupported == 0)) {
-      parts += ngettext ("%u file optimized", "%u files optimized", optimized).printf (optimized);
+      parts += ngettext (
+        "%u of %u file optimized",
+        "%u of %u files optimized",
+        total
+      ).printf (optimized, total);
     }
 
     if (skipped > 0) {
@@ -297,7 +320,7 @@ public class SummaryBar : Gtk.Box {
     }
 
     if (unsupported > 0) {
-      parts += _("%u not supported").printf (unsupported);
+      parts += _("%u skipped").printf (unsupported);
     }
 
     // Not translatable on purpose: a bare ", " gives a translator nothing to go

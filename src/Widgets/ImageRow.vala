@@ -46,6 +46,13 @@ public class ImageRow : GLib.Object {
   public string savings_text = "";
 
   /**
+   * The icon in front of the row, or null while there is still a spinner there.
+   *
+   * @var string?
+   */
+  public string? icon_resource = null;
+
+  /**
    * Create a row for an image.
    *
    * @param Image image
@@ -60,8 +67,13 @@ public class ImageRow : GLib.Object {
   }
 
   /**
-   * Set the status and the display strings that follow from it. Keeping the two
-   * together is what stops a row from showing a size the app never wrote.
+   * Set the status, the icon and the display strings that follow from it.
+   * Keeping them together is what stops a row from showing a size the app never
+   * wrote.
+   *
+   * The icon carries the outcome, so the columns only hold numbers wherever
+   * there is a number to hold. A word appears in them exactly when there is no
+   * figure to put there instead.
    *
    * @param  Status status
    * @return void
@@ -71,32 +83,39 @@ public class ImageRow : GLib.Object {
 
     switch (status) {
       case Status.OPTIMIZED:
+        this.icon_resource = "/com/github/gijsgoudzwaard/image-optimizer/icons/check.svg";
         this.new_size_text = GLib.format_size (this.image.new_size);
         this.savings_text = Image.calc_savings ((float) this.image.size, (float) this.image.new_size);
         break;
 
       case Status.ALREADY_OPTIMAL:
+        // The dash says nothing went wrong, so the row can keep its numbers and
+        // report the 0.00% it honestly gained.
+        this.icon_resource = "/com/github/gijsgoudzwaard/image-optimizer/icons/dash.svg";
         this.new_size_text = GLib.format_size (this.image.new_size);
-        this.savings_text = _("Already optimal");
+        this.savings_text = Image.calc_savings ((float) this.image.size, (float) this.image.new_size);
         break;
 
       case Status.FAILED:
-        // No size, because nothing was written. A "0.00%" here reads as a
+        // No new size, because nothing was written. A "0.00%" here reads as a
         // successful run that happened to gain nothing, which is the confusion
         // this whole status exists to end.
-        this.new_size_text = "";
-        this.savings_text = _("Failed");
+        this.icon_resource = "/com/github/gijsgoudzwaard/image-optimizer/icons/error.svg";
+        this.new_size_text = _("Failed");
+        this.savings_text = "";
         break;
 
       case Status.UNSUPPORTED:
         // Not even a size: the app is not going to touch this file, so showing
         // how big it is only suggests it is waiting its turn.
-        this.size_text = "";
+        this.icon_resource = "/com/github/gijsgoudzwaard/image-optimizer/icons/error.svg";
+        this.size_text = _("Skipped");
         this.new_size_text = "";
-        this.savings_text = _("Not supported");
+        this.savings_text = "";
         break;
 
       default:
+        this.icon_resource = null;
         this.new_size_text = "";
         this.savings_text = "";
         break;

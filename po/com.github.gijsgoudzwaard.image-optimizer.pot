@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: com.github.gijsgoudzwaard.image-optimizer\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-12 13:12+0000\n"
+"POT-Creation-Date: 2026-08-12 13:47+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -30,16 +30,12 @@ msgstr ""
 msgid "Select image(s)"
 msgstr ""
 
-#: src/Widgets/ImageRow.vala:80
-msgid "Already optimal"
-msgstr ""
-
-#: src/Widgets/ImageRow.vala:88
+#: src/Widgets/ImageRow.vala:104
 msgid "Failed"
 msgstr ""
 
-#: src/Widgets/ImageRow.vala:96
-msgid "Not supported"
+#: src/Widgets/ImageRow.vala:112
+msgid "Skipped"
 msgstr ""
 
 #: src/Widgets/List.vala:118
@@ -58,55 +54,55 @@ msgstr ""
 msgid "Savings"
 msgstr ""
 
-#: src/Widgets/SummaryBar.vala:183
+#: src/Widgets/SummaryBar.vala:197
 msgid "Optimizing…"
 msgstr ""
 
-#: src/Widgets/SummaryBar.vala:185
+#: src/Widgets/SummaryBar.vala:199
 #, c-format
 msgid "%u of %u file done"
 msgid_plural "%u of %u files done"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Widgets/SummaryBar.vala:191
+#: src/Widgets/SummaryBar.vala:205
 msgid "saved so far"
 msgstr ""
 
-#: src/Widgets/SummaryBar.vala:235
+#: src/Widgets/SummaryBar.vala:253
 msgid "Nothing left to save"
 msgstr ""
 
-#: src/Widgets/SummaryBar.vala:242
+#: src/Widgets/SummaryBar.vala:260
 #, c-format
 msgid "%s saved"
 msgstr ""
 
-#: src/Widgets/SummaryBar.vala:248
+#: src/Widgets/SummaryBar.vala:266
 #, c-format
 msgid "%s to %s"
 msgstr ""
 
-#: src/Widgets/SummaryBar.vala:288
+#: src/Widgets/SummaryBar.vala:308
 #, c-format
-msgid "%u file optimized"
-msgid_plural "%u files optimized"
+msgid "%u of %u file optimized"
+msgid_plural "%u of %u files optimized"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Widgets/SummaryBar.vala:292
+#: src/Widgets/SummaryBar.vala:315
 #, c-format
 msgid "%u already optimal"
 msgstr ""
 
-#: src/Widgets/SummaryBar.vala:296
+#: src/Widgets/SummaryBar.vala:319
 #, c-format
 msgid "%u failed"
 msgstr ""
 
-#: src/Widgets/SummaryBar.vala:300
+#: src/Widgets/SummaryBar.vala:323
 #, c-format
-msgid "%u not supported"
+msgid "%u skipped"
 msgstr ""
 
 #: src/Widgets/UploadScreen.vala:24

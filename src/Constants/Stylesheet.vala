@@ -105,36 +105,63 @@ class Stylesheet {
     /* The rounded bottom corners used to sit on .tree_view. The bar is the
        bottom of the window now, so they belong here. */
     .summary_bar {
-      background-color: mix(@primary_color, #ffffff, 0.94);
-      border-top: 1px solid mix(@primary_color, #ffffff, 0.75);
+      background-color: mix(@primary_color, #ffffff, 0.955);
+      border-top: 1px solid mix(@primary_color, #ffffff, 0.86);
       border-bottom-left-radius: 3px;
       border-bottom-right-radius: 3px;
-      padding: 14px;
+    }
+
+    /* The padding sits here and not on .summary_bar, so the progress bar below
+       can run from edge to edge. */
+    .summary_content {
+      padding: 13px 14px;
+    }
+
+    .summary_bar spinner {
+      color: @primary_color;
     }
 
     .summary_bar .headline {
       font-size: 13px;
-      font-weight: 500;
-      color: #2c2c2a;
+      font-weight: 600;
+      color: #2b2b30;
     }
 
     .summary_bar .sub,
     .summary_bar .caption {
       font-size: 11px;
-      color: #5f5e5a;
+      color: #74747e;
     }
 
     .summary_bar .figure {
-      font-size: 19px;
-      font-weight: 500;
+      font-size: 20px;
+      font-weight: 600;
       color: @primary_color;
+    }
+
+    /* Green once there is a result, the app's own colour while it is still
+       working. Same green as the check mark in the rows. */
+    .summary_bar.done .figure {
+      color: #2ea45c;
     }
 
     .summary_progress,
     .summary_progress trough,
     .summary_progress progress {
-      min-height: 3px;
+      min-height: 4px;
       border-radius: 0;
+      border: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .summary_progress trough {
+      background-color: mix(@primary_color, #ffffff, 0.8);
+    }
+
+    .summary_progress progress {
+      background-color: @primary_color;
+      background-image: none;
     }
   """;
 }
