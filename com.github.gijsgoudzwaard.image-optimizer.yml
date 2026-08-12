@@ -14,11 +14,15 @@ command: com.github.gijsgoudzwaard.image-optimizer
 
 # Every permission here has to earn its place, because each one shows up on the
 # app's Flathub listing. There is deliberately no --filesystem argument: files
-# reach the app through the portals instead. Gtk.FileDialog goes through the file
-# chooser portal, drag and drop through the file transfer portal that GDK speaks
-# on its own, and paths from "Open With" through --file-forwarding below. All
-# three hand over a path in this app's document namespace, which is exactly the
-# one file the user pointed at and nothing around it.
+# reach the app through the portals instead, and all three routes hand over a
+# path in this app's own document namespace, which is the one file the user
+# pointed at and nothing around it.
+#
+#   file chooser   Gtk.FileDialog, which GTK routes through the portal
+#   drag and drop  GDK speaks org.freedesktop.portal.FileTransfer by itself
+#   Open With      flatpak rewrites the %F in the desktop file into its own file
+#                  forwarding tokens when it exports the launcher, so this needs
+#                  nothing here and nothing in the desktop file
 finish-args:
   # Shared memory with the X server. Without it X11 falls back to copying every
   # frame over the socket, which is visibly slow.
@@ -28,9 +32,6 @@ finish-args:
   - '--socket=fallback-x11'
   # The primary display path.
   - '--socket=wayland'
-  # Turns the host paths that a file manager passes on "Open With" into document
-  # portal paths. Without it those arguments name files the sandbox cannot open.
-  - '--file-forwarding'
 
 # This section is where you list all the source code required to build your app.
 # If we had external dependencies that weren't included in our SDK, we would list
@@ -55,11 +56,3 @@ modules:
     sources:
       - type: dir
         path: .
-    # --file-forwarding only does anything when the Exec line marks which of its
-    # arguments are files, and it marks them with @@. That marker cannot live in
-    # the desktop file in the repository: outside a flatpak nothing strips it, so
-    # a source install and the snap would pass a literal "@@" to the app. So it
-    # is added here, to the installed copy only.
-    post-install:
-      - sed -i 's|Exec=com.github.gijsgoudzwaard.image-optimizer %F|Exec=com.github.gijsgoudzwaard.image-optimizer @@ %F @@|'
-        /app/share/applications/com.github.gijsgoudzwaard.image-optimizer.desktop
