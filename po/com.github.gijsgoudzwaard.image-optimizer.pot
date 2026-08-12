@@ -8,41 +8,105 @@ msgid ""
 msgstr ""
 "Project-Id-Version: com.github.gijsgoudzwaard.image-optimizer\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-25 22:04+0900\n"
+"POT-Creation-Date: 2026-08-12 13:12+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
 #: src/MainWindow.vala:44
 msgid "Image Optimizer"
 msgstr ""
 
-#: src/MainWindow.vala:119
+#: src/MainWindow.vala:123
 msgid "Add Image"
 msgstr ""
 
-#: src/MainWindow.vala:202
+#: src/MainWindow.vala:221
 msgid "Select image(s)"
 msgstr ""
 
-#: src/Widgets/List.vala:57
+#: src/Widgets/ImageRow.vala:80
+msgid "Already optimal"
+msgstr ""
+
+#: src/Widgets/ImageRow.vala:88
+msgid "Failed"
+msgstr ""
+
+#: src/Widgets/ImageRow.vala:96
+msgid "Not supported"
+msgstr ""
+
+#: src/Widgets/List.vala:118
 msgid "File"
 msgstr ""
 
-#: src/Widgets/List.vala:58
+#: src/Widgets/List.vala:119
 msgid "Size"
 msgstr ""
 
-#: src/Widgets/List.vala:59
+#: src/Widgets/List.vala:120
 msgid "New size"
 msgstr ""
 
-#: src/Widgets/List.vala:60
+#: src/Widgets/List.vala:121
 msgid "Savings"
+msgstr ""
+
+#: src/Widgets/SummaryBar.vala:183
+msgid "Optimizing…"
+msgstr ""
+
+#: src/Widgets/SummaryBar.vala:185
+#, c-format
+msgid "%u of %u file done"
+msgid_plural "%u of %u files done"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Widgets/SummaryBar.vala:191
+msgid "saved so far"
+msgstr ""
+
+#: src/Widgets/SummaryBar.vala:235
+msgid "Nothing left to save"
+msgstr ""
+
+#: src/Widgets/SummaryBar.vala:242
+#, c-format
+msgid "%s saved"
+msgstr ""
+
+#: src/Widgets/SummaryBar.vala:248
+#, c-format
+msgid "%s to %s"
+msgstr ""
+
+#: src/Widgets/SummaryBar.vala:288
+#, c-format
+msgid "%u file optimized"
+msgid_plural "%u files optimized"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Widgets/SummaryBar.vala:292
+#, c-format
+msgid "%u already optimal"
+msgstr ""
+
+#: src/Widgets/SummaryBar.vala:296
+#, c-format
+msgid "%u failed"
+msgstr ""
+
+#: src/Widgets/SummaryBar.vala:300
+#, c-format
+msgid "%u not supported"
 msgstr ""
 
 #: src/Widgets/UploadScreen.vala:24

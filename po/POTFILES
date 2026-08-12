@@ -1,4 +1,6 @@
 src/MainWindow.vala
 src/Utils/Image.vala
+src/Widgets/ImageRow.vala
 src/Widgets/List.vala
+src/Widgets/SummaryBar.vala
 src/Widgets/UploadScreen.vala

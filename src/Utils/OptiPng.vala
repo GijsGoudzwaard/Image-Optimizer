@@ -95,7 +95,7 @@ public class OptiPng {
     var rewrite = new Rewrite (image);
 
     if (rewrite.working_path == null) {
-      this.list.update_size (image, 0);
+      this.list.update_result (image, Status.FAILED, 0);
 
       return;
     }
@@ -109,6 +109,7 @@ public class OptiPng {
     argv += rewrite.working_path;
 
     var new_size = 0;
+    var status_result = Status.FAILED;
 
     try {
       string standard_output;
@@ -137,13 +138,14 @@ public class OptiPng {
           image,
           standard_error
         );
-      } else if (! standard_error.contains ("is already optimized")) {
+      } else if (standard_error.contains ("is already optimized")) {
+        status_result = Status.ALREADY_OPTIMAL;
+      } else if (this.get_new_size (standard_error) > 0) {
         // optipng reports on stderr, stdout stays empty. Its number describes
         // the copy, so it only decides whether there is anything to write back;
         // the size handed to the list is what was actually written.
-        if (this.get_new_size (standard_error) > 0) {
-          new_size = rewrite.commit ();
-        }
+        new_size = rewrite.commit ();
+        status_result = (new_size > 0) ? Status.OPTIMIZED : Status.FAILED;
       }
     } catch (Error e) {
       warning ("Failed to run optipng on \"%s\": %s", image, e.message);
@@ -153,9 +155,10 @@ public class OptiPng {
     // behind.
     rewrite.cleanup ();
 
-    // A zero means "nothing was written", which the list turns back into the
-    // original size, so the row reports no saving instead of a made up one.
-    this.list.update_size (image, new_size);
+    // The status is what the row and the summary bar go by. A size only means
+    // anything alongside OPTIMIZED, and the list checks that it really is
+    // smaller before it counts as a saving.
+    this.list.update_result (image, status_result, new_size);
   }
 
   /**

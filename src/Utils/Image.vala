@@ -37,6 +37,15 @@ public class Image {
   public int64 new_size = 0;
 
   /**
+   * Whether one of the optimizers can do anything with this file. An
+   * unsupported file is still added to the list, so it can say so, but it is
+   * never handed to an optimizer.
+   *
+   * @var bool
+   */
+  public bool supported;
+
+  /**
    * Set the image properties.
    *
    * @param string path
@@ -47,6 +56,7 @@ public class Image {
     this.path = path;
     this.name = name;
     this.type = type;
+    this.supported = Image.is_valid (type);
 
     File file = File.new_for_path (path);
     int64 file_size = 0;
@@ -140,5 +150,25 @@ public class Image {
     float savings = 100.00f - (new_size / size * 100.00f);
 
     return "%.2f%%".printf (savings);
+  }
+
+  /**
+   * The savings as a whole percentage, for the summary bar. Two decimals are
+   * right for a single row but too much detail for one number about a batch.
+   *
+   * Deliberately calculated over the totals and not as the average of the
+   * per-row percentages: one small file with a large saving in it would pull
+   * such an average far away from what the user actually gained.
+   *
+   * @param  int64 size
+   * @param  int64 new_size
+   * @return int
+   */
+  public static int calc_savings_rounded (int64 size, int64 new_size) {
+    if (size <= 0) {
+      return 0;
+    }
+
+    return (int) Math.round (100.0 - ((double) new_size / (double) size * 100.0));
   }
 }

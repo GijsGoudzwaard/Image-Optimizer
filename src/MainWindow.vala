@@ -193,11 +193,11 @@ public class MainWindow : Gtk.Window {
       var name = Image.get_file_name (path);
       var type = Image.get_file_type (name);
 
-      if (Image.is_valid (type.down ())) {
-        this.images += new Image (path, name, type.down ());
-      } else {
-        // TODO: add an error message here
-      }
+      // Unsupported files are added too. They used to be dropped here without a
+      // word, so someone who selected a folder of mixed contents saw a shorter
+      // list than they picked and had no way to tell which files were left out.
+      // The Image knows it cannot be optimized and the list says so.
+      this.images += new Image (path, name, type.down ());
     });
 
     if (images.length > 0 && this.images_list == null) {
@@ -240,11 +240,8 @@ public class MainWindow : Gtk.Window {
       var name = Image.get_file_name (path);
       var type = Image.get_file_type (name);
 
-      if (Image.is_valid (type.down ())) {
-        this.images += new Image (path, name, type.down ());
-      } else {
-        // TODO: add an error message here
-      }
+      // Same as in on_drop: nothing is thrown away silently.
+      this.images += new Image (path, name, type.down ());
     }
 
     if (this.images_list != null) {

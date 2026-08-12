@@ -314,6 +314,10 @@ echo "### R9 an unsupported type is left alone ###"
 # 99% saving on the file the user had actually selected. The fixture has to be a
 # real bmp for that: optipng goes by content, so a png carrying a .bmp name gets
 # rewritten in place instead and the second file never appears.
+#
+# Such a file does get a row now, saying it is not supported, instead of being
+# dropped on the way in. What matters here is unchanged: nothing on disk moves,
+# and no optimizer is ever handed the file.
 r9="$WORK/r9"
 mkdir -p "$r9"
 cp "$BMP_SOURCE" "$r9/photo.bmp"

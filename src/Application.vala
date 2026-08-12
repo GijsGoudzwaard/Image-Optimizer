@@ -38,11 +38,10 @@ class Application : Gtk.Application {
         var name = Image.get_file_name (path);
         var type = Image.get_file_type (file.get_basename ());
 
-        if (Image.is_valid (type.down ())) {
-          this.images += new Image (path, name, type.down ());
-        } else {
-          // TODO: add an error message here
-        }
+        // Kept in step with MainWindow: a file that arrives through Open With or
+        // the command line gets a row saying it is not supported, rather than
+        // disappearing on the way in.
+        this.images += new Image (path, name, type.down ());
       }
 
       if (this.app_window == null) {

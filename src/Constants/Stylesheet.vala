@@ -73,8 +73,6 @@ class Stylesheet {
     .tree_view {
       background-color: #fff;
       color: #000;
-      border-bottom-left-radius: 3px;
-      border-bottom-right-radius: 3px;
     }
 
     .tree_view row {
@@ -102,6 +100,41 @@ class Stylesheet {
 
     .tree_view button label {
       color: #fff;
+    }
+
+    /* The rounded bottom corners used to sit on .tree_view. The bar is the
+       bottom of the window now, so they belong here. */
+    .summary_bar {
+      background-color: mix(@primary_color, #ffffff, 0.94);
+      border-top: 1px solid mix(@primary_color, #ffffff, 0.75);
+      border-bottom-left-radius: 3px;
+      border-bottom-right-radius: 3px;
+      padding: 14px;
+    }
+
+    .summary_bar .headline {
+      font-size: 13px;
+      font-weight: 500;
+      color: #2c2c2a;
+    }
+
+    .summary_bar .sub,
+    .summary_bar .caption {
+      font-size: 11px;
+      color: #5f5e5a;
+    }
+
+    .summary_bar .figure {
+      font-size: 19px;
+      font-weight: 500;
+      color: @primary_color;
+    }
+
+    .summary_progress,
+    .summary_progress trough,
+    .summary_progress progress {
+      min-height: 3px;
+      border-radius: 0;
     }
   """;
 }

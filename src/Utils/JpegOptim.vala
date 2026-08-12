@@ -103,7 +103,7 @@ public class JpegOptim {
     var rewrite = new Rewrite (image);
 
     if (rewrite.working_path == null) {
-      this.list.update_size (image, 0);
+      this.list.update_result (image, Status.FAILED, 0);
 
       return;
     }
@@ -117,6 +117,7 @@ public class JpegOptim {
     argv += rewrite.working_path;
 
     var new_size = 0;
+    var status_result = Status.FAILED;
 
     try {
       string standard_output;
@@ -141,11 +142,18 @@ public class JpegOptim {
       // a saving on a file that was never touched. The status is the only honest
       // signal, so read it.
       if (status == 0) {
-        // jpegoptim reports on stdout. The size it prints describes the copy, so
-        // it is only used to tell "it did something" from "already optimal"; the
-        // size that reaches the list is the number of bytes actually written.
-        if (this.get_new_size (standard_output) > 0) {
+        // jpegoptim reports on stdout and ends its line with ", skipped." when
+        // its own result was not smaller than what it was given. Committing then
+        // would write bytes identical to the original back over the original,
+        // which is work and risk for nothing.
+        if (", skipped" in standard_output) {
+          status_result = Status.ALREADY_OPTIMAL;
+        } else if (this.get_new_size (standard_output) > 0) {
+          // The size jpegoptim prints describes the copy, so it only tells "it
+          // did something" from "it could not"; the size that reaches the list
+          // is the number of bytes actually written.
           new_size = rewrite.commit ();
+          status_result = (new_size > 0) ? Status.OPTIMIZED : Status.FAILED;
         }
       } else {
         warning (
@@ -163,9 +171,10 @@ public class JpegOptim {
     // behind.
     rewrite.cleanup ();
 
-    // A zero means "nothing was written", which the list turns back into the
-    // original size, so the row reports no saving instead of a made up one.
-    this.list.update_size (image, new_size);
+    // The status is what the row and the summary bar go by. A size only means
+    // anything alongside OPTIMIZED, and the list checks that it really is
+    // smaller before it counts as a saving.
+    this.list.update_result (image, status_result, new_size);
   }
 
   /**

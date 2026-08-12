@@ -19,6 +19,70 @@ public class List {
   public Gtk.Button upload_button;
 
   /**
+   * The bar under the list, showing progress and then the result.
+   *
+   * @var SummaryBar
+   */
+  private SummaryBar summary;
+
+  /**
+   * Everything that was ever added to the list.
+   *
+   * These counters are only ever touched from apply_result and the two methods
+   * that add images, all of which run on the main loop, so they need no locking
+   * of their own.
+   *
+   * @var uint
+   */
+  private uint total_files = 0;
+
+  /**
+   * Everything that is no longer pending, whatever became of it.
+   *
+   * @var uint
+   */
+  private uint finished_files = 0;
+
+  /**
+   * Files that came out smaller than they went in.
+   *
+   * @var uint
+   */
+  private uint optimized_files = 0;
+
+  /**
+   * Files the app could not write.
+   *
+   * @var uint
+   */
+  private uint failed_files = 0;
+
+  /**
+   * Files no optimizer here can do anything with.
+   *
+   * @var uint
+   */
+  private uint unsupported_files = 0;
+
+  /**
+   * Original size of the optimized files only.
+   *
+   * Files that were already optimal are left out on purpose. Counting them
+   * would drag the percentage down with files there was nothing to be done
+   * about, which reads as a worse result than the app delivered.
+   *
+   * @var int64
+   */
+  private int64 total_before = 0;
+
+  /**
+   * New size of the same files.
+   *
+   * @var int64
+   */
+  private int64 total_after = 0;
+
+  /**
    * Returns the text a column should show for a given row.
    */
   private delegate string CellText (ImageRow row);
@@ -27,11 +91,12 @@ public class List {
     this.images = images;
   }
 
-  public Gtk.ScrolledWindow window () {
+  public Gtk.Box window () {
     var main = new Gtk.ScrolledWindow ();
     main.set_policy (PolicyType.AUTOMATIC, PolicyType.AUTOMATIC);
 
     this.listmodel = new GLib.ListStore (typeof (ImageRow));
+    this.summary = new SummaryBar ();
 
     this.upload_button = new Gtk.Button.with_label ("+");
     this.upload_button.add_css_class ("upload_button");
@@ -55,10 +120,72 @@ public class List {
     view.append_column (this.text_column (_("New size"), (row) => row.new_size_text));
     view.append_column (this.text_column (_("Savings"), (row) => row.savings_text));
 
-    var optimizer = new Optimizer (this.images);
-    optimizer.optimize (this);
+    this.start (this.images);
 
-    return main;
+    // The list scrolls, the bar does not: it stays visible at the bottom of the
+    // window however long the list gets.
+    var container = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
+
+    main.set_vexpand (true);
+    container.append (main);
+    container.append (this.summary);
+
+    return container;
+  }
+
+  /**
+   * Take a batch into the counts and hand the part of it that can be optimized
+   * to the optimizers.
+   *
+   * @param  Image[] batch
+   * @return void
+   */
+  private void start (Image[] batch) {
+    Image[] to_optimize = {};
+
+    foreach (var image in batch) {
+      this.total_files++;
+
+      if (image.supported) {
+        to_optimize += image;
+
+        continue;
+      }
+
+      // It has a row saying so, but there is nothing to wait for, so it is done
+      // the moment it arrives.
+      this.unsupported_files++;
+      this.finished_files++;
+    }
+
+    this.refresh_summary ();
+
+    // Starting the optimizers on an empty batch would spawn workers with nothing
+    // to do, which is what happens when every file that was added is one of the
+    // types the app turns away.
+    if (to_optimize.length == 0) {
+      return;
+    }
+
+    var optimizer = new Optimizer (to_optimize);
+    optimizer.optimize (this);
+  }
+
+  /**
+   * Hand the current counts to the bar.
+   *
+   * @return void
+   */
+  private void refresh_summary () {
+    this.summary.update (
+      this.finished_files,
+      this.total_files,
+      this.optimized_files,
+      this.failed_files,
+      this.unsupported_files,
+      this.total_before,
+      this.total_after
+    );
   }
 
   /**
@@ -87,9 +214,11 @@ public class List {
       var row = (ImageRow) item.get_item ();
       var spinner = (Gtk.Spinner) item.get_child ();
 
-      spinner.set_visible (row.optimizing);
+      var pending = row.status == Status.PENDING;
 
-      if (row.optimizing) {
+      spinner.set_visible (pending);
+
+      if (pending) {
         spinner.start ();
       } else {
         spinner.stop ();
@@ -136,34 +265,37 @@ public class List {
   }
 
   /**
-   * Store the optimized size for an image and refresh its row.
+   * Store what became of an image and refresh its row.
    *
    * This is called from the optimizer worker threads, so the actual model
    * update is deferred to the main loop where GTK is safe to touch.
    *
    * @param  string path
+   * @param  Status status
    * @param  int size
    * @return void
    */
-  public void update_size (string path, int size) {
+  public void update_result (string path, Status status, int size) {
     // Owned copy, the closure outlives this call.
     string image_path = path;
 
     Idle.add (() => {
-      this.apply_size (image_path, size);
+      this.apply_result (image_path, status, size);
 
       return Source.REMOVE;
     });
   }
 
   /**
-   * Apply a new size to the row belonging to a path. Runs on the main loop.
+   * Apply a result to the row belonging to a path and add it to the totals.
+   * Runs on the main loop.
    *
    * @param  string path
+   * @param  Status status
    * @param  int size
    * @return void
    */
-  private void apply_size (string path, int size) {
+  private void apply_result (string path, Status status, int size) {
     for (uint i = 0; i < this.listmodel.get_n_items (); i++) {
       var row = (ImageRow) this.listmodel.get_item (i);
 
@@ -172,17 +304,44 @@ public class List {
       }
 
       var image = row.image;
-      image.new_size = (size == 0 || image.size < size) ? image.size : size;
+      var outcome = status;
+
+      // The optimizers report what their tool did, but only here is the original
+      // size known, so this is where "smaller" is decided. Anything that did not
+      // actually shrink is not counted as a saving, or the total would grow on a
+      // file that stayed the same.
+      if (outcome == Status.OPTIMIZED && (size <= 0 || size >= image.size)) {
+        outcome = Status.ALREADY_OPTIMAL;
+      }
+
+      image.new_size = (outcome == Status.OPTIMIZED) ? size : image.size;
 
       // A GLib.ListStore has no "this item changed" signal. Splicing the same
       // object back in is not enough either: the column view sees an identical
       // item and skips rebinding it. Hand it a fresh row so it rebinds.
       var updated = new ImageRow (image);
-      updated.optimizing = false;
-      updated.new_size_text = GLib.format_size (image.new_size);
-      updated.savings_text = Image.calc_savings ((float) image.size, (float) image.new_size);
+      updated.apply_status (outcome);
 
       this.listmodel.splice (i, 1, {updated});
+
+      this.finished_files++;
+
+      switch (outcome) {
+        case Status.OPTIMIZED:
+          this.optimized_files++;
+          this.total_before += image.size;
+          this.total_after += image.new_size;
+          break;
+
+        case Status.FAILED:
+          this.failed_files++;
+          break;
+
+        default:
+          break;
+      }
+
+      this.refresh_summary ();
 
       return;
     }
@@ -215,7 +374,9 @@ public class List {
       return;
     }
 
-    var optimizer = new Optimizer (fresh);
-    optimizer.optimize (this);
+    // The totals are not reset here. Dropping more files halfway through is
+    // still the same session, so the bar keeps counting rather than starting
+    // over on what is already on screen.
+    this.start (fresh);
   }
 }
