@@ -74,10 +74,12 @@ public class SummaryBar : Gtk.Box {
 
     // The text sits in its own padded box so the progress bar underneath can run
     // the full width of the window instead of stopping at the padding.
-    var row = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 10);
+    // 16 between the two groups, 9 between the icon and the text it belongs to.
+    var row = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 16);
     row.add_css_class ("summary_content");
 
     this.spinner = new Gtk.Spinner ();
+    this.spinner.set_size_request (17, 17);
     this.spinner.set_valign (Gtk.Align.CENTER);
     this.spinner.start ();
 
@@ -87,13 +89,18 @@ public class SummaryBar : Gtk.Box {
     // though IconTheme.has_icon said it was there. These also carry their own
     // colour, which a symbolic icon from the theme would not.
     this.icon = new Gtk.Image.from_resource (SummaryBar.ICON_OK);
-    this.icon.set_pixel_size (16);
+    this.icon.set_pixel_size (17);
     this.icon.set_valign (Gtk.Align.CENTER);
     this.icon.set_visible (false);
 
+    // The icon and the two lines belong together, so they sit in one box with
+    // the tighter gap and that box is what the wider gap separates.
+    var left = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 9);
+    left.set_hexpand (true);
+    left.set_halign (Gtk.Align.START);
+    left.set_valign (Gtk.Align.CENTER);
+
     var text = new Gtk.Box (Gtk.Orientation.VERTICAL, 2);
-    text.set_hexpand (true);
-    text.set_halign (Gtk.Align.START);
     text.set_valign (Gtk.Align.CENTER);
 
     this.headline = new Gtk.Label (null);
@@ -107,7 +114,7 @@ public class SummaryBar : Gtk.Box {
     text.append (this.headline);
     text.append (this.sub);
 
-    var numbers = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
+    var numbers = new Gtk.Box (Gtk.Orientation.VERTICAL, 2);
     numbers.set_halign (Gtk.Align.END);
     numbers.set_valign (Gtk.Align.CENTER);
 
@@ -122,9 +129,11 @@ public class SummaryBar : Gtk.Box {
     numbers.append (this.figure);
     numbers.append (this.caption);
 
-    row.append (this.spinner);
-    row.append (this.icon);
-    row.append (text);
+    left.append (this.spinner);
+    left.append (this.icon);
+    left.append (text);
+
+    row.append (left);
     row.append (numbers);
 
     this.progress = new Gtk.ProgressBar ();

@@ -87,6 +87,12 @@ public class List {
    */
   private delegate string CellText (ImageRow row);
 
+  /**
+   * Whether that text is a word standing in for a number, which is shown a
+   * shade back from the numbers around it.
+   */
+  private delegate bool CellMuted (ImageRow row);
+
   public List (Image[] images) {
     this.images = images;
   }
@@ -114,15 +120,17 @@ public class List {
     view.add_css_class ("tree_view");
     main.set_child (view);
 
+    // The widths are fixed rather than shared out evenly, so a number never
+    // moves when the one beside it grows a digit. Each one is the width of the
+    // text plus the 10px gap in front of it, and the last one carries the 14px
+    // the window keeps free on the right.
     view.append_column (this.status_column ());
-    view.append_column (this.text_column (_("File"), 0, (row) => row.image.name));
-    view.append_column (this.text_column (_("Size"), 1, (row) => row.size_text));
-    view.append_column (this.text_column (_("New size"), 1, (row) => row.new_size_text));
-    view.append_column (this.text_column (_("Savings"), 1, (row) => row.savings_text));
+    view.append_column (this.text_column (_("File"), 0, -1, 10, 0, (row) => row.image.name, (row) => false));
+    view.append_column (this.text_column (_("Size"), 1, 88, 10, 0, (row) => row.size_text, (row) => row.status == Status.UNSUPPORTED));
+    view.append_column (this.text_column (_("New size"), 1, 92, 10, 0, (row) => row.new_size_text, (row) => row.status == Status.FAILED));
+    view.append_column (this.text_column (_("Savings"), 1, 94, 10, 14, (row) => row.savings_text, (row) => row.status != Status.OPTIMIZED));
 
-    // Everything from the third column on holds a number, so its heading lines
-    // up with it on the right.
-    this.align_headers (view, 2);
+    this.style_headers (view);
 
     this.start (this.images);
 
@@ -212,12 +220,12 @@ public class List {
       var box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
       box.set_valign (Gtk.Align.CENTER);
       box.set_margin_start (14);
-      box.set_margin_end (2);
 
       var spinner = new Gtk.Spinner ();
+      spinner.set_size_request (14, 14);
 
       var icon = new Gtk.Image ();
-      icon.set_pixel_size (16);
+      icon.set_pixel_size (14);
       icon.set_visible (false);
 
       box.append (spinner);
@@ -250,7 +258,11 @@ public class List {
       icon.set_visible (! pending && row.icon_resource != null);
     });
 
-    return new Gtk.ColumnViewColumn ("", factory);
+    var column = new Gtk.ColumnViewColumn ("", factory);
+    // 14 of padding plus the 20 the icon sits in, so the file name starts at 44.
+    column.set_fixed_width (34);
+
+    return column;
   }
 
   /**
@@ -258,24 +270,45 @@ public class List {
    *
    * @param  string title
    * @param  float xalign  0 to read as text, 1 to line up as a number
+   * @param  int width  fixed width in pixels, or -1 to take up the slack
+   * @param  int lead  space in front of the text
+   * @param  int trail  space behind it, which only the last column needs
    * @param  CellText get_text
+   * @param  CellMuted get_muted
    * @return Gtk.ColumnViewColumn
    */
-  private Gtk.ColumnViewColumn text_column (string title, float xalign, owned CellText get_text) {
+  private Gtk.ColumnViewColumn text_column (
+    string title,
+    float xalign,
+    int width,
+    int lead,
+    int trail,
+    owned CellText get_text,
+    owned CellMuted get_muted
+  ) {
     var factory = new Gtk.SignalListItemFactory ();
 
     factory.setup.connect ((object) => {
       var item = (Gtk.ListItem) object;
 
       var label = new Gtk.Label (null);
+      label.add_css_class ("cell_text");
       label.set_xalign (xalign);
       // Without this the label is only as wide as its text, and then xalign has
       // nothing to align inside.
       label.set_hexpand (true);
-      label.set_margin_top (14);
-      label.set_margin_bottom (14);
-      label.set_margin_start (6);
-      label.set_margin_end (14);
+      label.set_margin_top (11);
+      label.set_margin_bottom (11);
+
+      // The gap belongs in front of the text, so the numbers end where the
+      // column does. Only the last column keeps space behind it, which is what
+      // the window leaves free on the right.
+      if (xalign > 0) {
+        label.set_margin_start (lead);
+        label.set_margin_end (trail);
+      } else {
+        label.set_margin_start (lead);
+      }
 
       item.set_child (label);
     });
@@ -283,18 +316,30 @@ public class List {
     factory.bind.connect ((object) => {
       var item = (Gtk.ListItem) object;
       var row = (ImageRow) item.get_item ();
+      var label = (Gtk.Label) item.get_child ();
 
-      ((Gtk.Label) item.get_child ()).set_label (get_text (row));
+      label.set_label (get_text (row));
+
+      if (get_muted (row)) {
+        label.add_css_class ("muted");
+      } else {
+        label.remove_css_class ("muted");
+      }
     });
 
     var column = new Gtk.ColumnViewColumn (title, factory);
-    column.set_expand (true);
+
+    if (width < 0) {
+      column.set_expand (true);
+    } else {
+      column.set_fixed_width (width);
+    }
 
     return column;
   }
 
   /**
-   * Line the headings of the numeric columns up with their values.
+   * Line the column headings up with the values under them.
    *
    * Gtk.ColumnViewColumn exposes no widget for its heading, so this walks to the
    * labels the column view built for them. It is written to give up quietly
@@ -302,27 +347,32 @@ public class List {
    * GTK put them, which is the way they looked before this existed.
    *
    * @param  Gtk.ColumnView view
-   * @param  int from  index of the first column to align
    * @return void
    */
-  private void align_headers (Gtk.ColumnView view, int from) {
+  private void style_headers (Gtk.ColumnView view) {
     var header = view.get_first_child ();
 
     if (header == null) {
       return;
     }
 
+    // One entry per column, in order, with the same numbers the columns above
+    // use so a heading sits exactly over its values.
+    float[] xalign = { 0, 0, 1, 1, 1 };
+    int[] lead = { 0, 10, 10, 10, 10 };
+    int[] trail = { 0, 0, 0, 0, 14 };
+
     var child = header.get_first_child ();
     var index = 0;
 
-    while (child != null) {
-      if (index >= from) {
-        var label = this.find_label (child);
+    while (child != null && index < xalign.length) {
+      var label = this.find_label (child);
 
-        if (label != null) {
-          label.set_hexpand (true);
-          label.set_xalign (1);
-        }
+      if (label != null) {
+        label.set_hexpand (true);
+        label.set_xalign (xalign[index]);
+        label.set_margin_start (lead[index]);
+        label.set_margin_end (trail[index]);
       }
 
       child = child.get_next_sibling ();

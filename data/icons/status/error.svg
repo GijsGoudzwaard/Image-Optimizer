@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Row icon for a file the app could not handle, and the summary bar's icon
-     when a batch contains one. -->
-<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
-  <circle cx="8" cy="8" r="6.2" fill="none" stroke="#d64545" stroke-width="1.5"/>
-  <path d="M8 4.5 L8 9" fill="none" stroke="#d64545" stroke-width="1.5" stroke-linecap="round"/>
-  <circle cx="8" cy="11.4" r="0.95" fill="#d64545"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <!-- Row icon for a file the app could not handle, and the summary bar's icon
+       when a batch contains one. -->
+  <circle cx="12" cy="12" r="9" fill="none" stroke="#A32D2D" stroke-width="2"/>
+  <path d="M12 8 L12 12" fill="none" stroke="#A32D2D" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="12" cy="16" r="1.15" fill="#A32D2D"/>
 </svg>

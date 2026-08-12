@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Row icon for an image that came out smaller. Green is fixed on purpose,
-     like every other colour in this app's stylesheet. -->
-<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
-  <path d="M3.2 8.6 L6.3 11.7 L12.8 5.2" fill="none" stroke="#2ea45c" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <!-- Row icon for an image that came out smaller. Drawn on a 24 unit grid with
+       a 2 unit round stroke, which is what makes it sit beside the text the way
+       the mockup has it. The colour is fixed on purpose, like the rest of this
+       app's stylesheet.
+
+       The comment sits inside the element and not above it because gdk-pixbuf
+       works out the format from the first bytes of the file: with four lines of
+       prose in front of the svg tag it stopped recognising this as an image and
+       GTK quietly painted the missing icon placeholder instead. -->
+  <path d="M5 12.5 L10 17.5 L19 6.5" fill="none" stroke="#1D9E75" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
