@@ -13,6 +13,8 @@
 #   R7  no diagnostics for input that is perfectly fine.
 #   R8  Ctrl+Q, which the app description promises.
 #   R9  a bmp, which the app used to accept and then not optimize.
+#   R10 a read-only directory, which the copy-and-write-back path has to survive.
+#   R11 a read-only file, which has to fail without inventing a saving.
 #
 # Usage, against an installed tree:
 #
@@ -325,6 +327,53 @@ check "the file is unchanged" "$(cmp -s "$BMP_SOURCE" "$r9/photo.bmp" && echo ye
 # The one that catches the old behaviour: it left a second file behind.
 check "files in the directory" "$(find "$r9" -type f | wc -l | tr -d ' ')" "1"
 stop_app
+
+echo "### R10 a read-only directory no longer stops the optimization ###"
+# The optimizers replace a file by writing a temporary one beside it and
+# renaming, so they need write access to the directory. The app now hands them a
+# copy inside its own runtime directory and writes the result back over the
+# original file descriptor, which only needs write access to the file. A
+# directory the user cannot write to therefore has to work, and that is the same
+# shape as a document portal path, where the grant covers one file and nothing
+# around it.
+if [ "$(id -u)" = "0" ]; then
+  # root is exempt from these permissions, so the case would pass for the wrong
+  # reason. CI runs the suite as an ordinary user, where it applies.
+  echo "  SKIP running as root, which ignores file and directory permissions"
+else
+  r10="$WORK/r10"
+  mkdir -p "$r10"
+  cp "$PNG_SOURCE" "$r10/locked-dir.png"
+  cp "$JPG_SOURCE" "$r10/locked-dir.jpg"
+  record "$r10"/*
+  chmod a-w "$r10"
+  start_app "" "$r10/locked-dir.png" "$r10/locked-dir.jpg"
+  wait_shrunk 2 60 "$r10"/*
+  check "app still running" "$(alive)" "yes"
+  check "both files optimized in an unwritable directory" "$(shrunk_count "$r10"/*)" "2"
+  stop_app
+  chmod u+w "$r10"
+
+  echo "### R11 a read-only file fails without a fake saving ###"
+  # The one case that genuinely cannot be written. It has to be reported as a
+  # failure in the log and leave the file alone, rather than parsing the
+  # optimizer's optimistic output into a saving that never happened.
+  r11="$WORK/r11"
+  mkdir -p "$r11"
+  cp "$PNG_SOURCE" "$r11/readonly.png"
+  cp "$JPG_SOURCE" "$r11/readonly.jpg"
+  record "$r11"/*
+  chmod a-w "$r11"/readonly.*
+  start_app "" "$r11/readonly.png" "$r11/readonly.jpg"
+  # Nothing can be written, so wait out the time an optimization would have taken.
+  sleep 8
+  check "app still running" "$(alive)" "yes"
+  check "files left untouched" "$(shrunk_count "$r11"/*)" "0"
+  check "failure was logged" \
+    "$(grep -qE "Could not write the result back" "$WORK/app.log" && echo yes || echo no)" "yes"
+  stop_app
+  chmod u+w "$r11"/readonly.*
+fi
 
 echo
 if [ "$failed" -ne 0 ]; then

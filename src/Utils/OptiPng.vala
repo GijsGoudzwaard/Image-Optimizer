@@ -90,13 +90,25 @@ public class OptiPng {
    * @return void
    */
   private void compress_one (string image) {
+    // The optimizer runs on a copy inside the sandbox, never on the file the
+    // user picked. See Rewrite for why.
+    var rewrite = new Rewrite (image);
+
+    if (rewrite.working_path == null) {
+      this.list.update_size (image, 0);
+
+      return;
+    }
+
     string[] argv = { "optipng" };
 
     foreach (var arg in this.args) {
       argv += arg;
     }
 
-    argv += image;
+    argv += rewrite.working_path;
+
+    var new_size = 0;
 
     try {
       string standard_output;
@@ -114,17 +126,36 @@ public class OptiPng {
         out status
       );
 
-      var new_size = 0;
-
-      // optipng reports on stderr, stdout stays empty.
-      if (! standard_error.contains ("is already optimized")) {
-        new_size = this.get_new_size (standard_error);
+      // Same reasoning as in JpegOptim: only the exit status says whether the
+      // result reached the disk. optipng fails with "Can't back up the input
+      // file" when it cannot write next to the original, and without this check
+      // that turned into a reported saving on an untouched file.
+      if (status != 0) {
+        warning (
+          "optipng exited with status %d for \"%s\": %s",
+          status,
+          image,
+          standard_error
+        );
+      } else if (! standard_error.contains ("is already optimized")) {
+        // optipng reports on stderr, stdout stays empty. Its number describes
+        // the copy, so it only decides whether there is anything to write back;
+        // the size handed to the list is what was actually written.
+        if (this.get_new_size (standard_error) > 0) {
+          new_size = rewrite.commit ();
+        }
       }
-
-      this.list.update_size (image, new_size);
     } catch (Error e) {
       warning ("Failed to run optipng on \"%s\": %s", image, e.message);
     }
+
+    // Always, so a failure or a quit halfway through does not leave the copy
+    // behind.
+    rewrite.cleanup ();
+
+    // A zero means "nothing was written", which the list turns back into the
+    // original size, so the row reports no saving instead of a made up one.
+    this.list.update_size (image, new_size);
   }
 
   /**

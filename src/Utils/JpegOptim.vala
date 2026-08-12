@@ -98,13 +98,25 @@ public class JpegOptim {
    * @return void
    */
   private void compress_one (string image) {
+    // The optimizer runs on a copy inside the sandbox, never on the file the
+    // user picked. See Rewrite for why.
+    var rewrite = new Rewrite (image);
+
+    if (rewrite.working_path == null) {
+      this.list.update_size (image, 0);
+
+      return;
+    }
+
     string[] argv = { "jpegoptim" };
 
     foreach (var arg in this.args) {
       argv += arg;
     }
 
-    argv += image;
+    argv += rewrite.working_path;
+
+    var new_size = 0;
 
     try {
       string standard_output;
@@ -122,11 +134,38 @@ public class JpegOptim {
         out status
       );
 
-      // jpegoptim reports on stdout.
-      this.list.update_size (image, this.get_new_size (standard_output));
+      // jpegoptim prints its " --> " line before it tries to put the result in
+      // place, so that line is not proof that anything was written. A directory
+      // it cannot create its temporary file in gets the optimistic line on
+      // stdout and exit code 3, and parsing the line anyway made the list report
+      // a saving on a file that was never touched. The status is the only honest
+      // signal, so read it.
+      if (status == 0) {
+        // jpegoptim reports on stdout. The size it prints describes the copy, so
+        // it is only used to tell "it did something" from "already optimal"; the
+        // size that reaches the list is the number of bytes actually written.
+        if (this.get_new_size (standard_output) > 0) {
+          new_size = rewrite.commit ();
+        }
+      } else {
+        warning (
+          "jpegoptim exited with status %d for \"%s\": %s",
+          status,
+          image,
+          standard_error
+        );
+      }
     } catch (Error e) {
       warning ("Failed to run jpegoptim on \"%s\": %s", image, e.message);
     }
+
+    // Always, so a failure or a quit halfway through does not leave the copy
+    // behind.
+    rewrite.cleanup ();
+
+    // A zero means "nothing was written", which the list turns back into the
+    // original size, so the row reports no saving instead of a made up one.
+    this.list.update_size (image, new_size);
   }
 
   /**

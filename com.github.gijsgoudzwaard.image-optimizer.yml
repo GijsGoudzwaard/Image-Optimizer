@@ -12,14 +12,26 @@ sdk: io.elementary.Sdk
 # as your app ID
 command: com.github.gijsgoudzwaard.image-optimizer
 
-# Here we can specify the kinds of permissions our app needs to run. Since we're
-# not using hardware like webcams, making sound, or reading external files, we
-# only need permission to draw our app on screen using either X11 or Wayland.
+# Every permission here has to earn its place, because each one shows up on the
+# app's Flathub listing. There is deliberately no --filesystem argument: files
+# reach the app through the portals instead, and all three routes hand over a
+# path in this app's own document namespace, which is the one file the user
+# pointed at and nothing around it.
+#
+#   file chooser   Gtk.FileDialog, which GTK routes through the portal
+#   drag and drop  GDK speaks org.freedesktop.portal.FileTransfer by itself
+#   Open With      flatpak rewrites the %F in the desktop file into its own file
+#                  forwarding tokens when it exports the launcher, so this needs
+#                  nothing here and nothing in the desktop file
 finish-args:
+  # Shared memory with the X server. Without it X11 falls back to copying every
+  # frame over the socket, which is visibly slow.
   - '--share=ipc'
+  # Only claimed when the session is actually X11, so a Wayland session gets no
+  # X11 access at all.
   - '--socket=fallback-x11'
+  # The primary display path.
   - '--socket=wayland'
-  - '--filesystem=home'
 
 # This section is where you list all the source code required to build your app.
 # If we had external dependencies that weren't included in our SDK, we would list

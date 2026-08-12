@@ -170,6 +170,16 @@ public class MainWindow : Gtk.Window {
    * @return bool
    */
   private bool on_drop (Value value, double x, double y) {
+    // Nothing here asks for the document portal, and that is deliberate: GDK
+    // offers and accepts application/vnd.portal.filetransfer and calls
+    // org.freedesktop.portal.FileTransfer itself, so inside a sandbox the paths
+    // below already point into this app's document namespace and carry a grant.
+    // That is what lets the manifest ship without --filesystem=home.
+    //
+    // It depends on the app being dragged from doing the same. Anything that
+    // offers plain file:// URIs instead hands over a path the sandbox cannot
+    // open, which shows up as a row that fails to optimize rather than as a
+    // crash. Sources that use GTK, which includes Files, do the portal side.
     unowned var list = (Gdk.FileList) value;
 
     list.get_files ().foreach ((file) => {

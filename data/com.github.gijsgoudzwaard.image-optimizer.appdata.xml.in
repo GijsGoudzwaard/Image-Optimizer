@@ -80,6 +80,15 @@
       <value key="x-appcenter-stripe">pk_live_51AhbXkAINoIuuUE3zGg5JG2PvD3IcxMONFdFJZiMawOTGsCzcxxZAREnvLKeoGyMxEVfJpSYfjFzsDZa2bV6eEEb00nj0bUJl8</value>
    </custom>
    <releases>
+      <release version="0.4.0" date="2026-08-12">
+         <description>
+            <ul>
+               <li>Image Optimizer no longer asks for access to your whole home folder. It is handed only the images you pick, through the system file chooser, and dragging images in keeps working the same way</li>
+               <li>Images in a folder you have no permission to write to are now optimized as well, where they used to be skipped</li>
+               <li>Fixed an image that could not be rewritten being reported as optimized, with a saving it never made</li>
+            </ul>
+         </description>
+      </release>
       <release version="0.3.0" date="2026-07-26">
          <description>
             <ul>
