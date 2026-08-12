@@ -9,8 +9,20 @@
  * which is why this class exists rather than a portal specific workaround.
  *
  * So the file the optimizers see is a copy inside the sandbox, and the bytes
- * they produce are written back over the original file descriptor. The original
- * inode is never replaced, so whatever the portal granted stays valid.
+ * they produce are written back over the original file descriptor. Nothing here
+ * renames anything, which is what the portal path needs.
+ *
+ * That is not the same as promising the inode survives. Measured on a real
+ * sandboxed run, a file picked through the portal came back with a new inode
+ * (3932178 became 3933511) while its modification time and contents were exactly
+ * as intended. The document portal is a FUSE layer that commits a write by
+ * putting the bytes in a temporary file and renaming that over the real one, so
+ * the inode changes a level below this code. A file the app can reach without
+ * the portal keeps its inode.
+ *
+ * The practical consequence is that optimizing a file with more than one hard
+ * link splits it, and the other links keep the old contents. That was already
+ * true before this class existed, because the optimizers renamed as well.
  *
  * The copy also means the optimizers' own --preserve no longer decides what the
  * modification time ends up being, because it is the copy they preserve. This
