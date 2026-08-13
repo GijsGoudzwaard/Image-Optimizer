@@ -32,6 +32,13 @@ finish-args:
   - '--socket=fallback-x11'
   # The primary display path.
   - '--socket=wayland'
+  # Access to /dev/dri, which is what EGL and Vulkan need to find a driver.
+  # Without it GTK reports "Failed to create EGL display" and
+  # "VK_ERROR_INCOMPATIBLE_DRIVER", drops to its software renderer and draws
+  # every frame and every glyph on the CPU. This is the standard GPU permission
+  # and is not one of the ones Flathub counts against the risk rating: it grants
+  # the render node and nothing else, unlike --device=all.
+  - '--device=dri'
 
 # This section is where you list all the source code required to build your app.
 # If we had external dependencies that weren't included in our SDK, we would list
