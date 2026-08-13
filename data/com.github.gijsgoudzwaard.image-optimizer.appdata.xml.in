@@ -53,16 +53,16 @@
    <url type="contact">https://github.com/gijsgoudzwaard/image-optimizer/issues</url>
    <update_contact>gijs.goudzwaard@gmail.com</update_contact>
    <!-- Order matters: the first screenshot is what Flathub shows first and may
-        reuse in banners, so it leads with the app doing its job. The empty
-        welcome screen is last on purpose. -->
+        reuse in banners, so it leads with the result rather than with the work.
+        The empty welcome screen is last on purpose. -->
    <screenshots>
       <screenshot type="default">
-         <caption>Optimizing a batch of images</caption>
-         <image>https://raw.githubusercontent.com/GijsGoudzwaard/Image-Optimizer/master/data/screenshots/optimizing.png</image>
+         <caption>What the whole batch saved, added up under the list</caption>
+         <image>https://raw.githubusercontent.com/GijsGoudzwaard/Image-Optimizer/master/data/screenshots/completed.png</image>
       </screenshot>
       <screenshot>
-         <caption>Every image with its savings, and the total underneath</caption>
-         <image>https://raw.githubusercontent.com/GijsGoudzwaard/Image-Optimizer/master/data/screenshots/completed.png</image>
+         <caption>Optimizing a batch of images</caption>
+         <image>https://raw.githubusercontent.com/GijsGoudzwaard/Image-Optimizer/master/data/screenshots/optimizing.png</image>
       </screenshot>
       <screenshot>
          <caption>Drag and drop images to get started</caption>
