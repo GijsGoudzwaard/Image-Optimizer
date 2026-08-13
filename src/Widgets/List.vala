@@ -118,6 +118,9 @@ public class List {
     // NoSelection: the list is a progress report, there is nothing to select.
     var view = new Gtk.ColumnView (new Gtk.NoSelection (this.listmodel));
     view.add_css_class ("tree_view");
+    // The columns have one right order and the widths are fixed, so there is
+    // nothing to gain from being able to drag them about.
+    view.set_reorderable (false);
     main.set_child (view);
 
     // The widths are fixed rather than shared out evenly, so a number never

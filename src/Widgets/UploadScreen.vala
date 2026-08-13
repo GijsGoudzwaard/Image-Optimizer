@@ -28,7 +28,9 @@ public class UploadScreen : Gtk.Box {
     otherwise.add_css_class ("h4");
 
     this.upload_button = new Gtk.Button.with_label (_("Browse files"));
-    this.upload_button.add_css_class ("suggested-action");
+    // Deliberately not "suggested-action": that class hands the button to the
+    // theme's accent colour, which on a red system accent drew a red outline
+    // around it. The stylesheet gives it the app's own purple instead.
     this.upload_button.add_css_class ("upload_button");
     this.upload_button.set_valign (Gtk.Align.CENTER);
     this.upload_button.set_halign (Gtk.Align.CENTER);
