@@ -53,15 +53,8 @@ public class ImageRow : GLib.Object {
   public string? icon_resource = null;
 
   /**
-   * The sentence behind the icon, shown when the pointer rests on the row, or
-   * null for a row that needs no explaining.
-   *
-   * @var string?
-   */
-  public string? tooltip = null;
-
-  /**
-   * The same thing in fewer words, for a second line in the row itself.
+   * The line under the file name saying why nothing happened to it, or null for a
+   * row that needs no explaining.
    *
    * @var string?
    */
@@ -103,7 +96,6 @@ public class ImageRow : GLib.Object {
         this.new_size_text = GLib.format_size (this.image.new_size);
         this.savings_text = Image.calc_savings ((float) this.image.size, (float) this.image.new_size);
         // Nothing to explain: the three numbers on the row say it all.
-        this.tooltip = null;
         this.note = null;
         break;
 
@@ -113,7 +105,6 @@ public class ImageRow : GLib.Object {
         this.icon_resource = "/com/github/gijsgoudzwaard/image-optimizer/icons/dash.svg";
         this.new_size_text = GLib.format_size (this.image.new_size);
         this.savings_text = Image.calc_savings ((float) this.image.size, (float) this.image.new_size);
-        this.tooltip = _("Already as small as it gets, there is nothing left to remove");
         this.note = _("Already as small as it gets");
         break;
 
@@ -126,8 +117,7 @@ public class ImageRow : GLib.Object {
         this.savings_text = "";
         // The optimizer usually knows exactly what it ran into. The generic line
         // is only for the cases where it does not.
-        this.tooltip = reason ?? _("This file could not be optimized, so it was left exactly as it was");
-        this.note = this.tooltip;
+        this.note = reason ?? _("This file could not be optimized");
         break;
 
       case Status.UNSUPPORTED:
@@ -137,7 +127,6 @@ public class ImageRow : GLib.Object {
         this.size_text = _("Skipped");
         this.new_size_text = "";
         this.savings_text = "";
-        this.tooltip = _("Only PNG and JPEG can be optimized, so this file was left alone");
         this.note = _("Only PNG and JPEG are supported");
         break;
 
@@ -145,7 +134,6 @@ public class ImageRow : GLib.Object {
         this.icon_resource = null;
         this.new_size_text = "";
         this.savings_text = "";
-        this.tooltip = null;
         this.note = null;
         break;
     }

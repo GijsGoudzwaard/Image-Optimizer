@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: com.github.gijsgoudzwaard.image-optimizer\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-13 11:02+0000\n"
+"POT-Creation-Date: 2026-08-13 11:22+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -71,31 +71,23 @@ msgstr ""
 msgid "This file cannot be shortened, so it was left alone"
 msgstr ""
 
-#: src/Widgets/ImageRow.vala:116
-msgid "Already as small as it gets, there is nothing left to remove"
-msgstr ""
-
-#: src/Widgets/ImageRow.vala:117
+#: src/Widgets/ImageRow.vala:108
 msgid "Already as small as it gets"
 msgstr ""
 
-#: src/Widgets/ImageRow.vala:125
+#: src/Widgets/ImageRow.vala:116
 msgid "Failed"
 msgstr ""
 
-#: src/Widgets/ImageRow.vala:129
-msgid "This file could not be optimized, so it was left exactly as it was"
+#: src/Widgets/ImageRow.vala:120
+msgid "This file could not be optimized"
 msgstr ""
 
-#: src/Widgets/ImageRow.vala:137
+#: src/Widgets/ImageRow.vala:127
 msgid "Skipped"
 msgstr ""
 
-#: src/Widgets/ImageRow.vala:140
-msgid "Only PNG and JPEG can be optimized, so this file was left alone"
-msgstr ""
-
-#: src/Widgets/ImageRow.vala:141
+#: src/Widgets/ImageRow.vala:130
 msgid "Only PNG and JPEG are supported"
 msgstr ""
 
@@ -111,7 +103,7 @@ msgstr ""
 msgid "Savings"
 msgstr ""
 
-#: src/Widgets/List.vala:320
+#: src/Widgets/List.vala:318
 msgid "File"
 msgstr ""
 

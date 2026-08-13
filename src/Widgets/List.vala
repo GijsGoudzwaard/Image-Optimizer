@@ -260,7 +260,6 @@ public class List {
 
       icon.set_visible (! pending && row.icon_resource != null);
 
-      List.set_cell_tooltip (box, row.tooltip);
     });
 
     var column = new Gtk.ColumnViewColumn ("", factory);
@@ -314,7 +313,6 @@ public class List {
       note.set_label (row.note ?? "");
       note.set_visible (row.note != null);
 
-      List.set_cell_tooltip (box, row.tooltip);
     });
 
     var column = new Gtk.ColumnViewColumn (_("File"), factory);
@@ -378,8 +376,6 @@ public class List {
 
       label.set_label (get_text (row));
 
-      List.set_cell_tooltip (label, row.tooltip);
-
       if (get_muted (row)) {
         label.add_css_class ("muted");
       } else {
@@ -396,24 +392,6 @@ public class List {
     }
 
     return column;
-  }
-
-  /**
-   * Put the row's explanation on one cell.
-   *
-   * A Gtk.ColumnView gives out no widget for the row itself, only the children a
-   * factory made, so every column has to carry the same text. The cell widget is
-   * preferred over the child: the child stops at its own margins, and hovering
-   * the space between two rows would then show nothing.
-   *
-   * @param  Gtk.Widget child
-   * @param  string? tooltip
-   * @return void
-   */
-  private static void set_cell_tooltip (Gtk.Widget child, string? tooltip) {
-    var cell = child.get_parent ();
-
-    (cell ?? child).set_tooltip_text (tooltip);
   }
 
   /**
