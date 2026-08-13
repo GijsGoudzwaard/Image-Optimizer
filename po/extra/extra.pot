@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: extra\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-26 23:12+0100\n"
+"POT-Creation-Date: 2026-08-13 12:48+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,91 +17,365 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:6
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:8
 #: data/com.github.gijsgoudzwaard.image-optimizer.desktop.in:3
 #: data/com.github.gijsgoudzwaard.image-optimizer.desktop.in:4
 msgid "Image Optimizer"
 msgstr ""
 
-#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:7
+#. developer_name has deprecated since AppStream 1.0
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:10
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:12
 msgid "Gijs Goudzwaard"
 msgstr ""
 
-#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:9
-msgid "Simple lossless image compression"
-msgstr ""
-
-#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:11
-msgid ""
-"Compress your images with ease without the cost of loosing the images "
-"quality using JpegOptim and OptiPng."
-msgstr ""
-
-#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:12
-msgid "Features:"
-msgstr ""
-
-#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:14
-msgid "Compress bmp, jpg / jpeg, png, pnm and tiff with lossless compression"
-msgstr ""
-
 #: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:15
-msgid "Works offline, always ready where and whenever needed"
-msgstr ""
-
-#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:16
-msgid "A clean interface, optimize your images effortlessly"
+#: data/com.github.gijsgoudzwaard.image-optimizer.desktop.in:5
+msgid "Shrink images losslessly"
 msgstr ""
 
 #: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:17
-msgid "Easily quit the application by pressing Ctrl + Q"
+msgid ""
+"Image Optimizer makes PNG and JPEG files smaller without changing how they "
+"look. It rewrites the files you pick in place, so the file you selected is "
+"the one that gets smaller."
+msgstr ""
+
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:18
+msgid ""
+"The compression is lossless, which means the pixels come out identical and "
+"nothing is re-encoded at a lower quality. What comes off is whatever the "
+"encoder left on the table, so screenshots and interface images usually gain "
+"the most and photos straight out of a camera the least."
+msgstr ""
+
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:19
+msgid "Features:"
+msgstr ""
+
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:21
+msgid "Compress PNG and JPEG images without losing quality"
+msgstr ""
+
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:22
+msgid "Optimize a whole batch at once, several files at a time"
+msgstr ""
+
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:23
+msgid "Works offline, with no account and nothing uploaded"
+msgstr ""
+
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:24
+msgid "Keeps the colour profile, so wide-gamut images still look right"
+msgstr ""
+
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:25
+msgid "Keeps modification times, so a library sorted by date stays in order"
+msgstr ""
+
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:26
+msgid "Quit quickly by pressing Ctrl + Q"
+msgstr ""
+
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:30
+msgid "compress"
+msgstr ""
+
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:31
+msgid "compressor"
+msgstr ""
+
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:32
+msgid "shrink"
+msgstr ""
+
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:33
+msgid "reduce"
+msgstr ""
+
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:34
+msgid "file size"
+msgstr ""
+
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:35
+msgid "optimize"
+msgstr ""
+
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:36
+msgid "optimise"
+msgstr ""
+
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:37
+msgid "png"
+msgstr ""
+
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:38
+msgid "jpeg"
+msgstr ""
+
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:39
+msgid "jpg"
 msgstr ""
 
 #: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:40
-msgid "Getting things ready for Juno, #27 should be fixed."
+msgid "photo"
 msgstr ""
 
-#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:45
-msgid "Fixed unmet dependencies."
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:41
+msgid "picture"
 msgstr ""
 
-#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:50
-#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:55
-msgid "Getting things ready for Juno."
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:42
+msgid "batch"
+msgstr ""
+
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:43
+msgid "lossless"
 msgstr ""
 
 #: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:60
+msgid "What the whole batch saved, added up under the list"
+msgstr ""
+
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:64
+msgid "Optimizing a batch of images"
+msgstr ""
+
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:68
+msgid "Drag and drop images to get started"
+msgstr ""
+
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:86
+msgid ""
+"A bar under the list now adds everything up: how much came off in total, how "
+"many files were done and what percentage that is. While it is working it "
+"shows how far along it is"
+msgstr ""
+
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:87
+msgid ""
+"Files that cannot be optimized no longer disappear from the list. They stay, "
+"with a line under the name saying why: not a PNG or JPEG, already as small "
+"as it gets, or the reason it could not be written"
+msgstr ""
+
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:88
+msgid ""
+"A file that was already as small as it gets is now told apart from one that "
+"failed. Both used to look the same"
+msgstr ""
+
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:89
+msgid ""
+"The window can be made much smaller, down to 460 by 320, and still shows "
+"everything. It opens at the size it always did"
+msgstr ""
+
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:90
+msgid ""
+"The list has been redrawn, with an icon in front of every row saying how it "
+"went, numbers lined up under their headings, and larger type throughout"
+msgstr ""
+
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:91
+msgid ""
+"The Flatpak version uses the graphics card again. It had been drawing every "
+"frame and every letter on the processor"
+msgstr ""
+
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:92
+msgid ""
+"Fixed rows lighting up when clicked and columns being draggable, in a list "
+"where there is nothing to select or rearrange"
+msgstr ""
+
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:93
+msgid ""
+"Fixed the button on the welcome screen taking on the system accent colour, "
+"which put a red outline around it on some systems"
+msgstr ""
+
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:100
+msgid ""
+"Image Optimizer no longer asks for access to your whole home folder. It is "
+"handed only the images you pick, through the system file chooser, and "
+"dragging images in keeps working the same way"
+msgstr ""
+
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:101
+msgid ""
+"Images in a folder you have no permission to write to are now optimized as "
+"well, where they used to be skipped"
+msgstr ""
+
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:102
+msgid ""
+"Fixed an image that could not be rewritten being reported as optimized, with "
+"a saving it never made"
+msgstr ""
+
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:109
+msgid ""
+"Optimizing a folder full of images is several times faster, because they are "
+"now handled at the same time instead of one after another"
+msgstr ""
+
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:110
+msgid "Images are compressed further than before, JPEGs in particular"
+msgstr ""
+
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:111
+msgid ""
+"Colour profiles are now kept, so wide-gamut photos no longer shift colour "
+"after optimizing"
+msgstr ""
+
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:112
+msgid ""
+"Modification times are kept on JPEGs as well, so a photo library sorted by "
+"date stays in order"
+msgstr ""
+
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:113
+msgid ""
+"Fixed a batch stopping early when one file had a quote or a bracket in its "
+"name"
+msgstr ""
+
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:114
+msgid "Fixed a crash when a selected file turned out not to be an image"
+msgstr ""
+
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:115
+msgid "Fixed the button for adding more images being invisible on some systems"
+msgstr ""
+
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:116
+msgid ""
+"Bitmap files are no longer accepted, because they cannot be optimized in "
+"place"
+msgstr ""
+
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:117
+msgid ""
+"Image Optimizer is now available from the Snap Store, and takes up less room "
+"once installed"
+msgstr ""
+
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:124
+msgid ""
+"Image Optimizer has been rebuilt on GTK4, so it fits in with current "
+"elementary OS releases"
+msgstr ""
+
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:125
+msgid "Browsing for images now opens the system file chooser"
+msgstr ""
+
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:126
+msgid "Drag and drop has been rebuilt for the new toolkit"
+msgstr ""
+
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:127
+msgid ""
+"File sizes are now formatted the way the rest of your system formats them"
+msgstr ""
+
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:128
+msgid ""
+"The image list no longer refreshes on a repeating timer, which lowers idle "
+"processor use"
+msgstr ""
+
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:129
+msgid "Added a donation link for anyone who would like to support development"
+msgstr ""
+
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:135
+msgid "Fixed some warnings that happened under the hood."
+msgstr ""
+
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:140
+msgid ""
+"Fixed flatpak issue where dragging an image gives a 0 byte sized image and "
+"would therefore not be optimized. Also fixed issue where optimizing an image "
+"from the home directory would not work."
+msgstr ""
+
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:146
+msgid "Updated flatpak runtime to version 6"
+msgstr ""
+
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:147
+msgid "Fixed issue where the close and maximise buttons were shown in white"
+msgstr ""
+
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:148
+msgid "Updated screenshots"
+msgstr ""
+
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:154
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:159
+msgid "Getting things ready for Elementary OS 6."
+msgstr ""
+
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:164
+msgid ""
+"Added the flatpak manifest file for elementary os 6. Also fixes vala 0.48 "
+"build issue."
+msgstr ""
+
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:169
+msgid "Added Polish translations."
+msgstr ""
+
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:174
+msgid "Added Italian translations."
+msgstr ""
+
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:179
+msgid "Added Ukrainian translations."
+msgstr ""
+
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:184
+msgid "Getting things ready for Juno, #27 should be fixed."
+msgstr ""
+
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:189
+msgid "Fixed unmet dependencies."
+msgstr ""
+
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:194
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:199
+msgid "Getting things ready for Juno."
+msgstr ""
+
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:204
 msgid "This release fixes the context menu in Files."
 msgstr ""
 
-#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:65
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:209
 msgid ""
 "This release adds a context menu in Files for images that will allow easier "
 "image optimizations."
 msgstr ""
 
-#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:70
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:214
 msgid ""
 "This release changes the upload button to fit the Elementary OS HIG better."
 msgstr ""
 
-#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:75
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:219
 msgid ""
 "This release changes the upload icon to fit the Elementary OS HIG better."
 msgstr ""
 
-#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:80
+#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:224
 msgid "This release changes the icon to fit the Elementary OS HIG better."
 msgstr ""
 
-#: data/com.github.gijsgoudzwaard.image-optimizer.desktop.in:5
-msgid "Simple image optimzer"
-msgstr ""
-
-#: data/com.github.gijsgoudzwaard.image-optimizer.desktop.in:8
-msgid "com.github.gijsgoudzwaard.image-optimizer"
-msgstr ""
-
 #: data/com.github.gijsgoudzwaard.image-optimizer.desktop.in:12
-msgid "Image;Optimzer;"
+msgid ""
+"compress;compressor;shrink;reduce;file size;optimize;optimise;png;jpeg;jpg;"
+"photo;picture;batch;lossless;"
 msgstr ""
