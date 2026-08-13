@@ -51,7 +51,6 @@
    <!-- The snap adopts its Contact link from here. Without one the Snap Store
         listing shows no way to reach the author, which reads as abandonware. -->
    <url type="contact">https://github.com/gijsgoudzwaard/image-optimizer/issues</url>
-   <update_contact>gijs.goudzwaard@gmail.com</update_contact>
    <!-- Order matters: the first screenshot is what Flathub shows first and may
         reuse in banners, so it leads with the result rather than with the work.
         The empty welcome screen is last on purpose. -->

@@ -113,12 +113,14 @@ public class Image {
   }
 
   /**
-   * Check if a file type is a supported image.
+   * Check if a file type is a supported image. Private on purpose: the answer is
+   * on every Image as `supported`, and asking the class instead of the object is
+   * what let files be turned away before they ever reached the list.
    *
    * @param  string type
    * @return bool
    */
-  public static bool is_valid (string type) {
+  private static bool is_valid (string type) {
     // bmp used to be on this list, but nothing here can optimize one. optipng
     // accepted it and wrote a new .png next to it, leaving the .bmp exactly as
     // it was while the list reported a large saving on it. Accepting a file the

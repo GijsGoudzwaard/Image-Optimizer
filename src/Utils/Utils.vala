@@ -16,23 +16,6 @@ public class Utils {
   }
 
   /**
-   * Glue a string array together.
-   *
-   * @param  string glue
-   * @param  string[] pieces
-   * @return string
-   */
-  public static string join (string glue, string[] pieces) {
-    string glued_string = "";
-
-    foreach (var piece in pieces) {
-      glued_string += piece + glue;
-    }
-
-    return glued_string;
-  }
-
-  /**
    * Read the byte count that directly follows a marker in an optimizer's
    * output.
    *
