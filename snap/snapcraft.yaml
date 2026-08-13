@@ -39,6 +39,13 @@ parts:
       - desktop-file-utils
       - gettext
       - libglib2.0-dev
+      # xmllint, which glib-compile-resources shells out to for the
+      # xml-stripblanks on every icon in the gresource. Nothing else here pulls
+      # it in: with only the other packages the build stops at "xml-stripblanks
+      # preprocessing requested, but XMLLINT is not set, and xmllint is not in
+      # PATH". It has been coming from the gnome extension's SDK by luck rather
+      # than by agreement.
+      - libxml2-utils
       - valac
     stage-packages:
       # The two tools the app shells out to. GTK4 and GLib deliberately are not
