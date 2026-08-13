@@ -15,6 +15,7 @@
 #   R9  a bmp, which the app used to accept and then not optimize.
 #   R10 a read-only directory, which the copy-and-write-back path has to survive.
 #   R11 a read-only file, which has to fail without inventing a saving.
+#   R12 a second pass over the same file, which is the already optimal path.
 #
 # Usage, against an installed tree:
 #
@@ -378,6 +379,43 @@ else
   stop_app
   chmod u+w "$r11"/readonly.*
 fi
+
+echo "### R12 a file that is already optimal is left alone and not reported as failed ###"
+# The app tells three things apart that used to look the same: optimized, already
+# optimal, and failed. Only the middle one has no visible trace, so this is the
+# one worth testing from the outside: run the app twice over the same files and
+# the second pass has to leave them byte for byte as the first pass left them,
+# without a single diagnostic. If the already optimal branch ever breaks, the size
+# it fails to parse gets logged, which is what the last check catches.
+r12="$WORK/r12"
+mkdir -p "$r12"
+cp "$PNG_SOURCE" "$r12/twice.png"
+cp "$JPG_SOURCE" "$r12/twice.jpg"
+record "$r12"/*
+start_app "" "$r12"/*
+wait_shrunk 2 60 "$r12"/*
+check "both files optimized on the first pass" "$(shrunk_count "$r12"/*)" "2"
+stop_app
+
+cp "$r12/twice.png" "$WORK/r12-png.first"
+cp "$r12/twice.jpg" "$WORK/r12-jpg.first"
+
+start_app "" "$r12"/*
+# Nothing should change, so there is no event to wait for. Give it the time the
+# first pass took and then compare.
+sleep 8
+check "app still running" "$(alive)" "yes"
+check "the png is untouched by the second pass" \
+  "$(cmp -s "$WORK/r12-png.first" "$r12/twice.png" && echo yes || echo no)" "yes"
+check "the jpg is untouched by the second pass" \
+  "$(cmp -s "$WORK/r12-jpg.first" "$r12/twice.jpg" && echo yes || echo no)" "yes"
+noise=$(grep -E "CRITICAL|WARNING|\*\* ERROR" "$WORK/app.log" \
+  | grep -vcE "Gsk-Message|libEGL|DRI3|Unable to acquire session bus" || true)
+if [ "$noise" != "0" ]; then
+  grep -E "CRITICAL|WARNING|\*\* ERROR" "$WORK/app.log" >&2
+fi
+check "diagnostics on the second pass" "$noise" "0"
+stop_app
 
 echo
 if [ "$failed" -ne 0 ]; then
