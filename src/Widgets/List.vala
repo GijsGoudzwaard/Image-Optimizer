@@ -128,7 +128,7 @@ public class List {
     // text plus the 10px gap in front of it, and the last one carries the 14px
     // the window keeps free on the right.
     view.append_column (this.status_column ());
-    view.append_column (this.text_column (_("File"), 0, -1, 10, 0, (row) => row.image.name, (row) => false));
+    view.append_column (this.name_column ());
     view.append_column (this.text_column (_("Size"), 1, 88, 10, 0, (row) => row.size_text, (row) => row.status == Status.UNSUPPORTED));
     view.append_column (this.text_column (_("New size"), 1, 92, 10, 0, (row) => row.new_size_text, (row) => row.status == Status.FAILED));
     view.append_column (this.text_column (_("Savings"), 1, 94, 10, 14, (row) => row.savings_text, (row) => row.status != Status.OPTIMIZED));
@@ -259,11 +259,66 @@ public class List {
       }
 
       icon.set_visible (! pending && row.icon_resource != null);
+
+      List.set_cell_tooltip (box, row.tooltip);
     });
 
     var column = new Gtk.ColumnViewColumn ("", factory);
     // 14 of padding plus the 20 the icon sits in, so the file name starts at 44.
     column.set_fixed_width (34);
+
+    return column;
+  }
+
+  /**
+   * The file name, with a second line underneath saying why nothing happened to
+   * it. The line only appears on the rows that need it, so a row that came out
+   * smaller stays as short as it was.
+   *
+   * @return Gtk.ColumnViewColumn
+   */
+  private Gtk.ColumnViewColumn name_column () {
+    var factory = new Gtk.SignalListItemFactory ();
+
+    factory.setup.connect ((object) => {
+      var item = (Gtk.ListItem) object;
+
+      var box = new Gtk.Box (Gtk.Orientation.VERTICAL, 2);
+      box.set_valign (Gtk.Align.CENTER);
+      box.set_margin_top (11);
+      box.set_margin_bottom (11);
+      box.set_margin_start (10);
+
+      var name = new Gtk.Label (null);
+      name.add_css_class ("cell_text");
+      name.set_xalign (0);
+
+      var note = new Gtk.Label (null);
+      note.add_css_class ("cell_note");
+      note.set_xalign (0);
+
+      box.append (name);
+      box.append (note);
+
+      item.set_child (box);
+    });
+
+    factory.bind.connect ((object) => {
+      var item = (Gtk.ListItem) object;
+      var row = (ImageRow) item.get_item ();
+      var box = (Gtk.Box) item.get_child ();
+      var name = (Gtk.Label) box.get_first_child ();
+      var note = (Gtk.Label) box.get_last_child ();
+
+      name.set_label (row.image.name);
+      note.set_label (row.note ?? "");
+      note.set_visible (row.note != null);
+
+      List.set_cell_tooltip (box, row.tooltip);
+    });
+
+    var column = new Gtk.ColumnViewColumn (_("File"), factory);
+    column.set_expand (true);
 
     return column;
   }
@@ -323,6 +378,8 @@ public class List {
 
       label.set_label (get_text (row));
 
+      List.set_cell_tooltip (label, row.tooltip);
+
       if (get_muted (row)) {
         label.add_css_class ("muted");
       } else {
@@ -339,6 +396,24 @@ public class List {
     }
 
     return column;
+  }
+
+  /**
+   * Put the row's explanation on one cell.
+   *
+   * A Gtk.ColumnView gives out no widget for the row itself, only the children a
+   * factory made, so every column has to carry the same text. The cell widget is
+   * preferred over the child: the child stops at its own margins, and hovering
+   * the space between two rows would then show nothing.
+   *
+   * @param  Gtk.Widget child
+   * @param  string? tooltip
+   * @return void
+   */
+  private static void set_cell_tooltip (Gtk.Widget child, string? tooltip) {
+    var cell = child.get_parent ();
+
+    (cell ?? child).set_tooltip_text (tooltip);
   }
 
   /**
@@ -418,14 +493,16 @@ public class List {
    * @param  string path
    * @param  Status status
    * @param  int size
+   * @param  string? reason  what the optimizer ran into, when it knows
    * @return void
    */
-  public void update_result (string path, Status status, int size) {
-    // Owned copy, the closure outlives this call.
+  public void update_result (string path, Status status, int size, string? reason = null) {
+    // Owned copies, the closure outlives this call.
     string image_path = path;
+    string? image_reason = reason;
 
     Idle.add (() => {
-      this.apply_result (image_path, status, size);
+      this.apply_result (image_path, status, size, image_reason);
 
       return Source.REMOVE;
     });
@@ -438,9 +515,10 @@ public class List {
    * @param  string path
    * @param  Status status
    * @param  int size
+   * @param  string? reason
    * @return void
    */
-  private void apply_result (string path, Status status, int size) {
+  private void apply_result (string path, Status status, int size, string? reason) {
     for (uint i = 0; i < this.listmodel.get_n_items (); i++) {
       var row = (ImageRow) this.listmodel.get_item (i);
 
@@ -465,7 +543,7 @@ public class List {
       // object back in is not enough either: the column view sees an identical
       // item and skips rebinding it. Hand it a fresh row so it rebinds.
       var updated = new ImageRow (image);
-      updated.apply_status (outcome);
+      updated.apply_status (outcome, reason);
 
       this.listmodel.splice (i, 1, {updated});
 

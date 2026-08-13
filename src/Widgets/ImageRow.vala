@@ -53,6 +53,21 @@ public class ImageRow : GLib.Object {
   public string? icon_resource = null;
 
   /**
+   * The sentence behind the icon, shown when the pointer rests on the row, or
+   * null for a row that needs no explaining.
+   *
+   * @var string?
+   */
+  public string? tooltip = null;
+
+  /**
+   * The same thing in fewer words, for a second line in the row itself.
+   *
+   * @var string?
+   */
+  public string? note = null;
+
+  /**
    * Create a row for an image.
    *
    * @param Image image
@@ -76,9 +91,10 @@ public class ImageRow : GLib.Object {
    * figure to put there instead.
    *
    * @param  Status status
+   * @param  string? reason  what the optimizer ran into, when it knows
    * @return void
    */
-  public void apply_status (Status status) {
+  public void apply_status (Status status, string? reason = null) {
     this.status = status;
 
     switch (status) {
@@ -86,6 +102,9 @@ public class ImageRow : GLib.Object {
         this.icon_resource = "/com/github/gijsgoudzwaard/image-optimizer/icons/check.svg";
         this.new_size_text = GLib.format_size (this.image.new_size);
         this.savings_text = Image.calc_savings ((float) this.image.size, (float) this.image.new_size);
+        // Nothing to explain: the three numbers on the row say it all.
+        this.tooltip = null;
+        this.note = null;
         break;
 
       case Status.ALREADY_OPTIMAL:
@@ -94,6 +113,8 @@ public class ImageRow : GLib.Object {
         this.icon_resource = "/com/github/gijsgoudzwaard/image-optimizer/icons/dash.svg";
         this.new_size_text = GLib.format_size (this.image.new_size);
         this.savings_text = Image.calc_savings ((float) this.image.size, (float) this.image.new_size);
+        this.tooltip = _("Already as small as it gets, there is nothing left to remove");
+        this.note = _("Already as small as it gets");
         break;
 
       case Status.FAILED:
@@ -103,6 +124,10 @@ public class ImageRow : GLib.Object {
         this.icon_resource = "/com/github/gijsgoudzwaard/image-optimizer/icons/error.svg";
         this.new_size_text = _("Failed");
         this.savings_text = "";
+        // The optimizer usually knows exactly what it ran into. The generic line
+        // is only for the cases where it does not.
+        this.tooltip = reason ?? _("This file could not be optimized, so it was left exactly as it was");
+        this.note = this.tooltip;
         break;
 
       case Status.UNSUPPORTED:
@@ -112,12 +137,16 @@ public class ImageRow : GLib.Object {
         this.size_text = _("Skipped");
         this.new_size_text = "";
         this.savings_text = "";
+        this.tooltip = _("Only PNG and JPEG can be optimized, so this file was left alone");
+        this.note = _("Only PNG and JPEG are supported");
         break;
 
       default:
         this.icon_resource = null;
         this.new_size_text = "";
         this.savings_text = "";
+        this.tooltip = null;
+        this.note = null;
         break;
     }
   }

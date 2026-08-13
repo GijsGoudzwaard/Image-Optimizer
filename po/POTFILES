@@ -1,5 +1,8 @@
 src/MainWindow.vala
 src/Utils/Image.vala
+src/Utils/JpegOptim.vala
+src/Utils/OptiPng.vala
+src/Utils/Rewrite.vala
 src/Widgets/ImageRow.vala
 src/Widgets/List.vala
 src/Widgets/SummaryBar.vala

@@ -103,7 +103,7 @@ public class JpegOptim {
     var rewrite = new Rewrite (image);
 
     if (rewrite.working_path == null) {
-      this.list.update_result (image, Status.FAILED, 0);
+      this.list.update_result (image, Status.FAILED, 0, rewrite.failure);
 
       return;
     }
@@ -118,6 +118,7 @@ public class JpegOptim {
 
     var new_size = 0;
     var status_result = Status.FAILED;
+    string? reason = null;
 
     try {
       string standard_output;
@@ -154,6 +155,9 @@ public class JpegOptim {
           // is the number of bytes actually written.
           new_size = rewrite.commit ();
           status_result = (new_size > 0) ? Status.OPTIMIZED : Status.FAILED;
+          reason = rewrite.failure;
+        } else {
+          reason = this.failure_reason (standard_output + standard_error);
         }
       } else {
         warning (
@@ -162,9 +166,11 @@ public class JpegOptim {
           image,
           standard_error
         );
+        reason = this.failure_reason (standard_output + standard_error);
       }
     } catch (Error e) {
       warning ("Failed to run jpegoptim on \"%s\": %s", image, e.message);
+      reason = _("The optimizer could not be started");
     }
 
     // Always, so a failure or a quit halfway through does not leave the copy
@@ -174,7 +180,31 @@ public class JpegOptim {
     // The status is what the row and the summary bar go by. A size only means
     // anything alongside OPTIMIZED, and the list checks that it really is
     // smaller before it counts as a saving.
-    this.list.update_result (image, status_result, new_size);
+    this.list.update_result (image, status_result, new_size, reason);
+  }
+
+  /**
+   * Put what jpegoptim said into words for the row.
+   *
+   * The log keeps the tool's own output either way. This only has to answer the
+   * question someone looking at a red icon actually has, which is whether the
+   * file is the problem or the app is.
+   *
+   * @param  string output
+   * @return string
+   */
+  private string failure_reason (string output) {
+    // jpegoptim prints "Not a JPEG file" for anything that is not one, whatever
+    // the name says, and marks the line [ERROR] when it cannot read it at all.
+    if ("Not a JPEG" in output || "[ERROR]" in output) {
+      return _("This is not a JPEG file, whatever its name says");
+    }
+
+    if ("Permission denied" in output) {
+      return _("Could not write to this file, it may be read only");
+    }
+
+    return _("The optimizer could not process this file");
   }
 
   /**

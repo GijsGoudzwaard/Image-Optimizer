@@ -185,6 +185,11 @@ class Stylesheet {
       text-shadow: none;
     }
 
+    .tree_view .cell_note {
+      font-size: 12px;
+      color: #74747e;
+    }
+
     /* A word in a column of numbers is not a number, so it steps back a shade. */
     .tree_view .cell_text.muted {
       color: #5F5E5A;

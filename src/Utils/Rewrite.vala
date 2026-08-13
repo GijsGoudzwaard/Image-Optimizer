@@ -47,6 +47,14 @@ public class Rewrite {
   public string? working_path { get; private set; default = null; }
 
   /**
+   * Why this failed, in words a person can read, or null while nothing has gone
+   * wrong. The log gets the technical detail, this is what the row shows.
+   *
+   * @var string?
+   */
+  public string? failure { get; private set; default = null; }
+
+  /**
    * Modification time of the original, so it can be restored afterwards.
    *
    * @var DateTime?
@@ -86,6 +94,8 @@ public class Rewrite {
 
       if (DirUtils.create_with_parents (directory, 0700) != 0) {
         warning ("Could not create \"%s\"", directory);
+        this.failure = _("There was nowhere to put a working copy of this file");
+
         return;
       }
 
@@ -105,6 +115,7 @@ public class Rewrite {
       this.working_path = candidate;
     } catch (Error e) {
       warning ("Could not copy \"%s\" for optimizing: %s", path, e.message);
+      this.failure = _("Could not open this file, so nothing was done to it");
     }
   }
 
@@ -125,11 +136,15 @@ public class Rewrite {
       FileUtils.get_data (this.working_path, out contents);
     } catch (Error e) {
       warning ("Could not read the optimized copy of \"%s\": %s", this.original_path, e.message);
+      this.failure = _("The optimized copy of this file could not be read back");
+
       return 0;
     }
 
     if (contents.length == 0) {
       warning ("The optimized copy of \"%s\" was empty, leaving the original alone", this.original_path);
+      this.failure = _("The optimizer produced an empty file, so this one was left alone");
+
       return 0;
     }
 
@@ -151,6 +166,7 @@ public class Rewrite {
         stream.truncate (contents.length);
       } else {
         warning ("Cannot truncate \"%s\", leaving it alone", this.original_path);
+        this.failure = _("This file cannot be shortened, so it was left alone");
         stream.close ();
 
         return 0;
@@ -159,6 +175,8 @@ public class Rewrite {
       stream.close ();
     } catch (Error e) {
       warning ("Could not write the result back to \"%s\": %s", this.original_path, e.message);
+      this.failure = _("Could not write to this file, it may be read only");
+
       return 0;
     }
 
