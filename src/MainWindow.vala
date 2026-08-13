@@ -1,5 +1,21 @@
 using Gtk;
 
+/**
+ * Installs a css provider for a whole display.
+ *
+ * Declared here rather than called through the binding, because valac marks
+ * Gtk.StyleContext deprecated as a class while this one static function is not:
+ * it is GDK_AVAILABLE_IN_ALL in gtkstyleprovider.h and is still the documented
+ * way to do this. GTK offers nothing to migrate to, so the alternative is a
+ * warning on every build that nobody can act on.
+ *
+ * The generated C call is the same one the binding would have generated. If GTK
+ * ever really removes the function, this turns into a compile error instead of a
+ * warning, which is the right way round.
+ */
+[CCode (cname = "gtk_style_context_add_provider_for_display")]
+extern void add_provider_for_display (Gdk.Display display, Gtk.StyleProvider provider, uint priority);
+
 public class MainWindow : Gtk.Window {
 
   /**
@@ -48,11 +64,9 @@ public class MainWindow : Gtk.Window {
     var css_provider = new Gtk.CssProvider ();
     css_provider.load_from_string (Stylesheet.STYLES);
 
-    // valac warns that Gtk.StyleContext is deprecated since 4.10, but the
-    // static function below is not: it is declared GDK_AVAILABLE_IN_ALL in
-    // gtkstyleprovider.h and is still the documented way to install a
-    // display wide provider. There is nothing to migrate to yet.
-    Gtk.StyleContext.add_provider_for_display (
+    // See the declaration above this class for why this does not go through
+    // Gtk.StyleContext.
+    add_provider_for_display (
       this.get_display (),
       css_provider,
       Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
