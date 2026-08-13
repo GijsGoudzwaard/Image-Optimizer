@@ -52,13 +52,17 @@ public class MainWindow : Gtk.Window {
    * @param Gtk.Application application
    */
   public MainWindow (Gtk.Application application) {
+    // default-width and default-height, not width-request and height-request:
+    // a size request is a minimum, so the window opened at the smallest size it
+    // was allowed to be and could never be made narrower. The size it opens at
+    // is unchanged, the floor is set separately in construct.
     Object (
       application: application,
-      height_request: 680,
+      default_height: 680,
+      default_width: 980,
       icon_name: "com.github.gijsgoudzwaard.image-optimizer",
       resizable: true,
-      title: _("Image Optimizer"),
-      width_request: 980
+      title: _("Image Optimizer")
     );
 
     var css_provider = new Gtk.CssProvider ();
@@ -74,6 +78,13 @@ public class MainWindow : Gtk.Window {
   }
 
   construct {
+    // The floor, which is not the same thing as the size it opens at. Without one
+    // the window can be dragged down to 221x170, where the columns run into each
+    // other. The number itself is what the four columns need: 308px of fixed
+    // width, plus enough of the file name to still recognise a file by, and
+    // everything that could grow past that ellipsizes.
+    this.set_size_request (460, 320);
+
     this.toolbar = new Gtk.HeaderBar ();
     toolbar.add_css_class ("default-decoration");
     toolbar.add_css_class ("flat");

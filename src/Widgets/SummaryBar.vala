@@ -103,13 +103,17 @@ public class SummaryBar : Gtk.Box {
     var text = new Gtk.Box (Gtk.Orientation.VERTICAL, 2);
     text.set_valign (Gtk.Align.CENTER);
 
+    // Both ellipsize: the counts line grows with every kind of outcome in the
+    // batch, and a narrow window should shorten it rather than refuse to narrow.
     this.headline = new Gtk.Label (null);
     this.headline.set_xalign (0);
     this.headline.add_css_class ("headline");
+    this.headline.set_ellipsize (Pango.EllipsizeMode.END);
 
     this.sub = new Gtk.Label (null);
     this.sub.set_xalign (0);
     this.sub.add_css_class ("sub");
+    this.sub.set_ellipsize (Pango.EllipsizeMode.END);
 
     text.append (this.headline);
     text.append (this.sub);
@@ -125,6 +129,7 @@ public class SummaryBar : Gtk.Box {
     this.caption = new Gtk.Label (null);
     this.caption.set_xalign (1);
     this.caption.add_css_class ("caption");
+    this.caption.set_ellipsize (Pango.EllipsizeMode.END);
 
     numbers.append (this.figure);
     numbers.append (this.caption);

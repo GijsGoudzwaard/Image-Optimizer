@@ -288,13 +288,17 @@ public class List {
       box.set_margin_bottom (11);
       box.set_margin_start (10);
 
+      // Ellipsized, so a long file name asks for no more room than there is.
+      // Without this one long name sets the smallest width the window can have.
       var name = new Gtk.Label (null);
       name.add_css_class ("cell_text");
       name.set_xalign (0);
+      name.set_ellipsize (Pango.EllipsizeMode.END);
 
       var note = new Gtk.Label (null);
       note.add_css_class ("cell_note");
       note.set_xalign (0);
+      note.set_ellipsize (Pango.EllipsizeMode.END);
 
       box.append (name);
       box.append (note);
