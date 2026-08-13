@@ -16,8 +16,6 @@ public class List {
    */
   private GLib.ListStore listmodel;
 
-  public Gtk.Button upload_button;
-
   /**
    * The bar under the list, showing progress and then the result.
    *
@@ -103,13 +101,6 @@ public class List {
 
     this.listmodel = new GLib.ListStore (typeof (ImageRow));
     this.summary = new SummaryBar ();
-
-    this.upload_button = new Gtk.Button.with_label ("+");
-    this.upload_button.add_css_class ("upload_button");
-    this.upload_button.add_css_class ("add");
-    this.upload_button.set_valign (Gtk.Align.START);
-    this.upload_button.set_halign (Gtk.Align.END);
-    ((Gtk.Widget) this.upload_button).set_focus_on_click (false);
 
     foreach (var image in this.images) {
       this.listmodel.append (new ImageRow (image));
@@ -259,7 +250,6 @@ public class List {
       }
 
       icon.set_visible (! pending && row.icon_resource != null);
-
     });
 
     var column = new Gtk.ColumnViewColumn ("", factory);

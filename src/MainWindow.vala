@@ -146,7 +146,6 @@ public class MainWindow : Gtk.Window {
 
     var add_image = new Gtk.Button.from_icon_name ("list-add-symbolic");
     add_image.set_tooltip_markup (_("Add Image"));
-    this.toolbar.remove (add_image);
 
     // "flat" and not "titlebutton": titlebutton is meant for window controls and
     // brought the theme's light button background with it, while the stylesheet

@@ -21,11 +21,6 @@ class Stylesheet {
       border-radius: 3px;
     }
 
-    .upload_button.add {
-      border-radius: 100%;
-      padding: 10px 17px;
-    }
-
     /* The button on the welcome screen. It used to lean on the theme's
        suggested-action, which paints with the system accent colour and drew a red
        outline around it on a red accent. The border here is written out because
