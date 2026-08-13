@@ -36,7 +36,7 @@ class Stylesheet {
        left the label sitting off centre. */
     .upload_button {
       padding: 8px 18px;
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 700;
       color: #fff;
       background-color: @primary_color;
@@ -70,7 +70,7 @@ class Stylesheet {
     }
 
     .h4 {
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 400;
     }
 
@@ -175,11 +175,13 @@ class Stylesheet {
        between the pixel grid, and every line of text in the window came out
        softer for it.
 
-       Weights in here are 400 or 700 and nothing between. A UI font that ships
+       The scale is one step up from the mockup's, which put everything a point
+       smaller than a desktop normally uses and made the smaller lines hard to
+       read. Weights in here are 400 or 700 and nothing between. A UI font that ships
        only those two has its 500 and 600 synthesised by smearing the regular cut,
        which is exactly the soft, muddy look this is meant to avoid. */
     .tree_view .cell_text {
-      font-size: 13px;
+      font-size: 14px;
       text-shadow: none;
     }
 
@@ -209,7 +211,7 @@ class Stylesheet {
       border: none;
       border-radius: 0;
       padding: 8px 0;
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 700;
       outline: none;
       box-shadow: none;
@@ -227,7 +229,7 @@ class Stylesheet {
        the headings hard to read. */
     .tree_view header button label {
       color: #ffffff;
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 700;
       opacity: 1;
       text-shadow: none;
@@ -260,17 +262,17 @@ class Stylesheet {
     }
 
     .summary_bar .headline {
-      font-size: 14px;
+      font-size: 15px;
       font-weight: 700;
       color: #2C2C2A;
     }
 
     /* Darker than the mockup's grey. On this background the lighter one was hard
-       to read at 12px, and these two lines carry the numbers that explain the
+       to read, and these two lines carry the numbers that explain the
        ones above them. */
     .summary_bar .sub,
     .summary_bar .caption {
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 400;
       color: #4a4a52;
     }
@@ -279,7 +281,7 @@ class Stylesheet {
        there is a result. Both are darker than the icon they sit next to, because
        they carry more weight at this size. */
     .summary_bar .figure {
-      font-size: 20px;
+      font-size: 22px;
       font-weight: 700;
       color: #534AB7;
     }
