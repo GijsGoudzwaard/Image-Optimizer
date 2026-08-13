@@ -8,41 +8,154 @@ msgid ""
 msgstr ""
 "Project-Id-Version: com.github.gijsgoudzwaard.image-optimizer\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-25 22:04+0900\n"
+"POT-Creation-Date: 2026-08-13 11:22+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
-#: src/MainWindow.vala:44
+#: src/MainWindow.vala:60
 msgid "Image Optimizer"
 msgstr ""
 
-#: src/MainWindow.vala:119
+#: src/MainWindow.vala:137
 msgid "Add Image"
 msgstr ""
 
-#: src/MainWindow.vala:202
+#: src/MainWindow.vala:239
 msgid "Select image(s)"
 msgstr ""
 
-#: src/Widgets/List.vala:57
-msgid "File"
+#: src/Utils/JpegOptim.vala:173 src/Utils/OptiPng.vala:157
+msgid "The optimizer could not be started"
 msgstr ""
 
-#: src/Widgets/List.vala:58
+#: src/Utils/JpegOptim.vala:200
+msgid "This is not a JPEG file, whatever its name says"
+msgstr ""
+
+#: src/Utils/JpegOptim.vala:204 src/Utils/OptiPng.vala:187
+#: src/Utils/Rewrite.vala:178
+msgid "Could not write to this file, it may be read only"
+msgstr ""
+
+#: src/Utils/JpegOptim.vala:207 src/Utils/OptiPng.vala:190
+msgid "The optimizer could not process this file"
+msgstr ""
+
+#: src/Utils/OptiPng.vala:183
+msgid "This is not a PNG file, whatever its name says"
+msgstr ""
+
+#: src/Utils/Rewrite.vala:97
+msgid "There was nowhere to put a working copy of this file"
+msgstr ""
+
+#: src/Utils/Rewrite.vala:118
+msgid "Could not open this file, so nothing was done to it"
+msgstr ""
+
+#: src/Utils/Rewrite.vala:139
+msgid "The optimized copy of this file could not be read back"
+msgstr ""
+
+#: src/Utils/Rewrite.vala:146
+msgid "The optimizer produced an empty file, so this one was left alone"
+msgstr ""
+
+#: src/Utils/Rewrite.vala:169
+msgid "This file cannot be shortened, so it was left alone"
+msgstr ""
+
+#: src/Widgets/ImageRow.vala:108
+msgid "Already as small as it gets"
+msgstr ""
+
+#: src/Widgets/ImageRow.vala:116
+msgid "Failed"
+msgstr ""
+
+#: src/Widgets/ImageRow.vala:120
+msgid "This file could not be optimized"
+msgstr ""
+
+#: src/Widgets/ImageRow.vala:127
+msgid "Skipped"
+msgstr ""
+
+#: src/Widgets/ImageRow.vala:130
+msgid "Only PNG and JPEG are supported"
+msgstr ""
+
+#: src/Widgets/List.vala:132
 msgid "Size"
 msgstr ""
 
-#: src/Widgets/List.vala:59
+#: src/Widgets/List.vala:133
 msgid "New size"
 msgstr ""
 
-#: src/Widgets/List.vala:60
+#: src/Widgets/List.vala:134
 msgid "Savings"
+msgstr ""
+
+#: src/Widgets/List.vala:318
+msgid "File"
+msgstr ""
+
+#: src/Widgets/SummaryBar.vala:206
+msgid "Optimizing…"
+msgstr ""
+
+#: src/Widgets/SummaryBar.vala:208
+#, c-format
+msgid "%u of %u file done"
+msgid_plural "%u of %u files done"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Widgets/SummaryBar.vala:214
+msgid "saved so far"
+msgstr ""
+
+#: src/Widgets/SummaryBar.vala:262
+msgid "Nothing left to save"
+msgstr ""
+
+#: src/Widgets/SummaryBar.vala:269
+#, c-format
+msgid "%s saved"
+msgstr ""
+
+#: src/Widgets/SummaryBar.vala:275
+#, c-format
+msgid "%s to %s"
+msgstr ""
+
+#: src/Widgets/SummaryBar.vala:317
+#, c-format
+msgid "%u of %u file optimized"
+msgid_plural "%u of %u files optimized"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Widgets/SummaryBar.vala:324
+#, c-format
+msgid "%u already optimal"
+msgstr ""
+
+#: src/Widgets/SummaryBar.vala:328
+#, c-format
+msgid "%u failed"
+msgstr ""
+
+#: src/Widgets/SummaryBar.vala:332
+#, c-format
+msgid "%u skipped"
 msgstr ""
 
 #: src/Widgets/UploadScreen.vala:24

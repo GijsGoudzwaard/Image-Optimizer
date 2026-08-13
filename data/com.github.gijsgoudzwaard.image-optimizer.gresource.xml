@@ -2,5 +2,14 @@
 <gresources>
   <gresource prefix="/com/github/gijsgoudzwaard/image-optimizer/icons">
     <file compressed="true" preprocess="xml-stripblanks" alias="upload_icon.svg">icons/upload_icon.svg</file>
+    <!-- The row and summary icons are bundled rather than looked up by name.
+         The two icon themes the app ships against do not agree on which of the
+         obvious names exist, and one of them painted a missing icon placeholder
+         for a name IconTheme.has_icon said it had. These are also deliberately
+         coloured, which a symbolic icon from the theme would not be. -->
+    <file compressed="true" preprocess="xml-stripblanks" alias="check.svg">icons/status/check.svg</file>
+    <file compressed="true" preprocess="xml-stripblanks" alias="check-circle.svg">icons/status/check-circle.svg</file>
+    <file compressed="true" preprocess="xml-stripblanks" alias="dash.svg">icons/status/dash.svg</file>
+    <file compressed="true" preprocess="xml-stripblanks" alias="error.svg">icons/status/error.svg</file>
   </gresource>
 </gresources>

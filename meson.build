@@ -1,5 +1,5 @@
 project('com.github.gijsgoudzwaard.image-optimizer', 'vala', 'c',
-  version: '0.4.0',
+  version: '0.5.0',
   meson_version: '>= 0.59.0')
 
 gnome = import('gnome')
@@ -21,7 +21,9 @@ executable(
     'src/Widgets/UploadScreen.vala',
     'src/Widgets/List.vala',
     'src/Widgets/ImageRow.vala',
+    'src/Widgets/SummaryBar.vala',
     'src/Utils/Utils.vala',
+    'src/Utils/Status.vala',
     'src/Utils/Rewrite.vala',
     'src/Utils/Image.vala',
     'src/Utils/Optimizer.vala',

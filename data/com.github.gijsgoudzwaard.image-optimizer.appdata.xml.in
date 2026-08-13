@@ -51,18 +51,17 @@
    <!-- The snap adopts its Contact link from here. Without one the Snap Store
         listing shows no way to reach the author, which reads as abandonware. -->
    <url type="contact">https://github.com/gijsgoudzwaard/image-optimizer/issues</url>
-   <update_contact>gijs.goudzwaard@gmail.com</update_contact>
    <!-- Order matters: the first screenshot is what Flathub shows first and may
-        reuse in banners, so it leads with the app doing its job. The empty
-        welcome screen is last on purpose. -->
+        reuse in banners, so it leads with the result rather than with the work.
+        The empty welcome screen is last on purpose. -->
    <screenshots>
       <screenshot type="default">
-         <caption>Optimizing a batch of images</caption>
-         <image>https://raw.githubusercontent.com/GijsGoudzwaard/Image-Optimizer/master/data/screenshots/optimizing.png</image>
+         <caption>What the whole batch saved, added up under the list</caption>
+         <image>https://raw.githubusercontent.com/GijsGoudzwaard/Image-Optimizer/master/data/screenshots/completed.png</image>
       </screenshot>
       <screenshot>
-         <caption>Every image with its old size, new size and savings</caption>
-         <image>https://raw.githubusercontent.com/GijsGoudzwaard/Image-Optimizer/master/data/screenshots/completed.png</image>
+         <caption>Optimizing a batch of images</caption>
+         <image>https://raw.githubusercontent.com/GijsGoudzwaard/Image-Optimizer/master/data/screenshots/optimizing.png</image>
       </screenshot>
       <screenshot>
          <caption>Drag and drop images to get started</caption>
@@ -80,6 +79,20 @@
       <value key="x-appcenter-stripe">pk_live_51AhbXkAINoIuuUE3zGg5JG2PvD3IcxMONFdFJZiMawOTGsCzcxxZAREnvLKeoGyMxEVfJpSYfjFzsDZa2bV6eEEb00nj0bUJl8</value>
    </custom>
    <releases>
+      <release version="0.5.0" date="2026-08-13">
+         <description>
+            <ul>
+               <li>A bar under the list now adds everything up: how much came off in total, how many files were done and what percentage that is. While it is working it shows how far along it is</li>
+               <li>Files that cannot be optimized no longer disappear from the list. They stay, with a line under the name saying why: not a PNG or JPEG, already as small as it gets, or the reason it could not be written</li>
+               <li>A file that was already as small as it gets is now told apart from one that failed. Both used to look the same</li>
+               <li>The window can be made much smaller, down to 460 by 320, and still shows everything. It opens at the size it always did</li>
+               <li>The list has been redrawn, with an icon in front of every row saying how it went, numbers lined up under their headings, and larger type throughout</li>
+               <li>The Flatpak version uses the graphics card again. It had been drawing every frame and every letter on the processor</li>
+               <li>Fixed rows lighting up when clicked and columns being draggable, in a list where there is nothing to select or rearrange</li>
+               <li>Fixed the button on the welcome screen taking on the system accent colour, which put a red outline around it on some systems</li>
+            </ul>
+         </description>
+      </release>
       <release version="0.4.0" date="2026-08-12">
          <description>
             <ul>

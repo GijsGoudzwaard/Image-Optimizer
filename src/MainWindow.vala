@@ -1,5 +1,21 @@
 using Gtk;
 
+/**
+ * Installs a css provider for a whole display.
+ *
+ * Declared here rather than called through the binding, because valac marks
+ * Gtk.StyleContext deprecated as a class while this one static function is not:
+ * it is GDK_AVAILABLE_IN_ALL in gtkstyleprovider.h and is still the documented
+ * way to do this. GTK offers nothing to migrate to, so the alternative is a
+ * warning on every build that nobody can act on.
+ *
+ * The generated C call is the same one the binding would have generated. If GTK
+ * ever really removes the function, this turns into a compile error instead of a
+ * warning, which is the right way round.
+ */
+[CCode (cname = "gtk_style_context_add_provider_for_display")]
+extern void add_provider_for_display (Gdk.Display display, Gtk.StyleProvider provider, uint priority);
+
 public class MainWindow : Gtk.Window {
 
   /**
@@ -36,23 +52,25 @@ public class MainWindow : Gtk.Window {
    * @param Gtk.Application application
    */
   public MainWindow (Gtk.Application application) {
+    // default-width and default-height, not width-request and height-request:
+    // a size request is a minimum, so the window opened at the smallest size it
+    // was allowed to be and could never be made narrower. The size it opens at
+    // is unchanged, the floor is set separately in construct.
     Object (
       application: application,
-      height_request: 680,
+      default_height: 680,
+      default_width: 980,
       icon_name: "com.github.gijsgoudzwaard.image-optimizer",
       resizable: true,
-      title: _("Image Optimizer"),
-      width_request: 980
+      title: _("Image Optimizer")
     );
 
     var css_provider = new Gtk.CssProvider ();
     css_provider.load_from_string (Stylesheet.STYLES);
 
-    // valac warns that Gtk.StyleContext is deprecated since 4.10, but the
-    // static function below is not: it is declared GDK_AVAILABLE_IN_ALL in
-    // gtkstyleprovider.h and is still the documented way to install a
-    // display wide provider. There is nothing to migrate to yet.
-    Gtk.StyleContext.add_provider_for_display (
+    // See the declaration above this class for why this does not go through
+    // Gtk.StyleContext.
+    add_provider_for_display (
       this.get_display (),
       css_provider,
       Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
@@ -60,6 +78,13 @@ public class MainWindow : Gtk.Window {
   }
 
   construct {
+    // The floor, which is not the same thing as the size it opens at. Without one
+    // the window can be dragged down to 221x170, where the columns run into each
+    // other. The number itself is what the four columns need: 308px of fixed
+    // width, plus enough of the file name to still recognise a file by, and
+    // everything that could grow past that ellipsizes.
+    this.set_size_request (460, 320);
+
     this.toolbar = new Gtk.HeaderBar ();
     toolbar.add_css_class ("default-decoration");
     toolbar.add_css_class ("flat");
@@ -121,15 +146,18 @@ public class MainWindow : Gtk.Window {
 
     var add_image = new Gtk.Button.from_icon_name ("list-add-symbolic");
     add_image.set_tooltip_markup (_("Add Image"));
-    this.toolbar.remove (add_image);
 
     // "flat" and not "titlebutton": titlebutton is meant for window controls and
     // brought the theme's light button background with it, while the stylesheet
     // forces icons in this header bar white. That put a white plus on a white
-    // button. Flat leaves the purple header bar showing through and keeps the
-    // hover and pressed states the theme provides.
+    // button.
+    //
+    // The second class is the app's own and not the generic "add" it used to be:
+    // themes colour a button like this with the system accent, which on a red
+    // accent put a red button on a purple bar. The stylesheet gives it a flat
+    // look with its own hover and pressed states instead.
     add_image.add_css_class ("flat");
-    add_image.add_css_class ("add");
+    add_image.add_css_class ("add_image");
     add_image.clicked.connect (on_open_clicked);
 
     this.toolbar.pack_end (add_image);
@@ -193,11 +221,11 @@ public class MainWindow : Gtk.Window {
       var name = Image.get_file_name (path);
       var type = Image.get_file_type (name);
 
-      if (Image.is_valid (type.down ())) {
-        this.images += new Image (path, name, type.down ());
-      } else {
-        // TODO: add an error message here
-      }
+      // Unsupported files are added too. They used to be dropped here without a
+      // word, so someone who selected a folder of mixed contents saw a shorter
+      // list than they picked and had no way to tell which files were left out.
+      // The Image knows it cannot be optimized and the list says so.
+      this.images += new Image (path, name, type.down ());
     });
 
     if (images.length > 0 && this.images_list == null) {
@@ -240,11 +268,8 @@ public class MainWindow : Gtk.Window {
       var name = Image.get_file_name (path);
       var type = Image.get_file_type (name);
 
-      if (Image.is_valid (type.down ())) {
-        this.images += new Image (path, name, type.down ());
-      } else {
-        // TODO: add an error message here
-      }
+      // Same as in on_drop: nothing is thrown away silently.
+      this.images += new Image (path, name, type.down ());
     }
 
     if (this.images_list != null) {
