@@ -126,10 +126,14 @@ public class MainWindow : Gtk.Window {
     // "flat" and not "titlebutton": titlebutton is meant for window controls and
     // brought the theme's light button background with it, while the stylesheet
     // forces icons in this header bar white. That put a white plus on a white
-    // button. Flat leaves the purple header bar showing through and keeps the
-    // hover and pressed states the theme provides.
+    // button.
+    //
+    // The second class is the app's own and not the generic "add" it used to be:
+    // themes colour a button like this with the system accent, which on a red
+    // accent put a red button on a purple bar. The stylesheet gives it a flat
+    // look with its own hover and pressed states instead.
     add_image.add_css_class ("flat");
-    add_image.add_css_class ("add");
+    add_image.add_css_class ("add_image");
     add_image.clicked.connect (on_open_clicked);
 
     this.toolbar.pack_end (add_image);

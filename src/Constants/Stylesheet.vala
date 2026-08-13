@@ -55,11 +55,11 @@ class Stylesheet {
       color: #fff;
     }
 
-    /* 13px at medium weight, so the title carries the same weight as the rest of
-       the window instead of the theme's heavier default. */
+    /* 13px, bold, so the window's name reads as the heading of everything under
+       it rather than as another line of interface text. */
     .default-decoration .title {
       font-size: 13px;
-      font-weight: 500;
+      font-weight: 700;
     }
 
     /* 10px above and below a 16px line, and the same 14 on the sides that the
@@ -68,6 +68,28 @@ class Stylesheet {
     .list .default-decoration {
       min-height: 36px;
       padding: 0 14px;
+    }
+
+    /* The plus in the header bar. Styled here rather than left to the theme,
+       which paints it with the system accent colour: on a red accent that put a
+       red button on a purple bar. Flat with a lighter purple on hover keeps it
+       part of the bar it sits in. */
+    .list .default-decoration .add_image {
+      background-color: transparent;
+      background-image: none;
+      border: none;
+      box-shadow: none;
+      color: #fff;
+      border-radius: 4px;
+      padding: 4px 6px;
+    }
+
+    .list .default-decoration .add_image:hover {
+      background-color: #7d8fe2;
+    }
+
+    .list .default-decoration .add_image:active {
+      background-color: #5a6fd0;
     }
 
     .list .default-decoration image,
@@ -104,8 +126,12 @@ class Stylesheet {
       min-height: 0;
     }
 
+    /* Whole pixels, not the mockup's 12.5. A fractional size lands the glyphs
+       between the pixel grid, and every line of text in the window came out
+       softer for it. */
     .tree_view .cell_text {
-      font-size: 12.5px;
+      font-size: 13px;
+      text-shadow: none;
     }
 
     /* A word in a column of numbers is not a number, so it steps back a shade. */
@@ -113,10 +139,15 @@ class Stylesheet {
       color: #5F5E5A;
     }
 
-    /* The hairline under the headings. Written out rather than as 20% white over
-       the header colour, because the mix has to survive whatever the theme
-       decides to do with the node underneath. */
+    /* The hairline under the headings, and the background that puts it right on
+       the edge between the headings and the first row. Without the background the
+       header node showed a white sliver under the buttons and the line landed
+       below that, which read as an extra rule above the first row.
+
+       Written out rather than as 20% white over the header colour, because
+       alpha() in this position is dropped without a word. */
     .tree_view header {
+      background-color: @primary_color;
       border-bottom: 1px solid #8697e2;
     }
 
@@ -127,11 +158,10 @@ class Stylesheet {
       background-image: none;
       color: #fff;
       border: none;
-      border-bottom: 1px solid alpha(#ffffff, 0.2);
       border-radius: 0;
       padding: 8px 0;
       font-size: 12px;
-      font-weight: 400;
+      font-weight: 600;
       outline: none;
       box-shadow: none;
     }
@@ -141,12 +171,16 @@ class Stylesheet {
       filter: none;
     }
 
-    /* The weight and size belong on the label as well as the button: the theme
-       sets them on the label, and there the label wins. */
-    .tree_view button label {
-      color: #fff;
+    /* The size and weight belong on the label as well as on the button, because
+       that is where the theme sets them and the more specific rule wins. Pure
+       white and heavier than the mockup asks for: at 12px on this purple the
+       lighter weight never reached full coverage on any pixel, which is what made
+       the headings hard to read. */
+    .tree_view header button label {
+      color: #ffffff;
       font-size: 12px;
-      font-weight: 400;
+      font-weight: 600;
+      text-shadow: none;
     }
 
     /* The rounded bottom corners used to sit on .tree_view. The bar is the
@@ -168,15 +202,22 @@ class Stylesheet {
       color: #534AB7;
     }
 
+    /* No text shadow anywhere in here. The elementary stylesheet puts one on
+       several kinds of label, and at these sizes it reads as smudged text rather
+       than as depth. */
+    .summary_bar label {
+      text-shadow: none;
+    }
+
     .summary_bar .headline {
-      font-size: 13.5px;
+      font-size: 14px;
       font-weight: 500;
       color: #2C2C2A;
     }
 
     .summary_bar .sub,
     .summary_bar .caption {
-      font-size: 11.5px;
+      font-size: 12px;
       color: #5F5E5A;
     }
 
