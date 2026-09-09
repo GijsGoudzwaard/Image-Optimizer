@@ -16,6 +16,7 @@
 #   R10 a read-only directory, which the copy-and-write-back path has to survive.
 #   R11 a read-only file, which has to fail without inventing a saving.
 #   R12 a second pass over the same file, which is the already optimal path.
+#   R13 quitting mid batch, which may never leave a file half written.
 #
 # Usage, against an installed tree:
 #
@@ -416,6 +417,60 @@ if [ "$noise" != "0" ]; then
 fi
 check "diagnostics on the second pass" "$noise" "0"
 stop_app
+
+echo "### R13 quitting during a batch leaves no half written file ###"
+# Writing a result back is a write followed by a truncate, and between those two
+# the original carries the new head on the old length. Quitting in that gap used
+# to be possible, because the workers are detached threads and nothing held the
+# exit. The app now waits for any write back before it goes.
+#
+# The check needs no reference file. A finished file is always smaller than what
+# it started as, an untouched file is byte for byte the original, and the broken
+# state is the one that kept the original length while the bytes changed. So:
+# same size means it has to be identical, smaller is fine, larger is wrong.
+#
+# This is a guard and not a proof. Without help the gap is milliseconds wide, so
+# a passing run does not mean the hold works. That was proven separately by
+# putting a second of sleep between the write and the truncate, where the same
+# quit left a 16286 byte file with the new head and no drain, and a correct 13046
+# byte file with it.
+if command -v xdotool >/dev/null 2>&1; then
+  r13="$WORK/r13"
+  mkdir -p "$r13"
+  for i in $(seq 1 10); do cp "$PNG_SOURCE" "$r13/q$i.png"; done
+  for i in $(seq 1 6); do cp "$JPG_SOURCE" "$r13/q$i.jpg"; done
+  mkdir -p "$WORK/r13-orig"
+  cp "$r13"/* "$WORK/r13-orig/"
+  record "$r13"/*
+  start_app "" "$r13"/*
+  # Long enough that the first files are being written back, short enough that
+  # the batch is nowhere near done.
+  sleep 0.6
+  window=$(xdotool search --name "Image Optimizer" 2>/dev/null | head -1)
+  if [ -n "$window" ]; then
+    xdotool key --window "$window" --clearmodifiers ctrl+q 2>/dev/null
+    for _ in $(seq 1 100); do
+      kill -0 "$APP_PID" 2>/dev/null || break
+      sleep 0.1
+    done
+  fi
+  stop_app
+
+  mixed=0
+  for f in "$r13"/*; do
+    name=$(basename "$f")
+    before=$(size "$WORK/r13-orig/$name")
+    now=$(size "$f")
+    if [ "$now" -gt "$before" ]; then
+      mixed=$((mixed + 1))
+    elif [ "$now" -eq "$before" ] && ! cmp -s "$f" "$WORK/r13-orig/$name"; then
+      mixed=$((mixed + 1))
+    fi
+  done
+  check "files left in a half written state" "$mixed" "0"
+else
+  echo "  SKIP xdotool is not available"
+fi
 
 echo
 if [ "$failed" -ne 0 ]; then

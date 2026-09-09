@@ -53,6 +53,30 @@ class Application : Gtk.Application {
     }
   }
 
+  /**
+   * Runs on the way out, whatever asked for it: Ctrl+Q, the close button or the
+   * last window going away.
+   *
+   * The workers are detached threads, so nothing here waits for the batch as a
+   * whole, and it should not: someone who quits wants to quit. What it does wait
+   * for is the write back, because that is a write followed by a truncate and a
+   * file caught between the two is neither the old image nor the new one. Those
+   * writes are one buffer each, so this is milliseconds in practice.
+   *
+   * The cap means a wedged write costs two seconds and then the app leaves
+   * anyway. Nothing can be done about a kill -9, which is fine: the optimizers
+   * work on a copy and the original is only ever touched here.
+   *
+   * @return void
+   */
+  protected override void shutdown () {
+    for (var waited = 0; waited < 200 && Rewrite.is_committing (); waited++) {
+      Thread.usleep (10000);
+    }
+
+    base.shutdown ();
+  }
+
   public static int main (string[] args) {
     var app = new Application ();
     return app.run (args);
