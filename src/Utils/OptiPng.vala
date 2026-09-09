@@ -17,11 +17,24 @@ public class OptiPng {
     // -o6 only pays off on smooth gradients while costing four to ten times the
     // time: 104 seconds for a single 3000x2000 image against 15 for -o3.
     "-o3",
-    // Free, and it brings PNG in line with what the app already does to JPEG
-    // metadata. The gain is exactly the size of the metadata carried.
-    "-strip", "all",
     "-preserve"
   };
+
+  /**
+   * What is added for a file that carries no colour profile.
+   *
+   * "-strip all" is what it says: optipng has no way to keep one chunk and drop
+   * the rest, so passing it to a file with an embedded profile throws that
+   * profile away and the image renders as sRGB from then on. Measured on a
+   * profiled PNG, keeping the profile costs 358 bytes.
+   *
+   * So the flag is added per file, and only when there is no profile to lose.
+   * Screenshots and exports, which is nearly everything this app sees, still get
+   * the full saving.
+   *
+   * @var string[]
+   */
+  private string[] strip_args = { "-strip", "all" };
 
   /**
    * Used to update the treeview when done compressing.
@@ -106,6 +119,12 @@ public class OptiPng {
       argv += arg;
     }
 
+    if (! OptiPng.has_colour_profile (rewrite.working_path)) {
+      foreach (var arg in this.strip_args) {
+        argv += arg;
+      }
+    }
+
     argv += rewrite.working_path;
 
     var new_size = 0;
@@ -165,6 +184,69 @@ public class OptiPng {
     // anything alongside OPTIMIZED, and the list checks that it really is
     // smaller before it counts as a saving.
     this.list.update_result (image, status_result, new_size, reason);
+  }
+
+  /**
+   * Whether this PNG carries an embedded colour profile.
+   *
+   * A PNG is a signature followed by chunks of [length][type][data][crc], and
+   * the spec puts iCCP before the first IDAT, so the walk can stop as soon as
+   * the image data starts. Nothing is written here, only read, which is why this
+   * is a safe way to decide about a flag that would otherwise destroy the
+   * profile.
+   *
+   * Returns false when the file cannot be read or does not look like a PNG. That
+   * is the same answer as "no profile", and it is the right one: optipng is
+   * about to refuse the file anyway, and the row will say so.
+   *
+   * @param  string path
+   * @return bool
+   */
+  private static bool has_colour_profile (string path) {
+    try {
+      var stream = new DataInputStream (File.new_for_path (path).read ());
+      // PNG is big endian, which is also what DataInputStream defaults to.
+      var header = new uint8[8];
+      size_t read;
+
+      if (! stream.read_all (header, out read) || read != 8) {
+        return false;
+      }
+
+      // The cap is there so a truncated or hostile file cannot keep this going.
+      // Sixty chunks is far more than the handful that precede the image data.
+      for (var i = 0; i < 60; i++) {
+        var length = stream.read_uint32 ();
+        var type = new uint8[4];
+
+        if (! stream.read_all (type, out read) || read != 4) {
+          return false;
+        }
+
+        if (type[0] == 'i' && type[1] == 'C' && type[2] == 'C' && type[3] == 'P') {
+          return true;
+        }
+
+        // Once the image data starts there is no profile coming.
+        if (type[0] == 'I' && type[1] == 'D' && type[2] == 'A' && type[3] == 'T') {
+          return false;
+        }
+
+        // The data plus its four byte checksum. Cast first: a corrupt length of
+        // 0xFFFFFFFF would wrap round if the four were added as a uint32.
+        var skip = (int64) length + 4;
+
+        if (stream.skip ((size_t) skip) != skip) {
+          return false;
+        }
+      }
+    } catch (Error e) {
+      // Not worth a warning: optipng gets the same file a moment later and its
+      // own complaint is the one that reaches the row.
+      return false;
+    }
+
+    return false;
   }
 
   /**
