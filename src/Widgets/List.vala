@@ -1,5 +1,3 @@
-using Gtk;
-
 public class List {
 
   /**
@@ -97,7 +95,7 @@ public class List {
 
   public Gtk.Box window () {
     var main = new Gtk.ScrolledWindow ();
-    main.set_policy (PolicyType.AUTOMATIC, PolicyType.AUTOMATIC);
+    main.set_policy (Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC);
 
     this.listmodel = new GLib.ListStore (typeof (ImageRow));
     this.summary = new SummaryBar ();
@@ -120,9 +118,21 @@ public class List {
     // the window keeps free on the right.
     view.append_column (this.status_column ());
     view.append_column (this.name_column ());
-    view.append_column (this.text_column (_("Size"), 1, 88, 10, 0, (row) => row.size_text, (row) => row.status == Status.UNSUPPORTED));
-    view.append_column (this.text_column (_("New size"), 1, 92, 10, 0, (row) => row.new_size_text, (row) => row.status == Status.FAILED));
-    view.append_column (this.text_column (_("Savings"), 1, 94, 10, 14, (row) => row.savings_text, (row) => row.status != Status.OPTIMIZED));
+    view.append_column (this.text_column (
+      _("Size"), 1, 88, 10, 0,
+      (row) => row.size_text,
+      (row) => row.status == Status.UNSUPPORTED
+    ));
+    view.append_column (this.text_column (
+      _("New size"), 1, 92, 10, 0,
+      (row) => row.new_size_text,
+      (row) => row.status == Status.FAILED
+    ));
+    view.append_column (this.text_column (
+      _("Savings"), 1, 94, 10, 14,
+      (row) => row.savings_text,
+      (row) => row.status != Status.OPTIMIZED
+    ));
 
     this.style_headers (view);
 

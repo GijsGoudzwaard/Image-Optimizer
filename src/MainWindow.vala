@@ -1,5 +1,3 @@
-using Gtk;
-
 /**
  * Installs a css provider for a whole display.
  *

@@ -1,5 +1,3 @@
-using Gtk;
-
 public class UploadScreen : Gtk.Box {
 
   public Gtk.Button upload_button;

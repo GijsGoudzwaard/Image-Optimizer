@@ -1,5 +1,3 @@
-using Gtk;
-
 public class Image {
   /**
    * The image path.
