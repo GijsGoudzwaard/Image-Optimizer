@@ -55,11 +55,33 @@ public class Rewrite {
   public string? failure { get; private set; default = null; }
 
   /**
+   * How many workers are inside the write back right now, across every thread.
+   *
+   * Writing the result back is a write followed by a truncate, and between those
+   * two the original holds the new head and the old tail. That is the only
+   * moment in this app where a file on disk is not a valid image, so the app is
+   * not allowed to exit in it. Application.shutdown waits on this.
+   *
+   * @var int
+   */
+  private static int committing = 0;
+
+  /**
    * Modification time of the original, so it can be restored afterwards.
    *
    * @var DateTime?
    */
   private DateTime? modified = null;
+
+  /**
+   * Whether any worker is mid write back. Read from the main thread on the way
+   * out, written by the workers, hence the atomics.
+   *
+   * @return bool
+   */
+  public static bool is_committing () {
+    return AtomicInt.get (ref Rewrite.committing) > 0;
+  }
 
   /**
    * Take a copy of the image inside the sandbox. Check working_path afterwards:
@@ -148,6 +170,29 @@ public class Rewrite {
       return 0;
     }
 
+    // The counter is raised around the whole write back and lowered on every way
+    // out of it, so the app can tell whether a file is halfway through.
+    AtomicInt.inc (ref Rewrite.committing);
+    var written = this.write_back (contents);
+    AtomicInt.dec_and_test (ref Rewrite.committing);
+
+    if (written == 0) {
+      return 0;
+    }
+
+    this.restore_modification_time ();
+
+    return written;
+  }
+
+  /**
+   * Put the bytes over the original. Returns the number written, or 0 when
+   * nothing was.
+   *
+   * @param  uint8[] contents
+   * @return int
+   */
+  private int write_back (uint8[] contents) {
     try {
       // open_readwrite, not replace: File.replace writes a new file and renames
       // it over this one, which is exactly what has to be avoided here.
@@ -158,6 +203,23 @@ public class Rewrite {
       size_t written;
       stream.output_stream.write_all (contents, out written);
       stream.output_stream.flush ();
+
+      // write_all loops until it is done or it throws, so a short count is not
+      // supposed to happen. If it ever did, truncating to the length the result
+      // was meant to have would cut the file down to a size it never received
+      // the bytes for, and that is the one outcome worse than failing here.
+      if (written != contents.length) {
+        warning (
+          "Only %d of %d bytes reached \"%s\"",
+          (int) written,
+          contents.length,
+          this.original_path
+        );
+        this.failure = _("Only part of the result could be written, so this file may be damaged");
+        stream.close ();
+
+        return 0;
+      }
 
       // The result is smaller than what was there, so the tail of the old file
       // has to go. Without this the file keeps its original length and the
@@ -179,8 +241,6 @@ public class Rewrite {
 
       return 0;
     }
-
-    this.restore_modification_time ();
 
     return contents.length;
   }

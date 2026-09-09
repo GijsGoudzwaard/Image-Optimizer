@@ -16,6 +16,9 @@
 #   R10 a read-only directory, which the copy-and-write-back path has to survive.
 #   R11 a read-only file, which has to fail without inventing a saving.
 #   R12 a second pass over the same file, which is the already optimal path.
+#   R13 quitting mid batch, which may never leave a file half written.
+#   R14 a photo with Exif, whose orientation flag has to survive.
+#   R15 a png that says how its colours should be read, which has to survive too.
 #
 # Usage, against an installed tree:
 #
@@ -38,6 +41,10 @@ REPO_ROOT=$(cd "$(dirname "$0")/../.." && pwd)
 PNG_SOURCE="$REPO_ROOT/.github/fixtures/fixture.png"
 JPG_SOURCE="$REPO_ROOT/.github/fixtures/fixture.jpg"
 BMP_SOURCE="$REPO_ROOT/.github/fixtures/fixture.bmp"
+# Both of these carry something worth keeping and still have room to shrink, so a
+# run that keeps the metadata and a run that does nothing at all look different.
+EXIF_SOURCE="$REPO_ROOT/.github/fixtures/fixture-exif.jpg"
+ICC_SOURCE="$REPO_ROOT/.github/fixtures/fixture-icc.png"
 
 WORK=$(mktemp -d)
 XVFB_PID=""
@@ -53,6 +60,10 @@ trap cleanup EXIT
 
 passed=0
 failed=0
+# Kept so the summary can name them. This suite is long and both CI and a
+# terminal cut the middle out of it, so a run that fails early otherwise ends in
+# a count with no clue what it was.
+failures=""
 
 check () { # description, actual, expected
   if [ "$2" = "$3" ]; then
@@ -60,6 +71,8 @@ check () { # description, actual, expected
     passed=$((passed + 1))
   else
     echo "  FAIL $1 (got '$2', expected '$3')"
+    failures="$failures
+  $1 (got '$2', expected '$3')"
     failed=$((failed + 1))
   fi
 }
@@ -417,10 +430,103 @@ fi
 check "diagnostics on the second pass" "$noise" "0"
 stop_app
 
+echo "### R13 quitting during a batch leaves no half written file ###"
+# Writing a result back is a write followed by a truncate, and between those two
+# the original carries the new head on the old length. Quitting in that gap used
+# to be possible, because the workers are detached threads and nothing held the
+# exit. The app now waits for any write back before it goes.
+#
+# The check needs no reference file. A finished file is always smaller than what
+# it started as, an untouched file is byte for byte the original, and the broken
+# state is the one that kept the original length while the bytes changed. So:
+# same size means it has to be identical, smaller is fine, larger is wrong.
+#
+# This is a guard and not a proof. Without help the gap is milliseconds wide, so
+# a passing run does not mean the hold works. That was proven separately by
+# putting a second of sleep between the write and the truncate, where the same
+# quit left a 16286 byte file with the new head and no drain, and a correct 13046
+# byte file with it.
+if command -v xdotool >/dev/null 2>&1; then
+  r13="$WORK/r13"
+  mkdir -p "$r13"
+  for i in $(seq 1 10); do cp "$PNG_SOURCE" "$r13/q$i.png"; done
+  for i in $(seq 1 6); do cp "$JPG_SOURCE" "$r13/q$i.jpg"; done
+  mkdir -p "$WORK/r13-orig"
+  cp "$r13"/* "$WORK/r13-orig/"
+  record "$r13"/*
+  start_app "" "$r13"/*
+  # Long enough that the first files are being written back, short enough that
+  # the batch is nowhere near done.
+  sleep 0.6
+  window=$(xdotool search --name "Image Optimizer" 2>/dev/null | head -1)
+  if [ -n "$window" ]; then
+    xdotool key --window "$window" --clearmodifiers ctrl+q 2>/dev/null
+    for _ in $(seq 1 100); do
+      kill -0 "$APP_PID" 2>/dev/null || break
+      sleep 0.1
+    done
+  fi
+  stop_app
+
+  mixed=0
+  for f in "$r13"/*; do
+    name=$(basename "$f")
+    before=$(size "$WORK/r13-orig/$name")
+    now=$(size "$f")
+    if [ "$now" -gt "$before" ]; then
+      mixed=$((mixed + 1))
+    elif [ "$now" -eq "$before" ] && ! cmp -s "$f" "$WORK/r13-orig/$name"; then
+      mixed=$((mixed + 1))
+    fi
+  done
+  check "files left in a half written state" "$mixed" "0"
+else
+  echo "  SKIP xdotool is not available"
+fi
+
+echo "### R14 a photo keeps its Exif, so it does not come out on its side ###"
+# The orientation flag lives in the Exif block. A phone stores a portrait photo
+# as a landscape image plus that flag, so stripping Exif changes no pixel at all
+# and still turns every such photo sideways. --strip-all used to do exactly that.
+# grep on the raw bytes is enough here: the marker is the literal string "Exif",
+# and after a strip it is gone.
+r14="$WORK/r14"
+mkdir -p "$r14"
+cp "$EXIF_SOURCE" "$r14/photo.jpg"
+record "$r14"/*
+start_app "" "$r14/photo.jpg"
+wait_shrunk 1 60 "$r14/photo.jpg"
+check "the photo was optimized" "$(shrunk_count "$r14/photo.jpg")" "1"
+check "the Exif block survived" \
+  "$(grep -a -q 'Exif' "$r14/photo.jpg" && echo yes || echo no)" "yes"
+stop_app
+
+echo "### R15 a png keeps what it says about its own colours ###"
+# iCCP, gAMA, sRGB and cHRM tell a viewer how to read the colours in the file,
+# and optipng counts all four as metadata that "-strip all" removes. So the flag
+# is only passed to files that carry none of them, which is what the second half
+# of this checks: a plain png still gets stripped, because there the saving is
+# free.
+r15="$WORK/r15"
+mkdir -p "$r15"
+cp "$ICC_SOURCE" "$r15/profiled.png"
+cp "$PNG_SOURCE" "$r15/plain.png"
+record "$r15"/*
+start_app "" "$r15"/*
+wait_shrunk 2 60 "$r15"/*
+check "both pngs were optimized" "$(shrunk_count "$r15"/*)" "2"
+check "the colour profile survived" \
+  "$(grep -a -q 'iCCP' "$r15/profiled.png" && echo yes || echo no)" "yes"
+check "the plain png is still stripped" \
+  "$(grep -a -q 'iCCP' "$r15/plain.png" && echo yes || echo no)" "no"
+stop_app
+
 echo
 if [ "$failed" -ne 0 ]; then
-  # Whatever went wrong, the app's own output from the last group is usually
-  # the fastest way to see it, so do not make anyone reproduce it to find out.
+  echo "--- what failed ---$failures"
+  # The app's own output from the last group is usually the fastest way to see
+  # what happened, so do not make anyone reproduce it to find out. Note that it
+  # is the last group's log and not the failing one's, if those differ.
   echo "--- output of the last run of the app ---"
   cat "$WORK/app.log" 2>/dev/null
   echo "--- end ---"

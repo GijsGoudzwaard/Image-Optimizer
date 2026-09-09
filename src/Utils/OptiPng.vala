@@ -17,11 +17,29 @@ public class OptiPng {
     // -o6 only pays off on smooth gradients while costing four to ten times the
     // time: 104 seconds for a single 3000x2000 image against 15 for -o3.
     "-o3",
-    // Free, and it brings PNG in line with what the app already does to JPEG
-    // metadata. The gain is exactly the size of the metadata carried.
-    "-strip", "all",
     "-preserve"
   };
+
+  /**
+   * What is added for a file that says nothing about how to display it.
+   *
+   * "-strip all" is what it says: optipng has no way to keep one chunk and drop
+   * the rest, so passing it to a file that carries colour information throws
+   * that information away and the image is read differently from then on.
+   * Measured, keeping it costs 358 bytes on a file with a full profile and 110
+   * on one with gAMA, sRGB and cHRM.
+   *
+   * So the flag is added per file, and only when there is nothing to lose. The
+   * flag being all or nothing does mean such a file keeps its other metadata as
+   * well. Measured on the screenshot in .github/fixtures, that is 81 bytes on 13
+   * kB: 44 of them the cHRM chunk that is the point of this, and 37 a bKGD and a
+   * tIME that came along for the ride. Recovering those 37 would mean splicing
+   * chunks back into the result by hand, which is not worth doing to a file the
+   * app has just promised not to damage.
+   *
+   * @var string[]
+   */
+  private string[] strip_args = { "-strip", "all" };
 
   /**
    * Used to update the treeview when done compressing.
@@ -106,6 +124,12 @@ public class OptiPng {
       argv += arg;
     }
 
+    if (! OptiPng.carries_display_information (rewrite.working_path)) {
+      foreach (var arg in this.strip_args) {
+        argv += arg;
+      }
+    }
+
     argv += rewrite.working_path;
 
     var new_size = 0;
@@ -165,6 +189,90 @@ public class OptiPng {
     // anything alongside OPTIMIZED, and the list checks that it really is
     // smaller before it counts as a saving.
     this.list.update_result (image, status_result, new_size, reason);
+  }
+
+  /**
+   * Whether this PNG says anything about how it should be displayed.
+   *
+   * Five chunks do, and optipng counts every one as metadata that "-strip all"
+   * removes. Four are about colour: iCCP is a full profile, gAMA the gamma, sRGB
+   * the rendering intent and cHRM the primaries, and without them a viewer falls
+   * back on its own assumptions. The fifth is eXIf, which PNG has carried since
+   * 1.5 and which holds the same orientation flag as a JPEG: measured, a png with
+   * eXIf saying Rotate 90 came out of "-strip all" without it, so a png could be
+   * turned on its side the same way a photo was.
+   *
+   * A PNG is a signature followed by chunks of [length][type][data][crc], and
+   * the spec puts all of these before the first IDAT, so the walk can stop as
+   * soon as the image data starts. Nothing is written here, only read, which is
+   * why this is a safe way to decide about a flag that would otherwise destroy
+   * them.
+   *
+   * Returns false when the file cannot be read or does not look like a PNG. That
+   * is the same answer as "nothing to lose", and it is the right one: optipng is
+   * about to refuse the file anyway, and the row will say so.
+   *
+   * @param  string path
+   * @return bool
+   */
+  private static bool carries_display_information (string path) {
+    try {
+      var stream = new DataInputStream (File.new_for_path (path).read ());
+      // PNG is big endian, which is also what DataInputStream defaults to.
+      var header = new uint8[8];
+      size_t read;
+
+      if (! stream.read_all (header, out read) || read != 8) {
+        return false;
+      }
+
+      // What ends this loop is the end of the file: every turn takes at least the
+      // eight bytes of a length and a type, and a read that comes up short
+      // returns below. The count is only a backstop, and it is high because the
+      // spec lets any number of chunks sit in front of the profile. Measured with
+      // a file carrying two hundred tEXt chunks before its iCCP, a cap of sixty
+      // threw the profile away, which is the very bug this method exists to stop.
+      for (var i = 0; i < 10000; i++) {
+        var length = stream.read_uint32 ();
+        var type = new uint8[4];
+
+        if (! stream.read_all (type, out read) || read != 4) {
+          return false;
+        }
+
+        char[] letters = { (char) type[0], (char) type[1], (char) type[2], (char) type[3], '\0' };
+        var name = (string) letters;
+
+        if (
+          name == "iCCP" ||   // the whole colour profile
+          name == "gAMA" ||   // the gamma
+          name == "sRGB" ||   // the rendering intent
+          name == "cHRM" ||   // the primaries
+          name == "eXIf"      // the same orientation flag a photo carries
+        ) {
+          return true;
+        }
+
+        // Once the image data starts there is nothing of the sort coming.
+        if (name == "IDAT") {
+          return false;
+        }
+
+        // The data plus its four byte checksum. Cast first: a corrupt length of
+        // 0xFFFFFFFF would wrap round if the four were added as a uint32.
+        var skip = (int64) length + 4;
+
+        if (stream.skip ((size_t) skip) != skip) {
+          return false;
+        }
+      }
+    } catch (Error e) {
+      // Not worth a warning: optipng gets the same file a moment later and its
+      // own complaint is the one that reaches the row.
+      return false;
+    }
+
+    return false;
   }
 
   /**

@@ -54,9 +54,12 @@ untouched, and the app says so rather than pretending it did something.
 - **It rewrites the file you picked.** No copy next to it, no `-optimized`
   suffix, and the modification time is kept, so optimizing a folder does not
   reshuffle a photo library sorted by date.
-- **It keeps your colour profile.** Comments, Exif, IPTC and XMP are stripped,
-  which is part of the saving. The ICC profile is deliberately kept, because
-  dropping it makes a wide-gamut image render as sRGB afterwards.
+- **It keeps what an image needs to look right.** The ICC colour profile stays,
+  because dropping it makes a wide-gamut image render as sRGB afterwards, and so
+  does Exif, because that is where the orientation flag lives and a phone stores
+  a portrait photo as a landscape image plus that flag. Comments, IPTC and XMP are
+  stripped, which is part of the saving. Keeping the rest costs a few hundred
+  bytes: measured on a 920 kB photo, 340 of them.
 - **It never sends your images anywhere.** No account, no upload, no network
   access at all. On Flathub the app holds three permissions in total, and not one
   of them is filesystem access: files reach it through the desktop portals, so it
