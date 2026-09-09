@@ -21,14 +21,15 @@ public class OptiPng {
   };
 
   /**
-   * What is added for a file that carries no colour profile.
+   * What is added for a file that says nothing about its own colours.
    *
    * "-strip all" is what it says: optipng has no way to keep one chunk and drop
-   * the rest, so passing it to a file with an embedded profile throws that
-   * profile away and the image renders as sRGB from then on. Measured on a
-   * profiled PNG, keeping the profile costs 358 bytes.
+   * the rest, so passing it to a file that carries colour information throws
+   * that information away and the image is read differently from then on.
+   * Measured, keeping it costs 358 bytes on a file with a full profile and 110
+   * on one with gAMA, sRGB and cHRM.
    *
-   * So the flag is added per file, and only when there is no profile to lose.
+   * So the flag is added per file, and only when there is nothing to lose.
    * Screenshots and exports, which is nearly everything this app sees, still get
    * the full saving.
    *
@@ -119,7 +120,7 @@ public class OptiPng {
       argv += arg;
     }
 
-    if (! OptiPng.has_colour_profile (rewrite.working_path)) {
+    if (! OptiPng.carries_colour_information (rewrite.working_path)) {
       foreach (var arg in this.strip_args) {
         argv += arg;
       }
@@ -187,22 +188,26 @@ public class OptiPng {
   }
 
   /**
-   * Whether this PNG carries an embedded colour profile.
+   * Whether this PNG says anything about how its colours should be read.
+   *
+   * Four chunks do that, and optipng counts all four as metadata: iCCP is a full
+   * profile, gAMA is the gamma, sRGB is the rendering intent and cHRM names the
+   * primaries. Measured, "-strip all" removes every one of them, and a viewer
+   * then falls back on its own assumptions.
    *
    * A PNG is a signature followed by chunks of [length][type][data][crc], and
-   * the spec puts iCCP before the first IDAT, so the walk can stop as soon as
-   * the image data starts. Nothing is written here, only read, which is why this
-   * is a safe way to decide about a flag that would otherwise destroy the
-   * profile.
+   * the spec puts all four before the first IDAT, so the walk can stop as soon
+   * as the image data starts. Nothing is written here, only read, which is why
+   * this is a safe way to decide about a flag that would otherwise destroy them.
    *
    * Returns false when the file cannot be read or does not look like a PNG. That
-   * is the same answer as "no profile", and it is the right one: optipng is
+   * is the same answer as "nothing to lose", and it is the right one: optipng is
    * about to refuse the file anyway, and the row will say so.
    *
    * @param  string path
    * @return bool
    */
-  private static bool has_colour_profile (string path) {
+  private static bool carries_colour_information (string path) {
     try {
       var stream = new DataInputStream (File.new_for_path (path).read ());
       // PNG is big endian, which is also what DataInputStream defaults to.
@@ -223,12 +228,15 @@ public class OptiPng {
           return false;
         }
 
-        if (type[0] == 'i' && type[1] == 'C' && type[2] == 'C' && type[3] == 'P') {
+        char[] letters = { (char) type[0], (char) type[1], (char) type[2], (char) type[3], '\0' };
+        var name = (string) letters;
+
+        if (name == "iCCP" || name == "gAMA" || name == "sRGB" || name == "cHRM") {
           return true;
         }
 
-        // Once the image data starts there is no profile coming.
-        if (type[0] == 'I' && type[1] == 'D' && type[2] == 'A' && type[3] == 'T') {
+        // Once the image data starts there is nothing of the sort coming.
+        if (name == "IDAT") {
           return false;
         }
 

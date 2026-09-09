@@ -80,7 +80,7 @@
             <ul>
                <li>Fixed photos coming out of the app on their side. The orientation flag lives in the Exif block, which was being stripped, so a portrait photo taken on a phone was shown rotated afterwards even though not a single pixel had changed</li>
                <li>The capture date, the camera and the location are kept as well, where they used to be thrown away with that same block. Keeping all of it costs a few hundred bytes</li>
-               <li>PNG images keep their colour profile now, as JPEG images already did, so a wide-gamut PNG no longer renders as sRGB after optimizing</li>
+               <li>PNG images keep what they say about their own colours now, as JPEG images already did. The colour profile, the gamma and the primaries were all being thrown away, so a wide-gamut PNG came back looking different</li>
                <li>Quitting in the middle of a batch can no longer leave a file half written. The app now waits for the file it is writing before it closes</li>
             </ul>
          </description>
