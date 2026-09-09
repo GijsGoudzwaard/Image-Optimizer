@@ -146,7 +146,17 @@ jobs:
     runs-on: ubuntu-24.04
 
     container:
-      image: valalang/lint
+      # Pinned by digest because there is nothing else to pin to: valalang/lint
+      # publishes a single moving "latest" and no version tags at all. On
+      # 2026-09-04 a new one turned `using` into an error, which turned this job
+      # red three weeks after the last commit to this repo.
+      #
+      # To take in newer rules, deliberately, replace the digest with what this
+      # prints and then fix whatever it finds:
+      #
+      #   curl -s https://hub.docker.com/v2/repositories/valalang/lint/tags \
+      #     | python3 -c "import json,sys; print(json.load(sys.stdin)['results'][0]['digest'])"
+      image: valalang/lint@sha256:144a55cf6ff94ca4d58b38aa62990421d170313b3e8ef0ed2b9802644c3c07db
 
     steps:
       - name: Checkout
