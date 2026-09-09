@@ -21,7 +21,7 @@
          <li>Compress PNG and JPEG images without losing quality</li>
          <li>Optimize a whole batch at once, several files at a time</li>
          <li>Works offline, with no account and nothing uploaded</li>
-         <li>Keeps the colour profile, so wide-gamut images still look right</li>
+         <li>Keeps the colour profile and the orientation, so images still look the way they did</li>
          <li>Keeps modification times, so a library sorted by date stays in order</li>
          <li>Quit quickly by pressing Ctrl + Q</li>
       </ul>

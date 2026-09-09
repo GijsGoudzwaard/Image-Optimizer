@@ -13,13 +13,25 @@ public class JpegOptim {
    * @var string[]
    */
   private string[] args = {
-    // Strip everything, then put back the one marker that is not just weight:
-    // without the ICC profile a wide gamut image renders as sRGB afterwards.
+    // Strip everything, then put back the two blocks that are not just weight.
     // Naming what to keep beats naming what to drop, because jpegoptim also
     // knows Adobe APP14 and JFXX markers that a list of individual --strip-*
     // flags would silently leave behind.
     "--strip-all",
+    // Without the ICC profile a wide gamut image renders as sRGB afterwards.
     "--keep-icc",
+    // Exif holds the orientation flag, and a phone stores a portrait photo as a
+    // landscape image plus that flag. Stripping it therefore does not change a
+    // single pixel and still turns every such photo on its side, which is the
+    // one thing this app promises never to do. Measured on a 920 kB photo, the
+    // whole Exif block costs 340 bytes, so the saving went from 0.38% to 0.35%
+    // to keep the orientation, the capture date, the camera and the location.
+    // A file whose Exif carries a thumbnail costs that thumbnail instead.
+    //
+    // This does mean Exif is no longer stripped, where it used to be. Whether to
+    // drop it is a decision for the person sharing the file, not for a
+    // compressor, so it belongs in a setting rather than in this array.
+    "--keep-exif",
     // Reorders the scans without touching a single coefficient. Lossless, free,
     // and by far the largest win available here.
     "--all-progressive",
