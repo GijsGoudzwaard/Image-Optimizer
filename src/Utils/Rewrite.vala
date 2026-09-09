@@ -204,6 +204,23 @@ public class Rewrite {
       stream.output_stream.write_all (contents, out written);
       stream.output_stream.flush ();
 
+      // write_all loops until it is done or it throws, so a short count is not
+      // supposed to happen. If it ever did, truncating to the length the result
+      // was meant to have would cut the file down to a size it never received
+      // the bytes for, and that is the one outcome worse than failing here.
+      if (written != contents.length) {
+        warning (
+          "Only %d of %d bytes reached \"%s\"",
+          (int) written,
+          contents.length,
+          this.original_path
+        );
+        this.failure = _("Only part of the result could be written, so this file may be damaged");
+        stream.close ();
+
+        return 0;
+      }
+
       // The result is smaller than what was there, so the tail of the old file
       // has to go. Without this the file keeps its original length and the
       // leftover bytes corrupt it.
