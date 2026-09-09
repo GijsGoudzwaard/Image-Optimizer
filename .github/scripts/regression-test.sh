@@ -17,6 +17,8 @@
 #   R11 a read-only file, which has to fail without inventing a saving.
 #   R12 a second pass over the same file, which is the already optimal path.
 #   R13 quitting mid batch, which may never leave a file half written.
+#   R14 a photo with Exif, whose orientation flag has to survive.
+#   R15 a png that says how its colours should be read, which has to survive too.
 #
 # Usage, against an installed tree:
 #
@@ -39,6 +41,10 @@ REPO_ROOT=$(cd "$(dirname "$0")/../.." && pwd)
 PNG_SOURCE="$REPO_ROOT/.github/fixtures/fixture.png"
 JPG_SOURCE="$REPO_ROOT/.github/fixtures/fixture.jpg"
 BMP_SOURCE="$REPO_ROOT/.github/fixtures/fixture.bmp"
+# Both of these carry something worth keeping and still have room to shrink, so a
+# run that keeps the metadata and a run that does nothing at all look different.
+EXIF_SOURCE="$REPO_ROOT/.github/fixtures/fixture-exif.jpg"
+ICC_SOURCE="$REPO_ROOT/.github/fixtures/fixture-icc.png"
 
 WORK=$(mktemp -d)
 XVFB_PID=""
@@ -471,6 +477,43 @@ if command -v xdotool >/dev/null 2>&1; then
 else
   echo "  SKIP xdotool is not available"
 fi
+
+echo "### R14 a photo keeps its Exif, so it does not come out on its side ###"
+# The orientation flag lives in the Exif block. A phone stores a portrait photo
+# as a landscape image plus that flag, so stripping Exif changes no pixel at all
+# and still turns every such photo sideways. --strip-all used to do exactly that.
+# grep on the raw bytes is enough here: the marker is the literal string "Exif",
+# and after a strip it is gone.
+r14="$WORK/r14"
+mkdir -p "$r14"
+cp "$EXIF_SOURCE" "$r14/photo.jpg"
+record "$r14"/*
+start_app "" "$r14/photo.jpg"
+wait_shrunk 1 60 "$r14/photo.jpg"
+check "the photo was optimized" "$(shrunk_count "$r14/photo.jpg")" "1"
+check "the Exif block survived" \
+  "$(grep -a -q 'Exif' "$r14/photo.jpg" && echo yes || echo no)" "yes"
+stop_app
+
+echo "### R15 a png keeps what it says about its own colours ###"
+# iCCP, gAMA, sRGB and cHRM tell a viewer how to read the colours in the file,
+# and optipng counts all four as metadata that "-strip all" removes. So the flag
+# is only passed to files that carry none of them, which is what the second half
+# of this checks: a plain png still gets stripped, because there the saving is
+# free.
+r15="$WORK/r15"
+mkdir -p "$r15"
+cp "$ICC_SOURCE" "$r15/profiled.png"
+cp "$PNG_SOURCE" "$r15/plain.png"
+record "$r15"/*
+start_app "" "$r15"/*
+wait_shrunk 2 60 "$r15"/*
+check "both pngs were optimized" "$(shrunk_count "$r15"/*)" "2"
+check "the colour profile survived" \
+  "$(grep -a -q 'iCCP' "$r15/profiled.png" && echo yes || echo no)" "yes"
+check "the plain png is still stripped" \
+  "$(grep -a -q 'iCCP' "$r15/plain.png" && echo yes || echo no)" "no"
+stop_app
 
 echo
 if [ "$failed" -ne 0 ]; then
