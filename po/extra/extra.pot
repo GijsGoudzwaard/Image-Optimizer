@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: extra\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-09 11:58+0000\n"
+"POT-Creation-Date: 2026-09-09 12:10+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -163,8 +163,9 @@ msgstr ""
 
 #: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:83
 msgid ""
-"PNG images keep their colour profile now, as JPEG images already did, so a "
-"wide-gamut PNG no longer renders as sRGB after optimizing"
+"PNG images keep what they say about their own colours now, as JPEG images "
+"already did. The colour profile, the gamma and the primaries were all being "
+"thrown away, so a wide-gamut PNG came back looking different"
 msgstr ""
 
 #: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:84

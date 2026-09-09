@@ -60,6 +60,10 @@ trap cleanup EXIT
 
 passed=0
 failed=0
+# Kept so the summary can name them. This suite is long and both CI and a
+# terminal cut the middle out of it, so a run that fails early otherwise ends in
+# a count with no clue what it was.
+failures=""
 
 check () { # description, actual, expected
   if [ "$2" = "$3" ]; then
@@ -67,6 +71,8 @@ check () { # description, actual, expected
     passed=$((passed + 1))
   else
     echo "  FAIL $1 (got '$2', expected '$3')"
+    failures="$failures
+  $1 (got '$2', expected '$3')"
     failed=$((failed + 1))
   fi
 }
@@ -517,8 +523,10 @@ stop_app
 
 echo
 if [ "$failed" -ne 0 ]; then
-  # Whatever went wrong, the app's own output from the last group is usually
-  # the fastest way to see it, so do not make anyone reproduce it to find out.
+  echo "--- what failed ---$failures"
+  # The app's own output from the last group is usually the fastest way to see
+  # what happened, so do not make anyone reproduce it to find out. Note that it
+  # is the last group's log and not the failing one's, if those differ.
   echo "--- output of the last run of the app ---"
   cat "$WORK/app.log" 2>/dev/null
   echo "--- end ---"
