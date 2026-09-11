@@ -66,6 +66,19 @@ parts:
     source-type: git
     source-commit: 9aabc23d73899ae55c1de292592fed6eb6217f66
     source-subdir: src
+    # snapcraft checks the commit above out, and then leaves the submodules
+    # wherever the clone put them, which is where the default branch points and
+    # not where that commit records. That is not a subtle difference: it builds
+    # libpng 1.6.58 and a newer mozjpeg against a build system written for
+    # neither, and the two answer with "The option PNG_BUILD_ZLIB=ON is no longer
+    # supported" and "The libjpeg-turbo build system cannot be integrated into
+    # another build system using add_subdirectory()".
+    #
+    # flatpak-builder gets this right by itself, and so does the workflow, which
+    # says --init --recursive in full. This is the same sentence for snapcraft.
+    override-pull: |
+      craftctl default
+      git -C "$CRAFT_PART_SRC" submodule update --init --recursive --force
     cmake-parameters:
       - -DCMAKE_BUILD_TYPE=Release
       # Explicit, so the binary lands in $SNAP/usr/bin next to the app itself
