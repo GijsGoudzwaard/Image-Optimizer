@@ -426,6 +426,18 @@ public class Ect {
   /**
    * Copy one file over another inside the sandbox directory.
    *
+   * TARGET_DEFAULT_PERMS matters more than it looks. Without it the copy carries
+   * the mode of the file the user picked, and the optimizer rewrites the file it
+   * is given rather than writing a new one beside it, so a read-only image gave
+   * a read-only candidate and "can't open ... for writing". The tools that came
+   * before wrote and renamed, which needs no permission on the file itself,
+   * which is why this never came up until now.
+   *
+   * These candidates are throwaway files in the app's own runtime directory, so
+   * default permissions are the right ones for them. What the user's file ends
+   * up with is decided by Rewrite, which writes into the file that is already
+   * there and never creates one.
+   *
    * @param  string from
    * @param  string to
    * @return bool
@@ -434,7 +446,7 @@ public class Ect {
     try {
       File.new_for_path (from).copy (
         File.new_for_path (to),
-        FileCopyFlags.OVERWRITE,
+        FileCopyFlags.OVERWRITE | FileCopyFlags.TARGET_DEFAULT_PERMS,
         null,
         null
       );
