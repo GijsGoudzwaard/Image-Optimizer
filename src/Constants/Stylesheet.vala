@@ -52,6 +52,28 @@ class Stylesheet {
       background-color: #5a6fd0;
     }
 
+    /* The quieter of the two buttons on the welcome screen. Same shape and same
+       weight, so the pair reads as one choice, and the colour is the only thing
+       that says which of the two is the ordinary answer. */
+    .upload_button.secondary {
+      color: @primary_color;
+      background-color: #ffffff;
+      background-image: none;
+      border: 1px solid #c2cdda;
+    }
+
+    .upload_button.secondary label {
+      color: @primary_color;
+    }
+
+    .upload_button.secondary:hover {
+      background-color: #f4f5fb;
+    }
+
+    .upload_button.secondary:active {
+      background-color: #e4e7f5;
+    }
+
     .upload_button label {
       color: #fff;
       font-weight: 700;

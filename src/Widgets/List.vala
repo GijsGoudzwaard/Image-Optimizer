@@ -79,6 +79,53 @@ public class List {
   private int64 total_after = 0;
 
   /**
+   * Images a folder walk has found and that are waiting to be started.
+   *
+   * They are not in the model yet. A folder is one gesture that can reach
+   * thousands of files, and every one of them is rewritten in place, so the app
+   * says what it found and waits to be told to go. Files that were picked by
+   * name never wait: that gesture is already a list of exactly what was meant.
+   *
+   * @var Image[]
+   */
+  private Image[] pending = {};
+
+  /**
+   * Folders that arrived while a walk was already running.
+   *
+   * @var File[]
+   */
+  private File[] queued_folders = {};
+
+  /**
+   * The walk that is running now, or null when none is.
+   *
+   * @var Scanner?
+   */
+  private Scanner? scanner = null;
+
+  /**
+   * What the walks so far have passed over and looked in, so the line under the
+   * headline still adds up when more than one folder was dropped at once.
+   *
+   * @var uint
+   */
+  private uint scanned_others = 0;
+
+  /**
+   * @var uint
+   */
+  private uint scanned_folders = 0;
+
+  /**
+   * Where in the model the rows that are waiting begin, so they can all be
+   * turned into running rows in one go instead of one splice per file.
+   *
+   * @var uint
+   */
+  private uint pending_start = 0;
+
+  /**
    * Returns the text a column should show for a given row.
    */
   private delegate string CellText (ImageRow row);
@@ -136,6 +183,9 @@ public class List {
 
     this.style_headers (view);
 
+    // Pressing it is the only thing that starts a folder.
+    this.summary.start_requested.connect (this.begin_pending);
+
     this.start (this.images);
 
     // The list scrolls, the bar does not: it stays visible at the bottom of the
@@ -185,6 +235,111 @@ public class List {
 
     var optimizer = new Optimizer (to_optimize);
     optimizer.optimize (this);
+  }
+
+  /**
+   * Look through these folders and then wait, rather than starting on whatever
+   * is in them.
+   *
+   * @param  File[] folders
+   * @return void
+   */
+  public void scan (File[] folders) {
+    if (this.scanner != null) {
+      // A walk is already running, so these go after it rather than alongside
+      // it. Two walks at once would race over the same counters and report a
+      // total that was never true.
+      foreach (var folder in folders) {
+        this.queued_folders += folder;
+      }
+
+      return;
+    }
+
+    this.summary.scanning (this.pending.length);
+
+    this.scanner = new Scanner ();
+
+    this.scanner.progress.connect ((images) => {
+      this.summary.scanning (this.pending.length + images);
+    });
+
+    this.scanner.finished.connect (this.take_scan);
+    this.scanner.scan (folders);
+  }
+
+  /**
+   * Take what a walk found, and either start the next walk or show what is
+   * waiting.
+   *
+   * @param  Image[] images
+   * @param  uint others
+   * @param  uint folders
+   * @return void
+   */
+  private void take_scan (Image[] images, uint others, uint folders) {
+    foreach (var image in images) {
+      this.pending += image;
+    }
+
+    // Listed straight away, and not started. Someone who is about to have two
+    // thousand files rewritten in place should be able to read which ones they
+    // are first, and the column with the sizes is the one that says how much is
+    // about to be touched.
+    if (images.length > 0) {
+      if (this.pending.length == images.length) {
+        this.pending_start = this.listmodel.get_n_items ();
+      }
+
+      foreach (var image in images) {
+        var row = new ImageRow (image);
+        row.apply_status (Status.WAITING);
+        this.listmodel.append (row);
+      }
+    }
+
+    this.scanned_others += others;
+    this.scanned_folders += folders;
+    this.scanner = null;
+
+    if (this.queued_folders.length > 0) {
+      var next = this.queued_folders;
+      this.queued_folders = {};
+      this.scan (next);
+
+      return;
+    }
+
+    this.summary.found (this.pending.length, this.scanned_others, this.scanned_folders);
+  }
+
+  /**
+   * Start everything a walk has found and is holding on to.
+   *
+   * @return void
+   */
+  private void begin_pending () {
+    if (this.pending.length == 0) {
+      return;
+    }
+
+    var batch = this.pending;
+    this.pending = {};
+    this.scanned_others = 0;
+    this.scanned_folders = 0;
+
+    // The rows are already there, waiting. One splice turns the lot of them into
+    // rows that are being worked on, rather than one per file.
+    ImageRow[] running = {};
+
+    foreach (var image in batch) {
+      this.images += image;
+      running += new ImageRow (image);
+    }
+
+    this.listmodel.splice (this.pending_start, batch.length, running);
+
+    this.start (batch);
   }
 
   /**
@@ -245,11 +400,14 @@ public class List {
       var spinner = (Gtk.Spinner) box.get_first_child ();
       var icon = (Gtk.Image) box.get_last_child ();
 
-      var pending = row.status == Status.PENDING;
+      // A row that is waiting to be started shows nothing at all: there is no
+      // work going on to spin about, and a folder of two thousand rows all
+      // spinning at once would say less than an empty column does.
+      var working = row.status == Status.PENDING;
 
-      spinner.set_visible (pending);
+      spinner.set_visible (working);
 
-      if (pending) {
+      if (working) {
         spinner.start ();
       } else {
         spinner.stop ();
@@ -259,7 +417,7 @@ public class List {
         icon.set_from_resource (row.icon_resource);
       }
 
-      icon.set_visible (! pending && row.icon_resource != null);
+      icon.set_visible (! working && row.icon_resource != null);
     });
 
     var column = new Gtk.ColumnViewColumn ("", factory);
@@ -554,6 +712,22 @@ public class List {
 
   public void update_tree_view (Image[] images) {
     Image[] fresh = {};
+
+    // Anything a walk was holding on to goes in with this. Files that were
+    // picked by name start at once, and leaving a folder waiting behind a
+    // button that the bar can no longer show would be a dead end.
+    if (this.pending.length > 0) {
+      var waiting = this.pending;
+      this.pending = {};
+      this.scanned_others = 0;
+      this.scanned_folders = 0;
+
+      foreach (var image in images) {
+        waiting += image;
+      }
+
+      images = waiting;
+    }
 
     foreach (var image in images) {
       var duplicate = false;

@@ -15,6 +15,13 @@ public enum Status {
   PENDING,
 
   /**
+   * Found by looking through a folder, listed so it can be read, and not
+   * started. Nothing has been touched and nothing will be until someone says so,
+   * which is the whole difference between picking a folder and picking a file.
+   */
+  WAITING,
+
+  /**
    * Bytes were written back and the file really is smaller.
    */
   OPTIMIZED,

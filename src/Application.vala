@@ -11,6 +11,17 @@ class Application : Gtk.Application {
   protected override void startup () {
     base.startup ();
 
+    // The icons this app bundles, laid out the way an icon theme is, so the ones
+    // that have to take their colour from the stylesheet can be looked up by
+    // name. GtkApplication adds this very path by itself, and the header bar
+    // depends on it, so it is spelled out here rather than assumed.
+    var display = Gdk.Display.get_default ();
+
+    if (display != null) {
+      Gtk.IconTheme.get_for_display (display)
+        .add_resource_path ("/com/github/gijsgoudzwaard/image-optimizer/icons");
+    }
+
     var quit_action = new SimpleAction ("quit", null);
 
     add_action (quit_action);
@@ -31,25 +42,42 @@ class Application : Gtk.Application {
   }
 
   public override void open (File[] files, string hint) {
-    if (files [0].query_exists ()) {
-      foreach (File file in files) {
-        var path = file.get_path ();
+    if (! files [0].query_exists ()) {
+      return;
+    }
 
-        var name = Image.get_file_name (path);
-        var type = Image.get_file_type (file.get_basename ());
+    File[] folders = {};
 
-        // Kept in step with MainWindow: a file that arrives through Open With or
-        // the command line gets a row saying it is not supported, rather than
-        // disappearing on the way in.
-        this.images += new Image (path, name, type.down ());
+    foreach (File file in files) {
+      var path = file.get_path ();
+
+      // Kept in step with the drop handler and the buttons: a folder is looked
+      // through and what it holds waits, wherever it arrived from.
+      if (path != null && FileUtils.test (path, FileTest.IS_DIR)) {
+        folders += file;
+
+        continue;
       }
 
-      if (this.app_window == null) {
-        this.app_window = new MainWindow (this);
-        this.app_window.present ();
-      }
+      var name = Image.get_file_name (path);
+      var type = Image.get_file_type (file.get_basename ());
 
-      this.app_window.set_images (this.images);
+      // Kept in step with MainWindow: a file that arrives through Open With or
+      // the command line gets a row saying it is not supported, rather than
+      // disappearing on the way in.
+      this.images += new Image (path, name, type.down ());
+    }
+
+    if (this.app_window == null) {
+      this.app_window = new MainWindow (this);
+      this.app_window.present ();
+    }
+
+    this.app_window.set_images (this.images);
+    this.images = {};
+
+    if (folders.length > 0) {
+      this.app_window.add_folders (folders);
     }
   }
 

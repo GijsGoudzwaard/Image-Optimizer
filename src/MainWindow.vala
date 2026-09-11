@@ -103,6 +103,7 @@ public class MainWindow : Gtk.Window {
       set_child (this.upload_screen.window ());
 
       this.upload_screen.upload_button.clicked.connect (on_open_clicked);
+      this.upload_screen.folder_button.clicked.connect (on_open_folder_clicked);
     } else {
       this.set_list_window ();
     }
@@ -122,6 +123,7 @@ public class MainWindow : Gtk.Window {
       set_child (this.upload_screen.window ());
 
       this.upload_screen.upload_button.clicked.connect (on_open_clicked);
+      this.upload_screen.folder_button.clicked.connect (on_open_folder_clicked);
     } else {
       this.set_list_window ();
     }
@@ -158,6 +160,18 @@ public class MainWindow : Gtk.Window {
     add_image.add_css_class ("add_image");
     add_image.clicked.connect (on_open_clicked);
 
+    // The second way in, because a folder cannot come through the first one: the
+    // file chooser is asked for files or for folders and there is no dialog that
+    // offers both. The icon is one the app bundles and reaches by name, so the
+    // stylesheet can paint it white on this bar.
+    var add_folder = new Gtk.Button.from_icon_name ("folder-open-symbolic");
+    add_folder.set_tooltip_markup (_("Add a folder"));
+    add_folder.add_css_class ("flat");
+    add_folder.add_css_class ("add_image");
+    add_folder.clicked.connect (on_open_folder_clicked);
+
+    // Packed first, so it ends up on the outside of the plus.
+    this.toolbar.pack_end (add_folder);
     this.toolbar.pack_end (add_image);
   }
 
@@ -207,12 +221,22 @@ public class MainWindow : Gtk.Window {
     // open, which shows up as a row that fails to optimize rather than as a
     // crash. Sources that use GTK, which includes Files, do the portal side.
     unowned var list = (Gdk.FileList) value;
+    File[] folders = {};
 
     list.get_files ().foreach ((file) => {
       string uri = file.get_uri ();
       var path = Image.to_path (uri);
       if (path == null) {
         warning ("Failed to convert URI \"%s\" to path", uri);
+        return;
+      }
+
+      // A folder is not a file and does not become a row. It is looked through
+      // first and what it holds waits for the button in the bar, because this
+      // one gesture can reach everything under it.
+      if (FileUtils.test (path, FileTest.IS_DIR)) {
+        folders += File.new_for_path (path);
+
         return;
       }
 
@@ -226,15 +250,77 @@ public class MainWindow : Gtk.Window {
       this.images += new Image (path, name, type.down ());
     });
 
-    if (images.length > 0 && this.images_list == null) {
+    this.take (folders);
+
+    return true;
+  }
+
+  /**
+   * Put what just arrived where it belongs: files into the list, folders into a
+   * walk. Either of them may be the first thing to arrive, so this is also what
+   * builds the list window.
+   *
+   * @param  File[] folders
+   * @return void
+   */
+  private void take (File[] folders) {
+    if (this.images_list == null && (this.images.length > 0 || folders.length > 0)) {
       this.set_list_window ();
-    } else if (this.images_list != null) {
+    } else if (this.images_list != null && this.images.length > 0) {
       this.images_list.update_tree_view (this.images);
     }
 
-    this.images = {};
+    if (folders.length > 0 && this.images_list != null) {
+      this.images_list.scan (folders);
+    }
 
-    return true;
+    this.images = {};
+  }
+
+  /**
+   * Folders that arrived from somewhere other than this window: the command
+   * line, or Open With on a folder.
+   *
+   * @param  File[] folders
+   * @return void
+   */
+  public void add_folders (File[] folders) {
+    this.take (folders);
+  }
+
+  /**
+   * Gets called when the folder button gets clicked.
+   *
+   * A dialog of its own, because the portal is asked either for files or for
+   * folders and there is no way to offer both in one.
+   *
+   * @return void
+   */
+  public async void on_open_folder_clicked () {
+    var folder_dialog = new Gtk.FileDialog ();
+    folder_dialog.title = _("Select a folder");
+
+    ListModel folders;
+
+    try {
+      folders = yield folder_dialog.select_multiple_folders (this, null);
+    } catch (Error err) {
+      if (err.domain == Gtk.DialogError.quark () && err.code == Gtk.DialogError.DISMISSED) {
+        return;
+      }
+
+      warning ("Failed to select folders: %s", err.message);
+
+      return;
+    }
+
+    File[] picked = {};
+
+    for (int i = 0; i < folders.get_n_items (); i++) {
+      picked += (File) folders.get_object (i);
+    }
+
+    this.take (picked);
   }
 
   /**
@@ -270,14 +356,6 @@ public class MainWindow : Gtk.Window {
       this.images += new Image (path, name, type.down ());
     }
 
-    if (this.images_list != null) {
-      this.images_list.update_tree_view (this.images);
-    }
-
-    if (this.images.length > 0) {
-      this.set_list_window ();
-    }
-
-    this.images = {};
+    this.take ({});
   }
 }

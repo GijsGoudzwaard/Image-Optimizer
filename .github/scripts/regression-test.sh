@@ -23,6 +23,7 @@
 #   R16 the two passes, proved against a stand-in that does as it is told.
 #   R17 modification times, which the app promises to leave alone.
 #   R18 a missing optimizer, which is now every file rather than half of them.
+#   R19 a folder, which is looked through and then waits to be told to go.
 #
 # Usage, against an installed tree:
 #
@@ -704,6 +705,66 @@ if [ -n "$ect_path" ]; then
 else
   echo "  SKIP no optimizer on PATH to hide"
 fi
+
+echo "### R19 a folder is looked through and then waits ###"
+# A folder is the one gesture in this app that can reach thousands of files at
+# once, and every one of them is rewritten in place. So it is looked through and
+# then nothing happens until someone presses the button, and that is what the
+# first half of this checks: hand the app a folder and every file in it has to
+# still be exactly as it was.
+#
+# The folder itself is built to be awkward on purpose: a subfolder, a hidden
+# folder, a file that is not an image, and a symlink that points back at the top
+# so a walk that follows links never finishes.
+#
+# Every name here is different, and that is not an accident: record and
+# shrunk_count key on the basename, so two files called the same thing in
+# different folders quietly break the counting rather than the app. The app
+# handles that case, it shows the path under the folder instead of the bare name,
+# but this suite cannot see that and would only lie about it.
+r19="$WORK/r19"
+mkdir -p "$r19/tree/holiday" "$r19/tree/.cache"
+cp "$PNG_SOURCE" "$r19/tree/shot.png"
+cp "$PNG_SOURCE" "$r19/tree/holiday/inner.png"
+cp "$JPG_SOURCE" "$r19/tree/holiday/photo.jpg"
+cp "$PNG_SOURCE" "$r19/tree/.cache/hidden.png"
+echo "not an image" > "$r19/tree/notes.txt"
+ln -s "$r19/tree" "$r19/tree/holiday/loop"
+
+before_visible=$(size "$r19/tree/shot.png")
+before_hidden=$(size "$r19/tree/.cache/hidden.png")
+
+record "$r19/tree/shot.png" "$r19/tree/holiday/inner.png" "$r19/tree/holiday/photo.jpg"
+start_app "" "$r19/tree"
+# Long enough that a walk which followed that symlink would still be going, and
+# long enough that anything which started on its own would have finished.
+sleep 10
+check "app still running after walking a folder with a symlink loop" "$(alive)" "yes"
+check "nothing in the folder was touched" \
+  "$(shrunk_count "$r19/tree/shot.png" "$r19/tree/holiday/inner.png" "$r19/tree/holiday/photo.jpg")" "0"
+
+if command -v xdotool >/dev/null 2>&1; then
+  window=$(xdotool search --name "Image Optimizer" 2>/dev/null | head -1)
+
+  if [ -n "$window" ]; then
+    # The button sits at the right of the bar along the bottom of the window,
+    # which opens at a size this app sets itself.
+    xdotool mousemove --window "$window" 900 640 click 1 2>/dev/null
+    wait_shrunk 3 90 "$r19/tree/shot.png" "$r19/tree/holiday/inner.png" "$r19/tree/holiday/photo.jpg"
+    check "the button started everything the walk found" \
+      "$(shrunk_count "$r19/tree/shot.png" "$r19/tree/holiday/inner.png" "$r19/tree/holiday/photo.jpg")" "3"
+    check "the hidden folder was left alone" "$(size "$r19/tree/.cache/hidden.png")" "$before_hidden"
+    check "the file that is not an image was left alone" \
+      "$(cat "$r19/tree/notes.txt")" "not an image"
+  else
+    echo "  FAIL no window to press the button in"
+    failed=$((failed + 1))
+  fi
+else
+  echo "  SKIP xdotool is not available, so the button could not be pressed"
+fi
+
+stop_app
 
 echo
 if [ "$failed" -ne 0 ]; then

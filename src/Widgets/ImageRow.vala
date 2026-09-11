@@ -130,6 +130,15 @@ public class ImageRow : GLib.Object {
         this.note = _("Only PNG and JPEG are supported");
         break;
 
+      case Status.WAITING:
+        // The size it has now is worth showing, because that is the number the
+        // person is being asked about. Everything else is still unknown.
+        this.icon_resource = null;
+        this.new_size_text = "";
+        this.savings_text = "";
+        this.note = null;
+        break;
+
       default:
         this.icon_resource = null;
         this.new_size_text = "";
