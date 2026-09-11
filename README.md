@@ -21,7 +21,7 @@ flatpak install flathub com.github.gijsgoudzwaard.image-optimizer   # any distri
 sudo snap install image-optimizer                                   # Ubuntu and anywhere snaps run
 ```
 
-Both stores publish for amd64 and arm64, and both bundle the optimizers, so there is nothing else to install.
+Both stores publish for amd64 and arm64, and both bundle the optimizer, so there is nothing else to install.
 
 ## What it saves
 
@@ -33,17 +33,20 @@ How much that is depends entirely on the file.
 
 | file | before | after | saved |
 |---|---|---|---|
-| flat artwork exported as 24-bit PNG | 17,315 | 3,129 | **81.9%** |
-| logo exported as 24-bit PNG | 24,071 | 8,741 | **63.7%** |
-| window screenshot, PNG | 143,705 | 111,373 | 22.5% |
-| interface screenshot, PNG | 16,286 | 13,046 | 19.9% |
-| photo out of a camera, 3000x2000 JPEG | 2,535,780 | 2,469,183 | 2.6% |
-| JPEG straight from an export dialog | 11,261 | 11,067 | 1.7% |
+| flat artwork as a 24-bit PNG, 1200x900 with 105 colours | 11,156 | 4,214 | **62.2%** |
+| interface screenshot, 24-bit PNG, 980x680 | 16,286 | 11,778 | 27.7% |
+| window screenshot, 24-bit PNG, 1100x800 | 49,305 | 35,692 | 27.6% |
+| JPEG straight from an export dialog | 11,261 | 10,044 | 10.8% |
+| photo with Exif, 41 kB JPEG | 41,496 | 39,099 | 5.8% |
+
+Every one of those was compared against its input pixel by pixel afterwards, and
+came back identical.
 
 The pattern is worth knowing before you try it. Anything flat, exported as a
 24-bit PNG by a design tool, gives the most, because those files carry a full
-colour channel they never use. Screenshots give a fifth or so. Photos are already
-close to optimal, so a few percent is a good result there and not a disappointment.
+colour channel they never use. Screenshots give a quarter or so. Photos are
+already close to optimal, so a few percent is a good result there and not a
+disappointment.
 
 The screenshot above is a folder of 26 exported assets of that first kind, which
 came to 2.2 MB and left as 950 kB. An image that is already optimal comes back
@@ -57,9 +60,10 @@ untouched, and the app says so rather than pretending it did something.
 - **It keeps what an image needs to look right.** The ICC colour profile stays,
   because dropping it makes a wide-gamut image render as sRGB afterwards, and so
   does Exif, because that is where the orientation flag lives and a phone stores
-  a portrait photo as a landscape image plus that flag. Comments, IPTC and XMP are
-  stripped, which is part of the saving. Keeping the rest costs a few hundred
-  bytes: measured on a 920 kB photo, 340 of them.
+  a portrait photo as a landscape image plus that flag. A PNG that says nothing
+  at all about its colours is stripped, because there the saving is free, and a
+  JPEG keeps everything it came with. That costs very little: measured on a photo
+  with Exif, 240 bytes out of 39 kB.
 - **It never sends your images anywhere.** No account, no upload, no network
   access at all. On Flathub the app holds three permissions in total, and not one
   of them is filesystem access: files reach it through the desktop portals, so it
@@ -139,8 +143,9 @@ and requires them to come back smaller with nothing logged. `regression-test.sh`
 covers what has actually broken before: awkward filenames, unreadable files,
 whole batches being skipped, parallel output matching sequential, a single core
 machine, read-only files and directories, a second pass over an already optimal
-file, and Ctrl+Q. Both run in CI on amd64 and arm64, so a pull request gets the
-same answer you do locally.
+file, colour profiles and Exif surviving, modification times surviving, an
+optimizer that is not installed, and Ctrl+Q. Both run in CI on amd64 and arm64,
+so a pull request gets the same answer you do locally.
 
 ## Support this project
 
