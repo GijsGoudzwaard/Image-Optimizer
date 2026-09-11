@@ -28,38 +28,9 @@ msgstr "Image Optimizer"
 msgid "Gijs Goudzwaard"
 msgstr "Gijs Goudzwaard"
 
-#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:9
-msgid "Simple lossless image compression"
-msgstr "Compressão de imagem simples sem perda de qualidade"
-
-#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:11
-msgid ""
-"Compress your images with ease without the cost of loosing the images "
-"quality using JpegOptim and OptiPng."
-msgstr ""
-"Comprima as suas imagens com facilidade sem o custo de perder a qualidade "
-"das mesmas usando o JpegOptim e OptiPng."
-
 #: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:12
 msgid "Features:"
 msgstr "Funcionalidades:"
-
-#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:14
-msgid "Compress bmp, jpg / jpeg, png, pnm and tiff with lossless compression"
-msgstr "Comprime bmp, jpg / jpeg, png, pnm e tiff sem perdas de compressão"
-
-#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:15
-msgid "Works offline, always ready where and whenever needed"
-msgstr ""
-"Funciona sem estar ligado à Internet, sempre pronto onde e quando precisar"
-
-#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:16
-msgid "A clean interface, optimize your images effortlessly"
-msgstr "Interface mais limpa, otimize as suas imagens sem esforço"
-
-#: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:17
-msgid "Easily quit the application by pressing Ctrl + Q"
-msgstr "Saía da aplicação rapidamente pressionando em Ctrl + Q"
 
 #: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:40
 msgid "Getting things ready for Juno, #27 should be fixed."
@@ -104,15 +75,3 @@ msgstr ""
 msgid "This release changes the icon to fit the Elementary OS HIG better."
 msgstr ""
 "Este lançamento altera o ícone para se integrar melhor na HIG do Elementary."
-
-#: data/com.github.gijsgoudzwaard.image-optimizer.desktop.in:5
-msgid "Simple image optimzer"
-msgstr "Otimizador de imagem simples"
-
-#: data/com.github.gijsgoudzwaard.image-optimizer.desktop.in:8
-msgid "com.github.gijsgoudzwaard.image-optimizer"
-msgstr "com.github.gijsgoudzwaard.image-optimizer"
-
-#: data/com.github.gijsgoudzwaard.image-optimizer.desktop.in:12
-msgid "Image;Optimzer;"
-msgstr "Imagem;Image;Otimizador;Optimzer;"

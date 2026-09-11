@@ -119,10 +119,11 @@ public class Image {
    * @return bool
    */
   private static bool is_valid (string type) {
-    // bmp used to be on this list, but nothing here can optimize one. optipng
-    // accepted it and wrote a new .png next to it, leaving the .bmp exactly as
-    // it was while the list reported a large saving on it. Accepting a file the
-    // app cannot rewrite in place is worse than turning it away.
+    // bmp used to be on this list, but nothing here can optimize one. The
+    // optimizer of the day accepted it and wrote a new .png next to it, leaving
+    // the .bmp exactly as it was while the list reported a large saving on it.
+    // The one in use now refuses it outright, which is better, but accepting a
+    // file the app cannot rewrite in place is still worse than turning it away.
     string[] supported_types = {
       "png",
       "jpg",

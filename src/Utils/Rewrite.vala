@@ -1,16 +1,19 @@
 /**
  * Rewrites one image in place without ever renaming another file over it.
  *
- * Both jpegoptim and optipng replace a file by writing a temporary one next to
- * it and renaming. Under the XDG document portal the app is handed a path inside
- * a per-document FUSE directory, and the grant is bound to that one file: a
- * rename across it fails, and with it the whole optimization. Measured outside
- * the sandbox, the same thing happens whenever the directory is not writable,
- * which is why this class exists rather than a portal specific workaround.
+ * Under the XDG document portal the app is handed a path inside a per-document
+ * FUSE directory, and the grant is bound to that one file: a rename across it
+ * fails, and with it the whole optimization. Measured outside the sandbox, the
+ * same thing happens whenever the directory is not writable, which is why this
+ * class exists rather than a portal specific workaround.
  *
- * So the file the optimizers see is a copy inside the sandbox, and the bytes
- * they produce are written back over the original file descriptor. Nothing here
+ * So the file the optimizer sees is a copy inside the sandbox, and the bytes it
+ * produces are written back over the original file descriptor. Nothing here
  * renames anything, which is what the portal path needs.
+ *
+ * The copy earns its place twice over now. ECT is run more than once per file,
+ * at two levels, and the results are compared before anything is written back,
+ * so there has to be somewhere to put candidates that is not the user's file.
  *
  * That is not the same as promising the inode survives. Measured on a real
  * sandboxed run, a file picked through the portal came back with a new inode
@@ -24,10 +27,10 @@
  * link splits it, and the other links keep the old contents. That was already
  * true before this class existed, because the optimizers renamed as well.
  *
- * The copy also means the optimizers' own --preserve no longer decides what the
- * modification time ends up being, because it is the copy they preserve. This
- * class reads the original time before touching anything and puts it back after,
- * which is how PNG and JPEG both keep their timestamp now.
+ * The copy also means no flag of the optimizer's own can decide what the
+ * modification time ends up being, because the file it would preserve is the
+ * copy. This class reads the original time before touching anything and puts it
+ * back after, which is how PNG and JPEG both keep their timestamp now.
  */
 public class Rewrite {
 
@@ -121,10 +124,19 @@ public class Rewrite {
         return;
       }
 
-      // The extension is kept because both optimizers decide what to do by
-      // looking at the contents, but a recognisable name helps when a copy does
-      // survive a crash.
+      // The extension has to survive the copy, and it has to be lower case.
+      // ECT decides what a file is by its name rather than by its contents, and
+      // it only recognises an extension written all in lower case or all in
+      // upper case: measured, a file named "shot.Png" is answered with "No
+      // compatible files found" and left exactly as it was. The rest of the name
+      // is kept as it is, which helps when a copy does survive a crash.
       var name = Path.get_basename (path);
+      var dot = name.last_index_of_char ('.');
+
+      if (dot > 0) {
+        name = name.substring (0, dot) + name.substring (dot).down ();
+      }
+
       var candidate = Path.build_filename (directory, "%d-%s".printf (Random.int_range (0, int.MAX), name));
 
       original.copy (
@@ -248,6 +260,9 @@ public class Rewrite {
   /**
    * Remove the copy. Safe to call more than once, and safe to call when there
    * never was a copy.
+   *
+   * The candidates the optimizer works on are named after this file and are
+   * removed by the code that made them, whichever way that code left.
    *
    * @return void
    */

@@ -103,21 +103,37 @@ jobs:
           sudo apt-get install -y --no-install-recommends \
             appstream \
             build-essential \
+            cmake \
             dbus \
             desktop-file-utils \
             gettext \
-            jpegoptim \
             libglib2.0-dev \
             libgtk-4-bin \
             libgtk-4-dev \
             meson \
+            nasm \
             ninja-build \
-            optipng \
             pkg-config \
             util-linux \
             valac \
             xdotool \
             xvfb
+
+      # The optimizer the app shells out to. It is not packaged for Ubuntu, and
+      # its libpng and mozjpeg are git submodules, so the tarball for a tag is
+      # not enough: this builds the same pinned commit the flatpak manifest and
+      # snapcraft.yaml build, and those three are the only places the commit
+      # appears. nasm above is for the x86 assembly in mozjpeg's SIMD code.
+      - name: Build the optimizer the app runs
+        run: |
+          git clone https://github.com/fhanau/Efficient-Compression-Tool ect
+          cd ect
+          git checkout 9aabc23d73899ae55c1de292592fed6eb6217f66
+          git submodule update --init --recursive
+          cmake -S src -B build -DCMAKE_BUILD_TYPE=Release
+          cmake --build build -j"$(nproc)"
+          sudo cmake --install build
+          ect | head -3
 
       - name: Build
         run: |

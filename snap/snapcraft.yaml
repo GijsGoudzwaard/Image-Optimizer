@@ -47,11 +47,49 @@ parts:
       # than by agreement.
       - libxml2-utils
       - valac
-    stage-packages:
-      # The two tools the app shells out to. GTK4 and GLib deliberately are not
-      # here: the gnome extension provides those from its content snap.
-      - jpegoptim
-      - optipng
+    # No stage-packages. The tool the app shells out to is built by the part
+    # below and carries its own libpng, zlib, mozjpeg and zopfli, so there is
+    # nothing to pull from the archive. GTK4 and GLib come from the gnome
+    # extension's content snap.
+
+  # Efficient Compression Tool, the one thing the app shells out to. It handles
+  # both PNG and JPEG, which is why there is one part here where there used to be
+  # two stage-packages: measured over ten images, PNG went from 10.55% to 17.59%
+  # and JPEG from 3.32% to 5.85%, and the PNG side got faster rather than slower.
+  #
+  # From a pinned commit rather than a release tarball, because libpng and
+  # mozjpeg are git submodules and the tarball GitHub generates for a tag does
+  # not contain them. The commit is what the v0.9.5 tag points at.
+  ect:
+    plugin: cmake
+    source: https://github.com/fhanau/Efficient-Compression-Tool.git
+    source-type: git
+    source-commit: 9aabc23d73899ae55c1de292592fed6eb6217f66
+    source-subdir: src
+    # snapcraft checks the commit above out, and then leaves the submodules
+    # wherever the clone put them, which is where the default branch points and
+    # not where that commit records. That is not a subtle difference: it builds
+    # libpng 1.6.58 and a newer mozjpeg against a build system written for
+    # neither, and the two answer with "The option PNG_BUILD_ZLIB=ON is no longer
+    # supported" and "The libjpeg-turbo build system cannot be integrated into
+    # another build system using add_subdirectory()".
+    #
+    # flatpak-builder gets this right by itself, and so does the workflow, which
+    # says --init --recursive in full. This is the same sentence for snapcraft.
+    override-pull: |
+      craftctl default
+      git -C "$CRAFT_PART_SRC" submodule update --init --recursive --force
+    cmake-parameters:
+      - -DCMAKE_BUILD_TYPE=Release
+      # Explicit, so the binary lands in $SNAP/usr/bin next to the app itself
+      # instead of in $SNAP/bin, which is a second place to have to think about.
+      # The cmake plugin sets no prefix of its own, on purpose.
+      - -DCMAKE_INSTALL_PREFIX=/usr
+    build-packages:
+      # Only nasm, for the x86 assembly in mozjpeg's SIMD code: the cmake plugin
+      # brings gcc and cmake itself. Harmless on arm64, where the NEON path needs
+      # no assembler and the package exists all the same.
+      - nasm
 
 slots:
   # GtkApplication claims this well known name on the session bus. Without the

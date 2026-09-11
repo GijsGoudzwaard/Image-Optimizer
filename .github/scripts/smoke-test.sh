@@ -32,12 +32,12 @@ cleanup() {
 }
 trap cleanup EXIT
 
-# One fixture per optimizer, so a change to either tool's flags is covered.
-# Both are dedicated fixtures rather than screenshots: they have to stay
-# baseline, with the JPEG keeping its comment marker so the strip and progressive
-# flags have anything to do, which is not something data/screenshots should have
-# to guarantee. Those get optimized before they are published, and an already
-# optimal file cannot shrink. The assertion below only requires one to shrink.
+# One fixture per format, so a change to either set of flags is covered. Both are
+# dedicated fixtures rather than screenshots: they have to stay unoptimized, and
+# the JPEG keeps its comment marker so there is something for the flags to do,
+# which is not something data/screenshots should have to guarantee. Those get
+# optimized before they are published, and an already optimal file cannot shrink.
+# The assertion below only requires one to shrink.
 cp "$REPO_ROOT/.github/fixtures/fixture.png" "$WORK/fixture.png"
 cp "$REPO_ROOT/.github/fixtures/fixture.jpg" "$WORK/fixture.jpg"
 

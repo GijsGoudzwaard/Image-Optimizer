@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: com.github.gijsgoudzwaard.image-optimizer\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-13 11:22+0000\n"
+"POT-Creation-Date: 2026-09-11 09:31+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,56 +18,64 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
-#: src/MainWindow.vala:60
+#: src/MainWindow.vala:63
 msgid "Image Optimizer"
 msgstr ""
 
-#: src/MainWindow.vala:137
+#: src/MainWindow.vala:146
 msgid "Add Image"
 msgstr ""
 
-#: src/MainWindow.vala:239
+#: src/MainWindow.vala:247
 msgid "Select image(s)"
 msgstr ""
 
-#: src/Utils/JpegOptim.vala:173 src/Utils/OptiPng.vala:157
+#: src/Utils/Ect.vala:154
 msgid "The optimizer could not be started"
 msgstr ""
 
-#: src/Utils/JpegOptim.vala:200
-msgid "This is not a JPEG file, whatever its name says"
-msgstr ""
-
-#: src/Utils/JpegOptim.vala:204 src/Utils/OptiPng.vala:187
-#: src/Utils/Rewrite.vala:178
-msgid "Could not write to this file, it may be read only"
-msgstr ""
-
-#: src/Utils/JpegOptim.vala:207 src/Utils/OptiPng.vala:190
+#: src/Utils/Ect.vala:201 src/Utils/Ect.vala:371
 msgid "The optimizer could not process this file"
 msgstr ""
 
-#: src/Utils/OptiPng.vala:183
+#: src/Utils/Ect.vala:355
 msgid "This is not a PNG file, whatever its name says"
 msgstr ""
 
-#: src/Utils/Rewrite.vala:97
+#: src/Utils/Ect.vala:359
+msgid "This is not a JPEG file, whatever its name says"
+msgstr ""
+
+#. What ECT says about a file that stops halfway through, in either format.
+#: src/Utils/Ect.vala:364
+msgid "This file stops halfway through, so it may be damaged"
+msgstr ""
+
+#: src/Utils/Ect.vala:368 src/Utils/Rewrite.vala:252
+msgid "Could not write to this file, it may be read only"
+msgstr ""
+
+#: src/Utils/Rewrite.vala:122
 msgid "There was nowhere to put a working copy of this file"
 msgstr ""
 
-#: src/Utils/Rewrite.vala:118
+#: src/Utils/Rewrite.vala:152
 msgid "Could not open this file, so nothing was done to it"
 msgstr ""
 
-#: src/Utils/Rewrite.vala:139
+#: src/Utils/Rewrite.vala:173
 msgid "The optimized copy of this file could not be read back"
 msgstr ""
 
-#: src/Utils/Rewrite.vala:146
+#: src/Utils/Rewrite.vala:180
 msgid "The optimizer produced an empty file, so this one was left alone"
 msgstr ""
 
-#: src/Utils/Rewrite.vala:169
+#: src/Utils/Rewrite.vala:230
+msgid "Only part of the result could be written, so this file may be damaged"
+msgstr ""
+
+#: src/Utils/Rewrite.vala:243
 msgid "This file cannot be shortened, so it was left alone"
 msgstr ""
 
@@ -75,14 +83,21 @@ msgstr ""
 msgid "Already as small as it gets"
 msgstr ""
 
+#. No new size, because nothing was written. A "0.00%" here reads as a
+#. successful run that happened to gain nothing, which is the confusion
+#. this whole status exists to end.
 #: src/Widgets/ImageRow.vala:116
 msgid "Failed"
 msgstr ""
 
+#. The optimizer usually knows exactly what it ran into. The generic line
+#. is only for the cases where it does not.
 #: src/Widgets/ImageRow.vala:120
 msgid "This file could not be optimized"
 msgstr ""
 
+#. Not even a size: the app is not going to touch this file, so showing
+#. how big it is only suggests it is waiting its turn.
 #: src/Widgets/ImageRow.vala:127
 msgid "Skipped"
 msgstr ""
@@ -91,81 +106,83 @@ msgstr ""
 msgid "Only PNG and JPEG are supported"
 msgstr ""
 
-#: src/Widgets/List.vala:132
+#: src/Widgets/List.vala:122
 msgid "Size"
 msgstr ""
 
-#: src/Widgets/List.vala:133
+#: src/Widgets/List.vala:127
 msgid "New size"
 msgstr ""
 
-#: src/Widgets/List.vala:134
+#: src/Widgets/List.vala:132
 msgid "Savings"
 msgstr ""
 
-#: src/Widgets/List.vala:318
+#: src/Widgets/List.vala:322
 msgid "File"
 msgstr ""
 
-#: src/Widgets/SummaryBar.vala:206
+#: src/Widgets/SummaryBar.vala:211
 msgid "Optimizing…"
 msgstr ""
 
-#: src/Widgets/SummaryBar.vala:208
+#: src/Widgets/SummaryBar.vala:213
 #, c-format
 msgid "%u of %u file done"
 msgid_plural "%u of %u files done"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Widgets/SummaryBar.vala:214
+#: src/Widgets/SummaryBar.vala:219
 msgid "saved so far"
 msgstr ""
 
-#: src/Widgets/SummaryBar.vala:262
+#. "0%" next to a run that did everything it could reads as a failure, so
+#. there is no figure at all in this case.
+#: src/Widgets/SummaryBar.vala:267
 msgid "Nothing left to save"
 msgstr ""
 
-#: src/Widgets/SummaryBar.vala:269
+#: src/Widgets/SummaryBar.vala:274
 #, c-format
 msgid "%s saved"
 msgstr ""
 
-#: src/Widgets/SummaryBar.vala:275
+#: src/Widgets/SummaryBar.vala:280
 #, c-format
 msgid "%s to %s"
 msgstr ""
 
-#: src/Widgets/SummaryBar.vala:317
+#: src/Widgets/SummaryBar.vala:322
 #, c-format
 msgid "%u of %u file optimized"
 msgid_plural "%u of %u files optimized"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Widgets/SummaryBar.vala:324
+#: src/Widgets/SummaryBar.vala:329
 #, c-format
 msgid "%u already optimal"
 msgstr ""
 
-#: src/Widgets/SummaryBar.vala:328
+#: src/Widgets/SummaryBar.vala:333
 #, c-format
 msgid "%u failed"
 msgstr ""
 
-#: src/Widgets/SummaryBar.vala:332
+#: src/Widgets/SummaryBar.vala:337
 #, c-format
 msgid "%u skipped"
 msgstr ""
 
-#: src/Widgets/UploadScreen.vala:24
+#: src/Widgets/UploadScreen.vala:22
 msgid "Drag and drop images here"
 msgstr ""
 
-#: src/Widgets/UploadScreen.vala:27
+#: src/Widgets/UploadScreen.vala:25
 msgid "or"
 msgstr ""
 
-#: src/Widgets/UploadScreen.vala:30
+#: src/Widgets/UploadScreen.vala:28
 msgid "Browse files"
 msgstr ""
