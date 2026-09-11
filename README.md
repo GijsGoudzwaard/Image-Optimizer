@@ -91,9 +91,24 @@ You need GTK 4.12 or newer, GLib, a C compiler, Vala, Meson, Ninja, `msgfmt` and
 ```sh
 sudo apt install build-essential meson ninja-build valac gettext \
                  desktop-file-utils libgtk-4-dev libglib2.0-dev libxml2-utils
-sudo apt install jpegoptim optipng          # needed to run, not to build
 sudo apt install appstream xvfb xdotool     # optional, see below
 ```
+
+The app shells out to [Efficient Compression Tool][ect] to do the actual
+optimizing, so you need that on your `PATH` to run it. It is not packaged for
+Debian or Ubuntu, and its libpng and mozjpeg are git submodules, so it is built
+from source:
+
+```sh
+sudo apt install cmake nasm
+git clone --recursive https://github.com/fhanau/Efficient-Compression-Tool
+cd Efficient-Compression-Tool
+cmake -S src -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build -j"$(nproc)"
+sudo cmake --install build
+```
+
+[ect]: https://github.com/fhanau/Efficient-Compression-Tool
 
 Install the optional three before configuring, because Meson looks them up once
 at that point. `appstream` adds the MetaInfo validation to `ninja test`, which

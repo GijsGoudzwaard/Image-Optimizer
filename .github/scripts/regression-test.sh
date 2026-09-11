@@ -4,7 +4,8 @@
 # run at all", this covers the things that have actually broken before:
 #
 #   R1  awkward filenames. A quote used to abort the whole batch, not just the
-#       file that carried it.
+#       file that carried it, and a mixed case extension is a file the optimizer
+#       refuses to recognise unless the working copy is named carefully.
 #   R2  unreadable files. These used to take the process down with SIGSEGV.
 #   R3  a larger mixed batch, where every single file has to be dealt with.
 #   R4  parallel output has to equal sequential output, byte for byte.
@@ -19,6 +20,9 @@
 #   R13 quitting mid batch, which may never leave a file half written.
 #   R14 a photo with Exif, whose orientation flag has to survive.
 #   R15 a png that says how its colours should be read, which has to survive too.
+#   R16 a gradient, which only the cheaper of the two passes can improve.
+#   R17 modification times, which the app promises to leave alone.
+#   R18 a missing optimizer, which is now every file rather than half of them.
 #
 # Usage, against an installed tree:
 #
@@ -36,7 +40,7 @@ APP=$(cd "$(dirname "$APP")" && pwd)/$(basename "$APP")
 
 REPO_ROOT=$(cd "$(dirname "$0")/../.." && pwd)
 # Deliberately its own fixture and not a file from data/screenshots. Those are
-# store listing assets and get run through optipng before they are published, at
+# store listing assets and get optimized before they are published, at
 # which point they cannot shrink any further and every assertion here fails.
 PNG_SOURCE="$REPO_ROOT/.github/fixtures/fixture.png"
 JPG_SOURCE="$REPO_ROOT/.github/fixtures/fixture.jpg"
@@ -45,6 +49,13 @@ BMP_SOURCE="$REPO_ROOT/.github/fixtures/fixture.bmp"
 # run that keeps the metadata and a run that does nothing at all look different.
 EXIF_SOURCE="$REPO_ROOT/.github/fixtures/fixture-exif.jpg"
 ICC_SOURCE="$REPO_ROOT/.github/fixtures/fixture-icc.png"
+# A smooth gradient, and the one file in here that the good optimization level
+# cannot improve at all while the cheap one takes 4.5% off it. It exists to prove
+# that both passes run.
+#
+#   convert -size 640x400 gradient:'#687ddb-#ffffff' \
+#     -define png:exclude-chunk=date fixture-gradient.png
+GRADIENT_SOURCE="$REPO_ROOT/.github/fixtures/fixture-gradient.png"
 
 WORK=$(mktemp -d)
 XVFB_PID=""
@@ -195,11 +206,17 @@ cp "$PNG_SOURCE" "$r1/quote\"double.png"
 cp "$PNG_SOURCE" "$r1/space and (brackets) & dollar\$.png"
 cp "$PNG_SOURCE" "$r1/ordinary.png"
 cp "$JPG_SOURCE" "$r1/Mom's photo.jpg"
+# Mixed case on purpose. The optimizer decides what a file is by its extension
+# and only recognises one written all in lower case or all in upper case, so a
+# file named like this is answered with "No compatible files found" unless the
+# copy it is handed was named with that in mind. It reads as a file that was
+# already small enough, which is the quietest way for this to break.
+cp "$PNG_SOURCE" "$r1/Holiday.Png"
 record "$r1"/*
 start_app "" "$r1"/*
-wait_shrunk 5 60 "$r1"/*
+wait_shrunk 6 60 "$r1"/*
 check "app still running" "$(alive)" "yes"
-check "files optimized" "$(shrunk_count "$r1"/*)" "5"
+check "files optimized" "$(shrunk_count "$r1"/*)" "6"
 stop_app
 
 echo "### R2 unreadable files do not take the app down ###"
@@ -323,11 +340,11 @@ else
 fi
 
 echo "### R9 an unsupported type is left alone ###"
-# bmp was accepted once. optipng cannot write one, so it produced a new .png
-# beside the file and left the .bmp exactly as it was, while the list reported a
-# 99% saving on the file the user had actually selected. The fixture has to be a
-# real bmp for that: optipng goes by content, so a png carrying a .bmp name gets
-# rewritten in place instead and the second file never appears.
+# bmp was accepted once. The optimizer of the day could not write one, so it
+# produced a new .png beside the file and left the .bmp exactly as it was, while
+# the list reported a 99% saving on the file the user had actually selected. The
+# fixture is a real bmp so that the file is what it claims to be; the app turns
+# it away on its name before any optimizer sees it.
 #
 # Such a file does get a row now, saying it is not supported, instead of being
 # dropped on the way in. What matters here is unchanged: nothing on disk moves,
@@ -487,7 +504,8 @@ fi
 echo "### R14 a photo keeps its Exif, so it does not come out on its side ###"
 # The orientation flag lives in the Exif block. A phone stores a portrait photo
 # as a landscape image plus that flag, so stripping Exif changes no pixel at all
-# and still turns every such photo sideways. --strip-all used to do exactly that.
+# and still turns every such photo sideways. The app shipped a version that did
+# exactly that, which is why this check exists.
 # grep on the raw bytes is enough here: the marker is the literal string "Exif",
 # and after a strip it is gone.
 r14="$WORK/r14"
@@ -503,10 +521,11 @@ stop_app
 
 echo "### R15 a png keeps what it says about its own colours ###"
 # iCCP, gAMA, sRGB and cHRM tell a viewer how to read the colours in the file,
-# and optipng counts all four as metadata that "-strip all" removes. So the flag
-# is only passed to files that carry none of them, which is what the second half
-# of this checks: a plain png still gets stripped, because there the saving is
-# free.
+# and "-strip" removes all four. So the flag is only ever passed to a file that
+# carries none of them, which is what the second half of this checks: a file with
+# only cHRM has to keep it, even though nothing else in that file is worth
+# keeping. That is the half with teeth. Pass the flag unconditionally and this
+# is the check that fails.
 r15="$WORK/r15"
 mkdir -p "$r15"
 cp "$ICC_SOURCE" "$r15/profiled.png"
@@ -517,9 +536,87 @@ wait_shrunk 2 60 "$r15"/*
 check "both pngs were optimized" "$(shrunk_count "$r15"/*)" "2"
 check "the colour profile survived" \
   "$(grep -a -q 'iCCP' "$r15/profiled.png" && echo yes || echo no)" "yes"
-check "the plain png is still stripped" \
-  "$(grep -a -q 'iCCP' "$r15/plain.png" && echo yes || echo no)" "no"
+check "the other png kept what it says about its colours" \
+  "$(grep -a -q 'cHRM' "$r15/plain.png" && echo yes || echo no)" "yes"
 stop_app
+
+echo "### R16 a gradient, which only the cheaper of the two passes finds ###"
+# The app runs the optimizer twice over every file, at a cheap level and a good
+# one, and keeps whichever result came out smaller. That is not belt and braces:
+# the levels are not an ordering. Measured on this gradient, the good level finds
+# nothing at all and the cheap one takes 4.5% off.
+#
+# So this file is the check on that. It shrinks only if both passes really run
+# and are really compared, and it is the test that fails the day someone
+# simplifies the two passes back into one.
+r16="$WORK/r16"
+mkdir -p "$r16"
+cp "$GRADIENT_SOURCE" "$r16/gradient.png"
+record "$r16"/*
+start_app "" "$r16/gradient.png"
+wait_shrunk 1 60 "$r16/gradient.png"
+check "the gradient was optimized" "$(shrunk_count "$r16/gradient.png")" "1"
+# It carries cHRM, so it is also a second witness that the metadata guard holds.
+check "the gradient kept what it says about its colours" \
+  "$(grep -a -q 'cHRM' "$r16/gradient.png" && echo yes || echo no)" "yes"
+# And it has to be quiet about it. This is the file the optimizer fails on at the
+# level the app prefers: it answers "encoding error 83: memory allocation failed"
+# and leaves it alone, and the other pass covers it. That is the design working,
+# so nothing belongs in the log.
+noise=$(grep -E "CRITICAL|WARNING|\*\* ERROR" "$WORK/app.log" \
+  | grep -vcE "Gsk-Message|libEGL|DRI3|Unable to acquire session bus" || true)
+if [ "$noise" != "0" ]; then
+  grep -E "CRITICAL|WARNING|\*\* ERROR" "$WORK/app.log" >&2
+fi
+check "nothing logged for a file one pass cannot handle" "$noise" "0"
+stop_app
+
+echo "### R17 the modification time survives ###"
+# The app description promises that a photo library sorted by date stays in
+# order, and nothing here ever checked it. It is worth checking now: the tool no
+# longer has a flag of its own for this, so what keeps the time is Rewrite, which
+# reads it before the copy is made and puts it back after the write. That is our
+# code, and this is the only thing watching it.
+r17="$WORK/r17"
+mkdir -p "$r17"
+cp "$PNG_SOURCE" "$r17/dated.png"
+cp "$EXIF_SOURCE" "$r17/dated.jpg"
+touch -d "2019-03-14 09:26:53" "$r17"/dated.*
+record "$r17"/*
+start_app "" "$r17"/*
+wait_shrunk 2 60 "$r17"/*
+check "the png kept its modification time" \
+  "$(stat -c%y "$r17/dated.png" | cut -c1-19)" "2019-03-14 09:26:53"
+check "the jpg kept its modification time" \
+  "$(stat -c%y "$r17/dated.jpg" | cut -c1-19)" "2019-03-14 09:26:53"
+stop_app
+
+echo "### R18 a missing optimizer is a row, not a crash ###"
+# One tool does both formats now, so a binary that is not there is no longer half
+# a failure, it is every file in the batch. What it may not become is a crash or
+# a damaged file: the app has to come back, leave everything alone and say what
+# happened.
+ect_path=$(command -v ect 2>/dev/null)
+if [ -n "$ect_path" ]; then
+  r18="$WORK/r18"
+  mkdir -p "$r18"
+  cp "$PNG_SOURCE" "$r18/gone.png"
+  intact=$(size "$r18/gone.png")
+  record "$r18"/*
+  # Everything the app needs except the directory the optimizer lives in, so that
+  # dbus-run-session itself can still be found.
+  without_ect=$(echo "$PATH" | tr ':' '\n' | grep -v "^$(dirname "$ect_path")$" | paste -sd: -)
+  start_app "env PATH=$without_ect" "$r18/gone.png"
+  # Nothing can happen, so wait out the time an optimization would have taken.
+  sleep 6
+  check "app still running without an optimizer" "$(alive)" "yes"
+  check "the file was left alone" "$(size "$r18/gone.png")" "$intact"
+  check "the app said what went wrong" \
+    "$(grep -q "Failed to run ect" "$WORK/app.log" && echo yes || echo no)" "yes"
+  stop_app
+else
+  echo "  SKIP no optimizer on PATH to hide"
+fi
 
 echo
 if [ "$failed" -ne 0 ]; then

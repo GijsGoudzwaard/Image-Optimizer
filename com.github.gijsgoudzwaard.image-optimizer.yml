@@ -44,20 +44,31 @@ finish-args:
 # If we had external dependencies that weren't included in our SDK, we would list
 # them here.
 modules:
-  - name: jpegoptim
+  # Efficient Compression Tool, the one thing the app shells out to. It handles
+  # both PNG and JPEG, which is why there is one module here where there used to
+  # be two: measured over ten images, PNG went from 10.55% to 17.59% and JPEG
+  # from 3.32% to 5.85%, and the PNG side got faster rather than slower.
+  #
+  # A pinned commit and not a tarball, because libpng and mozjpeg are git
+  # submodules of it and the tarball GitHub generates for a tag does not contain
+  # them. The commit is the one the v0.9.5 tag points at; measured against
+  # master, that tag gives the same result on eight of ten test images and is
+  # within seven bytes on the other two.
+  #
+  # It brings its own libpng, zlib, mozjpeg and zopfli, so nothing here links
+  # against the runtime's copies and there is no second module to keep in step.
+  # The other side of that is that their updates arrive when this commit moves.
+  - name: ect
+    buildsystem: cmake-ninja
+    subdir: src
+    config-opts:
+      - -DCMAKE_BUILD_TYPE=Release
     sources:
-      - type: archive
-        url: https://github.com/tjko/jpegoptim/archive/v1.5.6.tar.gz
-        sha256: 661a808dfffa933d78c6beb47a2937d572b9f03e94cbaaab3d4c0d72f410e9be
-  - name: optipng
-    build-options:
-      config-opts:
-      - --with-system-libs
-    sources:
-      - type: archive
-        url: https://sourceforge.net/projects/optipng/files/OptiPNG/optipng-7.9.1/optipng-7.9.1.tar.gz/download
-        sha256: c2579be58c2c66dae9d63154edcb3d427fef64cb00ec0aff079c9d156ec46f29
-        dest-filename: optipng.tar.gz
+      - type: git
+        url: https://github.com/fhanau/Efficient-Compression-Tool.git
+        tag: v0.9.5
+        commit: 9aabc23d73899ae55c1de292592fed6eb6217f66
+
   - name: image-optimizer
     buildsystem: meson
     sources:

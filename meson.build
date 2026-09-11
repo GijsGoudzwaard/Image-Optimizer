@@ -27,8 +27,7 @@ executable(
     'src/Utils/Rewrite.vala',
     'src/Utils/Image.vala',
     'src/Utils/Optimizer.vala',
-    'src/Utils/JpegOptim.vala',
-    'src/Utils/OptiPng.vala',
+    'src/Utils/Ect.vala',
     'src/Constants/Stylesheet.vala',
     dependencies: [
         dependency('glib-2.0'),

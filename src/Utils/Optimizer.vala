@@ -17,42 +17,28 @@ public class Optimizer {
   }
 
   /**
-   * Add the images to their respective optimizer and start optimizing.
+   * Hand the batch to the optimizer and start it.
+   *
+   * There used to be a queue per format here, because there was a tool per
+   * format. One tool does both now, so there is one queue, and every file in it
+   * goes through the same code whatever it is. Only supported files ever arrive:
+   * List.start keeps the rest out and gives them a row saying why.
    *
    * @return void
    */
   public void optimize (List list) {
-    var jpegoptim = new JpegOptim (list);
-    var optipng = new OptiPng (list);
-    var jpegs = 0;
-    var pngs = 0;
+    var ect = new Ect (list);
 
     foreach (var image in this.images) {
-      if (Utils.in_array ({"jpg", "jpeg"}, image.type)) {
-        jpegoptim.add_image (image.path);
-        jpegs++;
-      } else if (image.type == "png") {
-        optipng.add_image (image.path);
-        pngs++;
-      }
+      ect.add_image (image.path);
     }
 
-    // Both tools are single threaded per file, so the way to use the machine is
-    // to run several files at once. One worker per core, split between the two
-    // tools when both have work, so together they never start more processes
-    // than there are cores. A single core machine gets one worker per tool,
-    // which is what the app did before this.
-    var cores = (int) get_num_processors ();
-    var workers = (jpegs > 0 && pngs > 0) ? int.max (1, cores / 2) : cores;
-
+    // One worker per core, and one file per worker. There is no arithmetic to do
+    // here beyond that: the optimizer stays single threaded unless it is asked
+    // otherwise, which it is not, so the number of workers is the number of
+    // files being worked on at once.
     try {
-      if (jpegs > 0) {
-        jpegoptim.compress (workers);
-      }
-
-      if (pngs > 0) {
-        optipng.compress (workers);
-      }
+      ect.compress ((int) get_num_processors ());
     } catch (Error e) {
       warning ("Failed to compress: %s", e.message);
     }
