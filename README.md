@@ -144,8 +144,11 @@ covers what has actually broken before: awkward filenames, unreadable files,
 whole batches being skipped, parallel output matching sequential, a single core
 machine, read-only files and directories, a second pass over an already optimal
 file, colour profiles and Exif surviving, modification times surviving, an
-optimizer that is not installed, and Ctrl+Q. Both run in CI on amd64 and arm64,
-so a pull request gets the same answer you do locally.
+optimizer that is not installed, and Ctrl+Q. A few of its checks point the app at
+a stand-in optimizer instead of the real one, because what they are about is what
+the app does with the answers it gets, and that should not depend on how the real
+one happens to behave that day. Both run in CI on amd64 and arm64, so a pull
+request gets the same answer you do locally.
 
 ## Support this project
 

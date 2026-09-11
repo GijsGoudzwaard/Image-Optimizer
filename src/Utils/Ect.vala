@@ -18,14 +18,19 @@ public class Ect {
    * The levels every file is run through, the smallest result winning.
    *
    * Two passes and not one, because a level is not a promise. On two of the test
-   * images ECT answers levels 3 to 8 with "encoding error 83: memory allocation
-   * failed" and leaves the file exactly as it found it, measured on a machine
-   * with seven gigabytes free, so this is something inside the tool and not the
-   * machine it runs on. On the gradient that is every level above 2, which
-   * leaves level 1 as the only pass that improves it at all; on the file with a
-   * colour profile it is level 3 alone, with 2 and 4 both taking 62% off. The
-   * tool's own README shows a milder version of the same on its gzip benchmark,
-   * where -6 comes out larger than -5.
+   * images ECT answers some levels with "encoding error 83: memory allocation
+   * failed" and leaves the file exactly as it found it, on a machine with seven
+   * gigabytes free, so the message is not about memory. On this machine that is
+   * every level above 2 for the gradient, where level 1 takes 176 bytes off it,
+   * and level 3 alone for the file with a colour profile, where 2 and 4 both
+   * take 62% off.
+   *
+   * And which levels it hits is not fixed. The same binary with the same flags
+   * on the same file gets 176 bytes off it here and nothing at all on one of the
+   * CI machines, which is the strongest argument there is for running two of
+   * them and keeping whichever came back better. The tool's own README shows a
+   * milder version of the same on its gzip benchmark, where -6 comes out larger
+   * than -5.
    *
    * So the level is not trusted to mean "better". The cheap pass and the good
    * pass both run and the smaller result is kept, which is why compress_one
@@ -159,6 +164,9 @@ public class Ect {
           trouble = _("There was nowhere to put a working copy of this file");
           trouble_output = "could not make a candidate copy";
         }
+
+        // A copy that ran out of room halfway leaves what it managed behind.
+        FileUtils.unlink (candidate);
 
         continue;
       }
