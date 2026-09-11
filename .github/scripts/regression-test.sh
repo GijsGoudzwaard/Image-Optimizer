@@ -20,7 +20,7 @@
 #   R13 quitting mid batch, which may never leave a file half written.
 #   R14 a photo with Exif, whose orientation flag has to survive.
 #   R15 a png that says how its colours should be read, which has to survive too.
-#   R16 a gradient, which only the cheaper of the two passes can improve.
+#   R16 the two passes, and the app keeping the better of them.
 #   R17 modification times, which the app promises to leave alone.
 #   R18 a missing optimizer, which is now every file rather than half of them.
 #
@@ -80,11 +80,23 @@ check () { # description, actual, expected
   if [ "$2" = "$3" ]; then
     echo "  PASS $1"
     passed=$((passed + 1))
-  else
-    echo "  FAIL $1 (got '$2', expected '$3')"
-    failures="$failures
+
+    return 0
+  fi
+
+  echo "  FAIL $1 (got '$2', expected '$3')"
+  failures="$failures
   $1 (got '$2', expected '$3')"
-    failed=$((failed + 1))
+  failed=$((failed + 1))
+
+  # The log of the run that just failed. The summary at the end prints the last
+  # group's log, which is the wrong one whenever the failure was earlier: that
+  # cost a full round trip through CI once, with a failure that could not be
+  # reproduced locally and no way to see what the app had said.
+  if [ -s "$WORK/app.log" ]; then
+    echo "    --- what the app logged in this group ---"
+    grep -vE "libEGL|DRI3" "$WORK/app.log" | head -20 | sed 's/^/    /'
+    echo "    --- end ---"
   fi
 }
 
@@ -540,36 +552,65 @@ check "the other png kept what it says about its colours" \
   "$(grep -a -q 'cHRM' "$r15/plain.png" && echo yes || echo no)" "yes"
 stop_app
 
-echo "### R16 a gradient, which only the cheaper of the two passes finds ###"
-# The app runs the optimizer twice over every file, at a cheap level and a good
-# one, and keeps whichever result came out smaller. That is not belt and braces:
-# the levels are not an ordering. Measured on this gradient, the good level finds
-# nothing at all and the cheap one takes 4.5% off.
+echo "### R16 the app keeps the better of its two passes ###"
+# The app optimizes every file twice, at a cheap level and a good one, and keeps
+# whichever came out smaller. Which of the two wins is not fixed and is not ours
+# to predict: on this gradient the cheap pass wins here, and the good one answers
+# "encoding error 83: memory allocation failed" and leaves the file alone. On
+# another machine the split is different again.
 #
-# So this file is the check on that. It shrinks only if both passes really run
-# and are really compared, and it is the test that fails the day someone
-# simplifies the two passes back into one.
-r16="$WORK/r16"
-mkdir -p "$r16"
-cp "$GRADIENT_SOURCE" "$r16/gradient.png"
-record "$r16"/*
-start_app "" "$r16/gradient.png"
-wait_shrunk 1 60 "$r16/gradient.png"
-check "the gradient was optimized" "$(shrunk_count "$r16/gradient.png")" "1"
-# It carries cHRM, so it is also a second witness that the metadata guard holds.
-check "the gradient kept what it says about its colours" \
-  "$(grep -a -q 'cHRM' "$r16/gradient.png" && echo yes || echo no)" "yes"
-# And it has to be quiet about it. This is the file the optimizer fails on at the
-# level the app prefers: it answers "encoding error 83: memory allocation failed"
-# and leaves it alone, and the other pass covers it. That is the design working,
-# so nothing belongs in the log.
-noise=$(grep -E "CRITICAL|WARNING|\*\* ERROR" "$WORK/app.log" \
-  | grep -vcE "Gsk-Message|libEGL|DRI3|Unable to acquire session bus" || true)
-if [ "$noise" != "0" ]; then
-  grep -E "CRITICAL|WARNING|\*\* ERROR" "$WORK/app.log" >&2
+# So this asserts no number. It runs both passes itself, works out which is
+# better, and requires the app to have produced exactly that. It fails if the app
+# ever runs one pass instead of two, and it keeps telling the truth on a machine
+# where the optimizer behaves differently from this one.
+if command -v ect >/dev/null 2>&1; then
+  r16="$WORK/r16"
+  mkdir -p "$r16"
+  cp "$GRADIENT_SOURCE" "$r16/gradient.png"
+  # The same flags the app uses. This file carries cHRM, so nothing is stripped.
+  cp "$GRADIENT_SOURCE" "$r16/pass-one.png"
+  cp "$GRADIENT_SOURCE" "$r16/pass-five.png"
+  ect -1 --strict "$r16/pass-one.png" >/dev/null 2>&1
+  ect -5 --strict "$r16/pass-five.png" >/dev/null 2>&1
+
+  original=$(size "$GRADIENT_SOURCE")
+  one=$(size "$r16/pass-one.png")
+  five=$(size "$r16/pass-five.png")
+  best=$one
+  [ "$five" -lt "$best" ] && best=$five
+  # A pass that comes out no smaller is not written back at all.
+  [ "$best" -ge "$original" ] && best=$original
+  echo "  pass 1 gives $one, pass 5 gives $five, original is $original, so the app owes us $best"
+
+  record "$r16/gradient.png"
+  start_app "" "$r16/gradient.png"
+
+  if [ "$best" -lt "$original" ]; then
+    wait_shrunk 1 60 "$r16/gradient.png"
+  else
+    # Neither pass can improve it here, so there is no event to wait for.
+    sleep 6
+  fi
+
+  check "the app kept the better of its two passes" "$(size "$r16/gradient.png")" "$best"
+  check "the gradient kept what it says about its colours" \
+    "$(grep -a -q 'cHRM' "$r16/gradient.png" && echo yes || echo no)" "yes"
+
+  # Only worth asserting when one of the passes actually worked. A pass failing
+  # where the other covers it is the design working and belongs in no log, but if
+  # both of them fail the app is right to say so.
+  if [ "$best" -lt "$original" ]; then
+    noise=$(grep -E "CRITICAL|WARNING|\*\* ERROR" "$WORK/app.log" \
+      | grep -vcE "Gsk-Message|libEGL|DRI3|Unable to acquire session bus" || true)
+    check "nothing logged when one pass covers for the other" "$noise" "0"
+  else
+    echo "  SKIP neither pass can improve this file here, so there is nothing to be quiet about"
+  fi
+
+  stop_app
+else
+  echo "  SKIP no optimizer on PATH"
 fi
-check "nothing logged for a file one pass cannot handle" "$noise" "0"
-stop_app
 
 echo "### R17 the modification time survives ###"
 # The app description promises that a photo library sorted by date stays in
