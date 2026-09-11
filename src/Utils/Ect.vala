@@ -142,6 +142,11 @@ public class Ect {
     // other one succeeds is not something the user needs to hear about, so the
     // warning waits until it is known whether the file failed.
     string? trouble_output = null;
+    // How many levels ran to the end without complaining, whatever they found.
+    // A level that finishes and reports nothing gained has answered the question:
+    // this file cannot be made smaller that way. Another level falling over does
+    // not turn that answer into a broken file, and the row should not say it did.
+    var clean = 0;
 
     foreach (var level in Ect.LEVELS) {
       var candidate = Ect.candidate_for (rewrite.working_path, level);
@@ -189,6 +194,8 @@ public class Ect {
         continue;
       }
 
+      clean++;
+
       var size = Ect.size_of (candidate);
 
       if (size > 0 && size < winning_size) {
@@ -222,10 +229,10 @@ public class Ect {
         reason = _("The optimizer could not process this file");
         FileUtils.unlink (winner);
       }
-    } else if (trouble != null) {
-      // Nothing was written and something went wrong, which is not the same as
-      // a file that had nothing left to give. Only now is it worth a line in the
-      // log: one level failing is expected and the other one covers it.
+    } else if (trouble != null && clean == 0) {
+      // Nothing was written and no level got far enough to tell us anything, so
+      // this really is a failure. Only now is it worth a line in the log: a level
+      // falling over while another one answers is the design working.
       warning ("ect could not deal with \"%s\": %s", image, trouble_output);
       status_result = Status.FAILED;
       reason = trouble;

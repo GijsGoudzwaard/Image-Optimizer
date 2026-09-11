@@ -20,7 +20,7 @@
 #   R13 quitting mid batch, which may never leave a file half written.
 #   R14 a photo with Exif, whose orientation flag has to survive.
 #   R15 a png that says how its colours should be read, which has to survive too.
-#   R16 the two passes, and the app keeping the better of them.
+#   R16 the two passes, proved against a stand-in that does as it is told.
 #   R17 modification times, which the app promises to leave alone.
 #   R18 a missing optimizer, which is now every file rather than half of them.
 #
@@ -552,65 +552,111 @@ check "the other png kept what it says about its colours" \
   "$(grep -a -q 'cHRM' "$r15/plain.png" && echo yes || echo no)" "yes"
 stop_app
 
-echo "### R16 the app keeps the better of its two passes ###"
-# The app optimizes every file twice, at a cheap level and a good one, and keeps
-# whichever came out smaller. Which of the two wins is not fixed and is not ours
-# to predict: on this gradient the cheap pass wins here, and the good one answers
-# "encoding error 83: memory allocation failed" and leaves the file alone. On
-# another machine the split is different again.
+echo "### R16 both passes run, and the better of them is what is kept ###"
+# The app optimizes every file twice, at two levels, and keeps whichever came out
+# smaller. That cannot be proved with a real image in a way that holds
+# everywhere: the only file here where the cheap level beats the good one is a
+# gradient, and it wins there because the good level falls over on it with
+# "encoding error 83: memory allocation failed". Which levels that hits turns out
+# to differ from machine to machine, so an assertion built on it is an assertion
+# about the optimizer's bugs rather than about this app.
 #
-# So this asserts no number. It runs both passes itself, works out which is
-# better, and requires the app to have produced exactly that. It fails if the app
-# ever runs one pass instead of two, and it keeps telling the truth on a machine
-# where the optimizer behaves differently from this one.
-if command -v ect >/dev/null 2>&1; then
-  r16="$WORK/r16"
-  mkdir -p "$r16"
-  cp "$GRADIENT_SOURCE" "$r16/gradient.png"
-  # The same flags the app uses. This file carries cHRM, so nothing is stripped.
-  cp "$GRADIENT_SOURCE" "$r16/pass-one.png"
-  cp "$GRADIENT_SOURCE" "$r16/pass-five.png"
-  ect -1 --strict "$r16/pass-one.png" >/dev/null 2>&1
-  ect -5 --strict "$r16/pass-five.png" >/dev/null 2>&1
+# So the app is pointed at a stand-in that does exactly what it is told, and the
+# real one gets the looser check underneath.
+r16="$WORK/r16"
+mkdir -p "$r16/bin" "$r16/files"
 
-  original=$(size "$GRADIENT_SOURCE")
-  one=$(size "$r16/pass-one.png")
-  five=$(size "$r16/pass-five.png")
-  best=$one
-  [ "$five" -lt "$best" ] && best=$five
-  # A pass that comes out no smaller is not written back at all.
-  [ "$best" -ge "$original" ] && best=$original
-  echo "  pass 1 gives $one, pass 5 gives $five, original is $original, so the app owes us $best"
+echo "--- when both passes work, the smaller result wins"
+cat > "$r16/bin/ect" <<'STUB'
+#!/bin/sh
+level=$1
+for a in "$@"; do file=$a; done
+case "$level" in
+  -1) printf '%s' 'result of the cheap pass, longer' > "$file" ;;
+  -5) printf '%s' 'result of the good pass' > "$file" ;;
+esac
+echo "Processed 1 file"
+exit 0
+STUB
+chmod +x "$r16/bin/ect"
+cp "$PNG_SOURCE" "$r16/files/both.png"
+record "$r16/files/both.png"
+start_app "env PATH=$r16/bin:$PATH" "$r16/files/both.png"
+wait_shrunk 1 30 "$r16/files/both.png"
+check "the app kept the smaller of the two passes" \
+  "$(cat "$r16/files/both.png")" "result of the good pass"
+stop_app
 
-  record "$r16/gradient.png"
-  start_app "" "$r16/gradient.png"
+echo "--- when one pass falls over, the other one still counts"
+cat > "$r16/bin/ect" <<'STUB'
+#!/bin/sh
+level=$1
+for a in "$@"; do file=$a; done
+case "$level" in
+  -1) printf '%s' 'the pass that worked' > "$file"; echo "Processed 1 file"; exit 0 ;;
+  -5) echo "$file encoding error 83: memory allocation failed"; exit 1 ;;
+esac
+STUB
+chmod +x "$r16/bin/ect"
+cp "$PNG_SOURCE" "$r16/files/half.png"
+record "$r16/files/half.png"
+start_app "env PATH=$r16/bin:$PATH" "$r16/files/half.png"
+wait_shrunk 1 30 "$r16/files/half.png"
+check "the app kept the pass that worked" \
+  "$(cat "$r16/files/half.png")" "the pass that worked"
+# And said nothing about it. One pass falling over where the other answers is the
+# design working, and the app warned about it until this check existed.
+noise=$(grep -E "CRITICAL|WARNING|\*\* ERROR" "$WORK/app.log" \
+  | grep -vcE "Gsk-Message|libEGL|DRI3|Unable to acquire session bus" || true)
+check "nothing logged when one pass covers for the other" "$noise" "0"
+stop_app
 
-  if [ "$best" -lt "$original" ]; then
-    wait_shrunk 1 60 "$r16/gradient.png"
-  else
-    # Neither pass can improve it here, so there is no event to wait for.
-    sleep 6
-  fi
+echo "--- and when the pass that works finds nothing, that is an answer too"
+# This is what one CI machine does with the gradient: the good pass falls over on
+# it and the cheap pass runs to the end and reports that there is nothing to
+# take off. The file is fine and nothing is wrong with it, so the row has to say
+# it was already as small as it gets, not that it failed, and the log has to stay
+# empty. It said "failed" until this check existed.
+cat > "$r16/bin/ect" <<'STUB'
+#!/bin/sh
+level=$1
+for a in "$@"; do file=$a; done
+case "$level" in
+  -1) echo "Processed 1 file"; echo "Saved 0B out of 3.84KB (0.0000%)"; exit 0 ;;
+  -5) echo "$file encoding error 83: memory allocation failed"; exit 1 ;;
+esac
+STUB
+chmod +x "$r16/bin/ect"
+cp "$PNG_SOURCE" "$r16/files/nothing.png"
+intact=$(size "$r16/files/nothing.png")
+record "$r16/files/nothing.png"
+start_app "env PATH=$r16/bin:$PATH" "$r16/files/nothing.png"
+# Nothing will happen, so wait out the time it would have taken.
+sleep 6
+check "app still running" "$(alive)" "yes"
+check "the file was left exactly as it was" "$(size "$r16/files/nothing.png")" "$intact"
+noise=$(grep -E "CRITICAL|WARNING|\*\* ERROR" "$WORK/app.log" \
+  | grep -vcE "Gsk-Message|libEGL|DRI3|Unable to acquire session bus" || true)
+check "nothing logged for a file that simply cannot be improved" "$noise" "0"
+stop_app
 
-  check "the app kept the better of its two passes" "$(size "$r16/gradient.png")" "$best"
-  check "the gradient kept what it says about its colours" \
-    "$(grep -a -q 'cHRM' "$r16/gradient.png" && echo yes || echo no)" "yes"
-
-  # Only worth asserting when one of the passes actually worked. A pass failing
-  # where the other covers it is the design working and belongs in no log, but if
-  # both of them fail the app is right to say so.
-  if [ "$best" -lt "$original" ]; then
-    noise=$(grep -E "CRITICAL|WARNING|\*\* ERROR" "$WORK/app.log" \
-      | grep -vcE "Gsk-Message|libEGL|DRI3|Unable to acquire session bus" || true)
-    check "nothing logged when one pass covers for the other" "$noise" "0"
-  else
-    echo "  SKIP neither pass can improve this file here, so there is nothing to be quiet about"
-  fi
-
-  stop_app
-else
-  echo "  SKIP no optimizer on PATH"
-fi
+echo "--- and the real optimizer on a real gradient"
+# No claim about which pass wins or by how much. What may never happen is the
+# file coming out larger, losing what it says about its colours, or the app
+# falling over on it.
+r16b="$WORK/r16b"
+mkdir -p "$r16b"
+cp "$GRADIENT_SOURCE" "$r16b/gradient.png"
+original=$(size "$GRADIENT_SOURCE")
+record "$r16b"/*
+start_app "" "$r16b/gradient.png"
+sleep 8
+check "app still running" "$(alive)" "yes"
+check "the gradient did not grow" \
+  "$([ "$(size "$r16b/gradient.png")" -le "$original" ] && echo yes || echo no)" "yes"
+check "the gradient kept what it says about its colours" \
+  "$(grep -a -q 'cHRM' "$r16b/gradient.png" && echo yes || echo no)" "yes"
+stop_app
 
 echo "### R17 the modification time survives ###"
 # The app description promises that a photo library sorted by date stays in
