@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+  <!-- The arrow on the split button. Bundled and reached by name for the same
+       reason every other icon here is: the two icon themes this ships against do
+       not agree on which names exist, and a missing one paints a placeholder
+       instead of saying so. Named -symbolic so the stylesheet can colour it.
+
+       The comment sits inside the element on purpose. Four lines of XML in front
+       of it once broke gdk-pixbuf's format sniffing. -->
+  <path d="M4.2 6.3a.8.8 0 0 1 1.1 0L8 9l2.7-2.7a.8.8 0 1 1 1.1 1.1l-3.2 3.3a.8.8 0 0 1-1.2 0L4.2 7.4a.8.8 0 0 1 0-1.1z" fill="#000000"/>
+</svg>

@@ -9,6 +9,14 @@
 public class SummaryBar : Gtk.Box {
 
   /**
+   * Emitted when someone presses the button that appears once a folder has been
+   * looked through. Nothing is optimized until then: a folder is one gesture
+   * that can reach thousands of files, and the app rewrites every one of them in
+   * place, so it says what it found and waits.
+   */
+  public signal void start_requested ();
+
+  /**
    * Shown when every file was dealt with without trouble.
    */
   private const string ICON_OK = "/com/github/gijsgoudzwaard/image-optimizer/icons/check-circle.svg";
@@ -66,6 +74,13 @@ public class SummaryBar : Gtk.Box {
    * @var Gtk.ProgressBar
    */
   private Gtk.ProgressBar progress;
+
+  /**
+   * Takes the place of the numbers while the app is waiting to be told to go.
+   *
+   * @var Gtk.Button
+   */
+  private Gtk.Button start;
 
   construct {
     this.set_orientation (Gtk.Orientation.VERTICAL);
@@ -134,18 +149,114 @@ public class SummaryBar : Gtk.Box {
     numbers.append (this.figure);
     numbers.append (this.caption);
 
+    // The same button the welcome screen uses, because it is the same kind of
+    // thing: the one thing to press on this screen right now.
+    this.start = new Gtk.Button.with_label (_("Optimize"));
+    this.start.add_css_class ("upload_button");
+    this.start.set_valign (Gtk.Align.CENTER);
+    this.start.set_visible (false);
+    ((Gtk.Widget) this.start).set_focus_on_click (false);
+    this.start.clicked.connect (() => {
+      this.start_requested ();
+    });
+
     left.append (this.spinner);
     left.append (this.icon);
     left.append (text);
 
     row.append (left);
     row.append (numbers);
+    row.append (this.start);
 
     this.progress = new Gtk.ProgressBar ();
     this.progress.add_css_class ("summary_progress");
 
     this.append (row);
     this.append (this.progress);
+  }
+
+  /**
+   * The state while a folder is being looked through, before there is a batch
+   * at all.
+   *
+   * @param  uint images
+   * @return void
+   */
+  public void scanning (uint images) {
+    this.remove_css_class ("done");
+
+    this.spinner.set_visible (true);
+    this.spinner.start ();
+    this.icon.set_visible (false);
+    this.start.set_visible (false);
+
+    this.headline.set_label (_("Looking for images…"));
+    this.sub.set_label (
+      ngettext ("%u found so far", "%u found so far", images).printf (images)
+    );
+
+    // Nothing to be a fraction of yet, and a bar that sits at zero reads as work
+    // that is not happening.
+    this.figure.set_visible (false);
+    this.caption.set_visible (false);
+    this.progress.set_visible (false);
+  }
+
+  /**
+   * The state once a folder has been looked through and nothing has been touched
+   * yet. This is the whole reason a folder is different from a file: one gesture
+   * reaches everything under it, so this says what that is and waits to be told
+   * to go.
+   *
+   * @param  uint images
+   * @param  uint others
+   * @param  uint folders
+   * @return void
+   */
+  public void found (uint images, uint others, uint folders) {
+    this.remove_css_class ("done");
+
+    this.spinner.stop ();
+    this.spinner.set_visible (false);
+    this.icon.set_from_resource (images > 0 ? SummaryBar.ICON_OK : SummaryBar.ICON_PROBLEM);
+    this.icon.set_visible (true);
+
+    this.figure.set_visible (false);
+    this.caption.set_visible (false);
+    this.progress.set_visible (false);
+
+    if (images == 0) {
+      this.headline.set_label (_("No images in there"));
+      this.sub.set_label (
+        ngettext (
+          "Looked in %u folder and found nothing to optimize",
+          "Looked in %u folders and found nothing to optimize",
+          folders
+        ).printf (folders)
+      );
+      this.start.set_visible (false);
+
+      return;
+    }
+
+    this.headline.set_label (
+      ngettext ("%u image found", "%u images found", images).printf (images)
+    );
+
+    var where = ngettext ("in %u folder", "in %u folders", folders).printf (folders);
+
+    // The files that are not images are counted and not listed, so this line is
+    // the only place they are accounted for. Saying nothing about them would be
+    // the app quietly deciding what was worth mentioning.
+    if (others > 0) {
+      where = "%s, %s".printf (
+        where,
+        ngettext ("%u other file skipped", "%u other files skipped", others).printf (others)
+      );
+    }
+
+    this.sub.set_label (where);
+    this.start.set_visible (true);
   }
 
   /**
@@ -203,6 +314,7 @@ public class SummaryBar : Gtk.Box {
     // The figure is the app's own colour while it is working and green once it
     // has something to show, so the state is readable without reading a word.
     this.remove_css_class ("done");
+    this.start.set_visible (false);
 
     this.spinner.set_visible (true);
     this.spinner.start ();

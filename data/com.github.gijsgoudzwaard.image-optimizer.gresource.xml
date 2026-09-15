@@ -11,5 +11,10 @@
     <file compressed="true" preprocess="xml-stripblanks" alias="check-circle.svg">icons/status/check-circle.svg</file>
     <file compressed="true" preprocess="xml-stripblanks" alias="dash.svg">icons/status/dash.svg</file>
     <file compressed="true" preprocess="xml-stripblanks" alias="error.svg">icons/status/error.svg</file>
+    <!-- Laid out the way an icon theme is, because this one is looked up by
+         name and not by path: Application.startup hands this prefix to the icon
+         theme, which then searches it like any other theme directory. That is
+         what lets the stylesheet recolour it. -->
+    <file compressed="true" preprocess="xml-stripblanks" alias="scalable/actions/pan-down-symbolic.svg">icons/actions/pan-down-symbolic.svg</file>
   </gresource>
 </gresources>

@@ -27,6 +27,7 @@ executable(
     'src/Utils/Rewrite.vala',
     'src/Utils/Image.vala',
     'src/Utils/Optimizer.vala',
+    'src/Utils/Scanner.vala',
     'src/Utils/Ect.vala',
     'src/Constants/Stylesheet.vala',
     dependencies: [

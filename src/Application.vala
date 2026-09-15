@@ -11,6 +11,46 @@ class Application : Gtk.Application {
   protected override void startup () {
     base.startup ();
 
+    // The icons this app bundles, laid out the way an icon theme is, so the ones
+    // that have to take their colour from the stylesheet can be looked up by
+    // name rather than by path. That is how the arrow beside the browse button
+    // gets drawn in white. GtkApplication adds this very path by itself, from
+    // the application id, so this line only makes sure of something that is
+    // already true, and it is here because a bundled icon that cannot be found
+    // is a blank space rather than an error.
+    var display = Gdk.Display.get_default ();
+
+    if (display != null) {
+      Gtk.IconTheme.get_for_display (display)
+        .add_resource_path ("/com/github/gijsgoudzwaard/image-optimizer/icons");
+    }
+
+    // The two ways of adding something, as actions rather than as buttons, so
+    // that the menus that offer them can be real menus. A menu built out of
+    // buttons takes keyboard focus per button, and a focused button is painted
+    // with the system accent colour: on a red accent that put a red ring around
+    // an item that had not been chosen, and left two items looking picked at
+    // once as soon as the pointer moved.
+    var open_files = new SimpleAction ("open-files", null);
+
+    add_action (open_files);
+
+    open_files.activate.connect (() => {
+      if (this.app_window != null) {
+        this.app_window.on_open_clicked.begin ();
+      }
+    });
+
+    var open_folder = new SimpleAction ("open-folder", null);
+
+    add_action (open_folder);
+
+    open_folder.activate.connect (() => {
+      if (this.app_window != null) {
+        this.app_window.on_open_folder_clicked.begin ();
+      }
+    });
+
     var quit_action = new SimpleAction ("quit", null);
 
     add_action (quit_action);
@@ -31,25 +71,42 @@ class Application : Gtk.Application {
   }
 
   public override void open (File[] files, string hint) {
-    if (files [0].query_exists ()) {
-      foreach (File file in files) {
-        var path = file.get_path ();
+    if (! files [0].query_exists ()) {
+      return;
+    }
 
-        var name = Image.get_file_name (path);
-        var type = Image.get_file_type (file.get_basename ());
+    File[] folders = {};
 
-        // Kept in step with MainWindow: a file that arrives through Open With or
-        // the command line gets a row saying it is not supported, rather than
-        // disappearing on the way in.
-        this.images += new Image (path, name, type.down ());
+    foreach (File file in files) {
+      var path = file.get_path ();
+
+      // Kept in step with the drop handler and the buttons: a folder is looked
+      // through and what it holds waits, wherever it arrived from.
+      if (path != null && FileUtils.test (path, FileTest.IS_DIR)) {
+        folders += file;
+
+        continue;
       }
 
-      if (this.app_window == null) {
-        this.app_window = new MainWindow (this);
-        this.app_window.present ();
-      }
+      var name = Image.get_file_name (path);
+      var type = Image.get_file_type (file.get_basename ());
 
-      this.app_window.set_images (this.images);
+      // Kept in step with MainWindow: a file that arrives through Open With or
+      // the command line gets a row saying it is not supported, rather than
+      // disappearing on the way in.
+      this.images += new Image (path, name, type.down ());
+    }
+
+    if (this.app_window == null) {
+      this.app_window = new MainWindow (this);
+      this.app_window.present ();
+    }
+
+    this.app_window.set_images (this.images);
+    this.images = {};
+
+    if (folders.length > 0) {
+      this.app_window.add_folders (folders);
     }
   }
 
