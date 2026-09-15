@@ -63,6 +63,12 @@ public class MainWindow : Gtk.Window {
       title: _("Image Optimizer")
     );
 
+    // This is a Gtk.Window and not a Gtk.ApplicationWindow, and the "app" action
+    // group is something the latter inserts for you. Without this line every
+    // menu item that names an app action is an item GTK cannot resolve, which it
+    // shows as an item that is there but greyed out and does nothing.
+    this.insert_action_group ("app", application);
+
     var css_provider = new Gtk.CssProvider ();
     css_provider.load_from_string (Stylesheet.STYLES);
 
@@ -103,7 +109,6 @@ public class MainWindow : Gtk.Window {
       set_child (this.upload_screen.window ());
 
       this.upload_screen.upload_button.clicked.connect (on_open_clicked);
-      this.upload_screen.folder_button.clicked.connect (on_open_folder_clicked);
     } else {
       this.set_list_window ();
     }
@@ -123,7 +128,6 @@ public class MainWindow : Gtk.Window {
       set_child (this.upload_screen.window ());
 
       this.upload_screen.upload_button.clicked.connect (on_open_clicked);
-      this.upload_screen.folder_button.clicked.connect (on_open_folder_clicked);
     } else {
       this.set_list_window ();
     }
@@ -144,8 +148,19 @@ public class MainWindow : Gtk.Window {
     images_list = new List (this.images);
     set_child (images_list.window ());
 
-    var add_image = new Gtk.Button.from_icon_name ("list-add-symbolic");
-    add_image.set_tooltip_markup (_("Add Image"));
+    // One button, and what it can add is a choice inside it rather than two
+    // buttons asking the same question twice. The file chooser is asked for
+    // files or for folders and there is no dialog that offers both, but that is
+    // the portal's problem and not something to put on this bar.
+    //
+    // A menu model and not a box of buttons. GTK builds a real menu out of this,
+    // which knows that only one item is highlighted at a time and that keyboard
+    // focus is not the same thing as being chosen. Built by hand it was neither:
+    // the item that had focus kept the system accent colour around it, red on a
+    // red accent, and stayed lit while the pointer highlighted another.
+    var choices = new GLib.Menu ();
+    choices.append (_("Images…"), "app.open-files");
+    choices.append (_("A folder…"), "app.open-folder");
 
     // "flat" and not "titlebutton": titlebutton is meant for window controls and
     // brought the theme's light button background with it, while the stylesheet
@@ -156,23 +171,28 @@ public class MainWindow : Gtk.Window {
     // themes colour a button like this with the system accent, which on a red
     // accent put a red button on a purple bar. The stylesheet gives it a flat
     // look with its own hover and pressed states instead.
-    add_image.add_css_class ("flat");
-    add_image.add_css_class ("add_image");
-    add_image.clicked.connect (on_open_clicked);
+    var add = new Gtk.MenuButton ();
+    add.set_icon_name ("list-add-symbolic");
+    add.set_tooltip_markup (_("Add images or a folder"));
+    add.set_menu_model (choices);
+    add.add_css_class ("flat");
+    add.add_css_class ("add_image");
+    // Without this the button takes the whole height of the bar and sits against
+    // the top of it rather than in the middle of it.
+    add.set_valign (Gtk.Align.CENTER);
 
-    // The second way in, because a folder cannot come through the first one: the
-    // file chooser is asked for files or for folders and there is no dialog that
-    // offers both. The icon is one the app bundles and reaches by name, so the
-    // stylesheet can paint it white on this bar.
-    var add_folder = new Gtk.Button.from_icon_name ("folder-open-symbolic");
-    add_folder.set_tooltip_markup (_("Add a folder"));
-    add_folder.add_css_class ("flat");
-    add_folder.add_css_class ("add_image");
-    add_folder.clicked.connect (on_open_folder_clicked);
+    // The menu GTK builds from the model is painted by this app like everything
+    // else it shows. Left to the theme it comes out as a black rectangle on a
+    // plain GTK install, and its labels come out white, because a popover
+    // hanging off this bar is a child of it as far as the stylesheet is
+    // concerned and this bar paints every label in it white.
+    var menu = add.get_popover ();
 
-    // Packed first, so it ends up on the outside of the plus.
-    this.toolbar.pack_end (add_folder);
-    this.toolbar.pack_end (add_image);
+    if (menu != null) {
+      menu.add_css_class ("app_popover");
+    }
+
+    this.toolbar.pack_start (add);
   }
 
   /**

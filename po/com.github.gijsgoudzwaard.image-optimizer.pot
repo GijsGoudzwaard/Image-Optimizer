@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: com.github.gijsgoudzwaard.image-optimizer\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-11 15:56+0000\n"
+"POT-Creation-Date: 2026-09-13 09:53+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,23 +22,33 @@ msgstr ""
 msgid "Image Optimizer"
 msgstr ""
 
-#: src/MainWindow.vala:148
-msgid "Add Image"
+#. One button, and what it can add is a choice inside it rather than two
+#. buttons asking the same question twice. The file chooser is asked for
+#. files or for folders and there is no dialog that offers both, but that is
+#. the portal's problem and not something to put on this bar.
+#.
+#. A menu model and not a box of buttons. GTK builds a real menu out of this,
+#. which knows that only one item is highlighted at a time and that keyboard
+#. focus is not the same thing as being chosen. Built by hand it was neither:
+#. the item that had focus kept the system accent colour around it, red on a
+#. red accent, and stayed lit while the pointer highlighted another.
+#: src/MainWindow.vala:162
+msgid "Images…"
 msgstr ""
 
-#. The second way in, because a folder cannot come through the first one: the
-#. file chooser is asked for files or for folders and there is no dialog that
-#. offers both. The icon is one the app bundles and reaches by name, so the
-#. stylesheet can paint it white on this bar.
-#: src/MainWindow.vala:168
-msgid "Add a folder"
+#: src/MainWindow.vala:163
+msgid "A folder…"
 msgstr ""
 
-#: src/MainWindow.vala:301
+#: src/MainWindow.vala:176
+msgid "Add images or a folder"
+msgstr ""
+
+#: src/MainWindow.vala:321
 msgid "Select a folder"
 msgstr ""
 
-#: src/MainWindow.vala:333
+#: src/MainWindow.vala:353
 msgid "Select image(s)"
 msgstr ""
 
@@ -239,20 +249,32 @@ msgstr ""
 msgid "%u skipped"
 msgstr ""
 
-#: src/Widgets/UploadScreen.vala:30
+#: src/Widgets/UploadScreen.vala:24
 msgid "Drag and drop images or folders here"
 msgstr ""
 
-#: src/Widgets/UploadScreen.vala:33
+#: src/Widgets/UploadScreen.vala:27
 msgid "or"
 msgstr ""
 
-#: src/Widgets/UploadScreen.vala:36
+#: src/Widgets/UploadScreen.vala:30
 msgid "Browse files"
 msgstr ""
 
-#. The same shape as the one beside it and quieter, because picking files is
-#. still the ordinary thing to do and a folder is the larger gesture.
-#: src/Widgets/UploadScreen.vala:46
+#. One control and not two. A folder cannot come through the same dialog as a
+#. file, because the chooser is asked for one or the other and there is no
+#. dialog that offers both, but that is the portal's problem and not
+#. something to hand to the person looking at this screen. So the button does
+#. the ordinary thing when it is pressed, and the arrow beside it offers the
+#. other one.
+#. A menu model, for the same reason the header bar uses one: built out of a
+#. button, the one item in here took keyboard focus the moment the menu
+#. opened and was painted with the system accent colour, which on a red
+#. accent looked like it had already been chosen.
+#: src/Widgets/UploadScreen.vala:49
 msgid "Browse a folder"
+msgstr ""
+
+#: src/Widgets/UploadScreen.vala:53
+msgid "Other ways to add images"
 msgstr ""

@@ -16,5 +16,6 @@
          theme, which then searches it like any other theme directory. That is
          what lets the stylesheet recolour it. -->
     <file compressed="true" preprocess="xml-stripblanks" alias="scalable/actions/folder-open-symbolic.svg">icons/actions/folder-open-symbolic.svg</file>
+    <file compressed="true" preprocess="xml-stripblanks" alias="scalable/actions/pan-down-symbolic.svg">icons/actions/pan-down-symbolic.svg</file>
   </gresource>
 </gresources>

@@ -22,6 +22,32 @@ class Application : Gtk.Application {
         .add_resource_path ("/com/github/gijsgoudzwaard/image-optimizer/icons");
     }
 
+    // The two ways of adding something, as actions rather than as buttons, so
+    // that the menus that offer them can be real menus. A menu built out of
+    // buttons takes keyboard focus per button, and a focused button is painted
+    // with the system accent colour: on a red accent that put a red ring around
+    // an item that had not been chosen, and left two items looking picked at
+    // once as soon as the pointer moved.
+    var open_files = new SimpleAction ("open-files", null);
+
+    add_action (open_files);
+
+    open_files.activate.connect (() => {
+      if (this.app_window != null) {
+        this.app_window.on_open_clicked.begin ();
+      }
+    });
+
+    var open_folder = new SimpleAction ("open-folder", null);
+
+    add_action (open_folder);
+
+    open_folder.activate.connect (() => {
+      if (this.app_window != null) {
+        this.app_window.on_open_folder_clicked.begin ();
+      }
+    });
+
     var quit_action = new SimpleAction ("quit", null);
 
     add_action (quit_action);
