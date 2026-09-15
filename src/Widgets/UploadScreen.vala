@@ -2,8 +2,6 @@ public class UploadScreen : Gtk.Box {
 
   public Gtk.Button upload_button;
 
-
-
   public Gtk.Box window () {
     this.margin_top = 10;
     this.margin_bottom = 10;

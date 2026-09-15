@@ -348,6 +348,16 @@ public class List {
    * @return void
    */
   private void refresh_summary () {
+    // A folder that has been looked through owns the bar until it is started:
+    // the button that starts it lives there and nowhere else. A file that was
+    // dropped earlier and finishes now would otherwise paint the numbers back
+    // over it, and those files would be left with no way to go. They are not
+    // lost sight of: pressing the button, or dropping anything else, counts them
+    // in and the bar catches up in the same breath.
+    if (this.pending.length > 0 || this.scanner != null) {
+      return;
+    }
+
     this.summary.update (
       this.finished_files,
       this.total_files,
@@ -722,6 +732,14 @@ public class List {
       this.scanned_others = 0;
       this.scanned_folders = 0;
 
+      // The rows those files are already sitting in come out first, because
+      // every image below is given a row of its own further down. Left in, a
+      // folder that was still waiting when something was dropped on the window
+      // showed every one of its files twice, once in a row that never moved
+      // again.
+      ImageRow[] none = {};
+      this.listmodel.splice (this.pending_start, waiting.length, none);
+
       foreach (var image in images) {
         waiting += image;
       }
@@ -729,17 +747,25 @@ public class List {
       images = waiting;
     }
 
-    foreach (var image in images) {
-      var duplicate = false;
-      for (int i = 0; i < this.images.length; i++) {
-        if (this.images[i].path == image.path) {
-          duplicate = true;
-        }
-      }
+    // A set of the paths already listed, rather than a walk through all of them
+    // for every arrival. A folder can hand over thousands of images in one go,
+    // and checking each of those against each row already on screen is work that
+    // grows with the square of what is on it: two folders of a few thousand
+    // files is millions of string comparisons on the main loop, which is a
+    // window that stops repainting. It also catches a path that arrives twice in
+    // the same batch, which the walk through the old list never could.
+    var seen = new GLib.GenericSet<string> (str_hash, str_equal);
 
-      if (duplicate) {
+    for (int i = 0; i < this.images.length; i++) {
+      seen.add (this.images[i].path);
+    }
+
+    foreach (var image in images) {
+      if (seen.contains (image.path)) {
         continue;
       }
+
+      seen.add (image.path);
 
       this.listmodel.append (new ImageRow (image));
       this.images += image;
@@ -750,6 +776,10 @@ public class List {
     // sent duplicates through the optimizers a second time, and an all
     // duplicate drop started workers with nothing to do.
     if (fresh.length == 0) {
+      // Nothing was added, but the bar may still be showing a folder that is no
+      // longer waiting for anything, behind a button that would now do nothing.
+      this.refresh_summary ();
+
       return;
     }
 

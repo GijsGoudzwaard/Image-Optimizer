@@ -13,8 +13,11 @@ class Application : Gtk.Application {
 
     // The icons this app bundles, laid out the way an icon theme is, so the ones
     // that have to take their colour from the stylesheet can be looked up by
-    // name. GtkApplication adds this very path by itself, and the header bar
-    // depends on it, so it is spelled out here rather than assumed.
+    // name rather than by path. That is how the arrow beside the browse button
+    // gets drawn in white. GtkApplication adds this very path by itself, from
+    // the application id, so this line only makes sure of something that is
+    // already true, and it is here because a bundled icon that cannot be found
+    // is a blank space rather than an error.
     var display = Gdk.Display.get_default ();
 
     if (display != null) {
