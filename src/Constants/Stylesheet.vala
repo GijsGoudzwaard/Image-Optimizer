@@ -170,8 +170,27 @@ class Stylesheet {
       font-weight: 400;
     }
 
+    /* The bar across the top of the welcome screen, which is the one surface in
+       this app that was still left to whatever theme is installed. That made it
+       the only part of the window that looks different on every desktop: flat
+       white on elementary, a grey gradient on Adwaita, something else again
+       elsewhere. It is painted here now, the same near white elementary gave it,
+       so the app arrives looking like itself wherever it is opened. The bar in
+       the list is purple and says so further down, which wins on having a class
+       more.
+
+       The line along the bottom goes with it, and that one was a real fault. In
+       the list the next thing under this bar is the row of column headings, the
+       same purple, so a theme's border landed in the middle of one block of
+       colour and read as a gap in it. Adwaita draws that line as a border and
+       other themes as an inset shadow, so both are named. */
     .default-decoration {
       transition: background-color .1s ease-in-out;
+      background: #fafafa;
+      background-image: none;
+      color: #2c2c2a;
+      border-bottom: none;
+      box-shadow: none;
     }
 
     .list .default-decoration {
