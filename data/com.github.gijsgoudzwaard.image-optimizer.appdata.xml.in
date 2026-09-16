@@ -75,6 +75,20 @@
       <color type="primary" scheme_preference="dark">#161650</color>
    </branding>
    <releases>
+      <release version="0.6.0" date="2026-09-16">
+         <description>
+            <ul>
+               <li>A whole folder can be handed to Image Optimizer now. Drop it on the window, choose it from the button, or right click it in Files and open it here. Everything under it is included, subfolders as well</li>
+               <li>A folder is looked through first and then waits. The bar says how many images were found and how many folders were looked in, and nothing is touched until you press Optimize. Images you pick by name still start straight away, as they always did</li>
+               <li>Files in a folder that are not images are counted rather than listed, so twenty images do not disappear under four hundred documents. Hidden folders are skipped, and so is anything behind a symbolic link</li>
+               <li>Images found in a folder are listed by their path under it, so two files with the same name in different subfolders are two different rows</li>
+               <li>Adding images and adding a folder are one button now, on the welcome screen and in the title bar, instead of two buttons asking the same question</li>
+               <li>PNG and JPEG go through one optimizer now, and both come out smaller than before. Measured over ten images, the average saving on a PNG went from 10.6 percent to 17.6 percent, and on a JPEG from 3.3 percent to 5.9 percent. PNG images are optimized faster than they were as well</li>
+               <li>The bar across the top of the window is painted by the app now, so it looks the same on every desktop instead of taking on whatever the installed theme wanted it to be</li>
+               <li>Fixed a line appearing between the title bar and the column headings above the list</li>
+            </ul>
+         </description>
+      </release>
       <release version="0.5.1" date="2026-09-09">
          <description>
             <ul>

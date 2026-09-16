@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: com.github.gijsgoudzwaard.image-optimizer\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-13 09:53+0000\n"
+"POT-Creation-Date: 2026-09-16 10:42+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,16 +22,6 @@ msgstr ""
 msgid "Image Optimizer"
 msgstr ""
 
-#. One button, and what it can add is a choice inside it rather than two
-#. buttons asking the same question twice. The file chooser is asked for
-#. files or for folders and there is no dialog that offers both, but that is
-#. the portal's problem and not something to put on this bar.
-#.
-#. A menu model and not a box of buttons. GTK builds a real menu out of this,
-#. which knows that only one item is highlighted at a time and that keyboard
-#. focus is not the same thing as being chosen. Built by hand it was neither:
-#. the item that had focus kept the system accent colour around it, red on a
-#. red accent, and stayed lit while the pointer highlighted another.
 #: src/MainWindow.vala:162
 msgid "Images…"
 msgstr ""
@@ -52,9 +42,6 @@ msgstr ""
 msgid "Select image(s)"
 msgstr ""
 
-#. Without this the row would say the file was already as small as it
-#. gets, which is what a batch on a full disk would have reported for
-#. every file in it.
 #: src/Utils/Ect.vala:164 src/Utils/Rewrite.vala:122
 msgid "There was nowhere to put a working copy of this file"
 msgstr ""
@@ -75,7 +62,6 @@ msgstr ""
 msgid "This is not a JPEG file, whatever its name says"
 msgstr ""
 
-#. What ECT says about a file that stops halfway through, in either format.
 #: src/Utils/Ect.vala:398
 msgid "This file stops halfway through, so it may be damaged"
 msgstr ""
@@ -108,21 +94,14 @@ msgstr ""
 msgid "Already as small as it gets"
 msgstr ""
 
-#. No new size, because nothing was written. A "0.00%" here reads as a
-#. successful run that happened to gain nothing, which is the confusion
-#. this whole status exists to end.
 #: src/Widgets/ImageRow.vala:116
 msgid "Failed"
 msgstr ""
 
-#. The optimizer usually knows exactly what it ran into. The generic line
-#. is only for the cases where it does not.
 #: src/Widgets/ImageRow.vala:120
 msgid "This file could not be optimized"
 msgstr ""
 
-#. Not even a size: the app is not going to touch this file, so showing
-#. how big it is only suggests it is waiting its turn.
 #: src/Widgets/ImageRow.vala:127
 msgid "Skipped"
 msgstr ""
@@ -143,12 +122,10 @@ msgstr ""
 msgid "Savings"
 msgstr ""
 
-#: src/Widgets/List.vala:480
+#: src/Widgets/List.vala:490
 msgid "File"
 msgstr ""
 
-#. The same button the welcome screen uses, because it is the same kind of
-#. thing: the one thing to press on this screen right now.
 #: src/Widgets/SummaryBar.vala:154
 msgid "Optimize"
 msgstr ""
@@ -211,8 +188,6 @@ msgstr[1] ""
 msgid "saved so far"
 msgstr ""
 
-#. "0%" next to a run that did everything it could reads as a failure, so
-#. there is no figure at all in this case.
 #: src/Widgets/SummaryBar.vala:379
 msgid "Nothing left to save"
 msgstr ""
@@ -249,32 +224,22 @@ msgstr ""
 msgid "%u skipped"
 msgstr ""
 
-#: src/Widgets/UploadScreen.vala:24
+#: src/Widgets/UploadScreen.vala:22
 msgid "Drag and drop images or folders here"
 msgstr ""
 
-#: src/Widgets/UploadScreen.vala:27
+#: src/Widgets/UploadScreen.vala:25
 msgid "or"
 msgstr ""
 
-#: src/Widgets/UploadScreen.vala:30
+#: src/Widgets/UploadScreen.vala:28
 msgid "Browse files"
 msgstr ""
 
-#. One control and not two. A folder cannot come through the same dialog as a
-#. file, because the chooser is asked for one or the other and there is no
-#. dialog that offers both, but that is the portal's problem and not
-#. something to hand to the person looking at this screen. So the button does
-#. the ordinary thing when it is pressed, and the arrow beside it offers the
-#. other one.
-#. A menu model, for the same reason the header bar uses one: built out of a
-#. button, the one item in here took keyboard focus the moment the menu
-#. opened and was painted with the system accent colour, which on a red
-#. accent looked like it had already been chosen.
-#: src/Widgets/UploadScreen.vala:49
+#: src/Widgets/UploadScreen.vala:47
 msgid "Browse a folder"
 msgstr ""
 
-#: src/Widgets/UploadScreen.vala:53
+#: src/Widgets/UploadScreen.vala:51
 msgid "Other ways to add images"
 msgstr ""
