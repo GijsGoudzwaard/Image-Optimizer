@@ -2,6 +2,7 @@ src/MainWindow.vala
 src/Utils/Ect.vala
 src/Utils/Image.vala
 src/Utils/Rewrite.vala
+src/Utils/Scanner.vala
 src/Widgets/ImageRow.vala
 src/Widgets/List.vala
 src/Widgets/SummaryBar.vala

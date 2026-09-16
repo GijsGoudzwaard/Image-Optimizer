@@ -63,6 +63,12 @@ public class MainWindow : Gtk.Window {
       title: _("Image Optimizer")
     );
 
+    // This is a Gtk.Window and not a Gtk.ApplicationWindow, and the "app" action
+    // group is something the latter inserts for you. Without this line every
+    // menu item that names an app action is an item GTK cannot resolve, which it
+    // shows as an item that is there but greyed out and does nothing.
+    this.insert_action_group ("app", application);
+
     var css_provider = new Gtk.CssProvider ();
     css_provider.load_from_string (Stylesheet.STYLES);
 
@@ -142,8 +148,19 @@ public class MainWindow : Gtk.Window {
     images_list = new List (this.images);
     set_child (images_list.window ());
 
-    var add_image = new Gtk.Button.from_icon_name ("list-add-symbolic");
-    add_image.set_tooltip_markup (_("Add Image"));
+    // One button, and what it can add is a choice inside it rather than two
+    // buttons asking the same question twice. The file chooser is asked for
+    // files or for folders and there is no dialog that offers both, but that is
+    // the portal's problem and not something to put on this bar.
+    //
+    // A menu model and not a box of buttons. GTK builds a real menu out of this,
+    // which knows that only one item is highlighted at a time and that keyboard
+    // focus is not the same thing as being chosen. Built by hand it was neither:
+    // the item that had focus kept the system accent colour around it, red on a
+    // red accent, and stayed lit while the pointer highlighted another.
+    var choices = new GLib.Menu ();
+    choices.append (_("Images…"), "app.open-files");
+    choices.append (_("A folder…"), "app.open-folder");
 
     // "flat" and not "titlebutton": titlebutton is meant for window controls and
     // brought the theme's light button background with it, while the stylesheet
@@ -154,11 +171,28 @@ public class MainWindow : Gtk.Window {
     // themes colour a button like this with the system accent, which on a red
     // accent put a red button on a purple bar. The stylesheet gives it a flat
     // look with its own hover and pressed states instead.
-    add_image.add_css_class ("flat");
-    add_image.add_css_class ("add_image");
-    add_image.clicked.connect (on_open_clicked);
+    var add = new Gtk.MenuButton ();
+    add.set_icon_name ("list-add-symbolic");
+    add.set_tooltip_markup (_("Add images or a folder"));
+    add.set_menu_model (choices);
+    add.add_css_class ("flat");
+    add.add_css_class ("add_image");
+    // Without this the button takes the whole height of the bar and sits against
+    // the top of it rather than in the middle of it.
+    add.set_valign (Gtk.Align.CENTER);
 
-    this.toolbar.pack_end (add_image);
+    // The menu GTK builds from the model is painted by this app like everything
+    // else it shows. Left to the theme it comes out as a black rectangle on a
+    // plain GTK install, and its labels come out white, because a popover
+    // hanging off this bar is a child of it as far as the stylesheet is
+    // concerned and this bar paints every label in it white.
+    var menu = add.get_popover ();
+
+    if (menu != null) {
+      menu.add_css_class ("app_popover");
+    }
+
+    this.toolbar.pack_start (add);
   }
 
   /**
@@ -207,12 +241,22 @@ public class MainWindow : Gtk.Window {
     // open, which shows up as a row that fails to optimize rather than as a
     // crash. Sources that use GTK, which includes Files, do the portal side.
     unowned var list = (Gdk.FileList) value;
+    File[] folders = {};
 
     list.get_files ().foreach ((file) => {
       string uri = file.get_uri ();
       var path = Image.to_path (uri);
       if (path == null) {
         warning ("Failed to convert URI \"%s\" to path", uri);
+        return;
+      }
+
+      // A folder is not a file and does not become a row. It is looked through
+      // first and what it holds waits for the button in the bar, because this
+      // one gesture can reach everything under it.
+      if (FileUtils.test (path, FileTest.IS_DIR)) {
+        folders += File.new_for_path (path);
+
         return;
       }
 
@@ -226,15 +270,77 @@ public class MainWindow : Gtk.Window {
       this.images += new Image (path, name, type.down ());
     });
 
-    if (images.length > 0 && this.images_list == null) {
+    this.take (folders);
+
+    return true;
+  }
+
+  /**
+   * Put what just arrived where it belongs: files into the list, folders into a
+   * walk. Either of them may be the first thing to arrive, so this is also what
+   * builds the list window.
+   *
+   * @param  File[] folders
+   * @return void
+   */
+  private void take (File[] folders) {
+    if (this.images_list == null && (this.images.length > 0 || folders.length > 0)) {
       this.set_list_window ();
-    } else if (this.images_list != null) {
+    } else if (this.images_list != null && this.images.length > 0) {
       this.images_list.update_tree_view (this.images);
     }
 
-    this.images = {};
+    if (folders.length > 0 && this.images_list != null) {
+      this.images_list.scan (folders);
+    }
 
-    return true;
+    this.images = {};
+  }
+
+  /**
+   * Folders that arrived from somewhere other than this window: the command
+   * line, or Open With on a folder.
+   *
+   * @param  File[] folders
+   * @return void
+   */
+  public void add_folders (File[] folders) {
+    this.take (folders);
+  }
+
+  /**
+   * Gets called when the folder button gets clicked.
+   *
+   * A dialog of its own, because the portal is asked either for files or for
+   * folders and there is no way to offer both in one.
+   *
+   * @return void
+   */
+  public async void on_open_folder_clicked () {
+    var folder_dialog = new Gtk.FileDialog ();
+    folder_dialog.title = _("Select a folder");
+
+    ListModel folders;
+
+    try {
+      folders = yield folder_dialog.select_multiple_folders (this, null);
+    } catch (Error err) {
+      if (err.domain == Gtk.DialogError.quark () && err.code == Gtk.DialogError.DISMISSED) {
+        return;
+      }
+
+      warning ("Failed to select folders: %s", err.message);
+
+      return;
+    }
+
+    File[] picked = {};
+
+    for (int i = 0; i < folders.get_n_items (); i++) {
+      picked += (File) folders.get_object (i);
+    }
+
+    this.take (picked);
   }
 
   /**
@@ -270,14 +376,6 @@ public class MainWindow : Gtk.Window {
       this.images += new Image (path, name, type.down ());
     }
 
-    if (this.images_list != null) {
-      this.images_list.update_tree_view (this.images);
-    }
-
-    if (this.images.length > 0) {
-      this.set_list_window ();
-    }
-
-    this.images = {};
+    this.take ({});
   }
 }

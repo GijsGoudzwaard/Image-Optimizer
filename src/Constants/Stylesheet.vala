@@ -52,6 +52,107 @@ class Stylesheet {
       background-color: #5a6fd0;
     }
 
+    /* The two halves of the button on the welcome screen. The rounded corners
+       are split between them so the pair reads as one control: the label keeps
+       the left ones, the arrow keeps the right ones, and the seam between them
+       is a single line rather than two borders meeting. */
+    .linked .upload_button {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+      border-right: none;
+    }
+
+    .upload_more > button {
+      padding: 8px 8px;
+      color: #fff;
+      background-color: @primary_color;
+      background-image: none;
+      border: 1px solid #5a6fd0;
+      border-left: 1px solid #7d8fe2;
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+      border-top-right-radius: 4px;
+      border-bottom-right-radius: 4px;
+      box-shadow: none;
+      outline: none;
+      transition: background-color 150ms ease-in-out;
+    }
+
+    .upload_more > button:hover {
+      background-color: #7d8fe2;
+    }
+
+    .upload_more > button:active,
+    .upload_more > button:checked {
+      background-color: #5a6fd0;
+    }
+
+    /* What drops out of the arrow. Painted here rather than left to the theme,
+       for the same reason everything else in this app is: a popover that is not
+       painted comes out as a black rectangle on a plain GTK install. A popover
+       is a background node with an arrow and a contents node inside it, and both
+       of the latter have to carry the colour or the little triangle stays dark.
+    */
+    .app_popover > contents,
+    .app_popover > arrow {
+      background-color: #ffffff;
+      border: 1px solid #c9c9d4;
+      box-shadow: none;
+    }
+
+    .app_popover > contents {
+      border-radius: 6px;
+      padding: 4px;
+    }
+
+    /* A popover hanging off the header bar is a child of it as far as the
+       stylesheet is concerned, so the rule that paints every label in that bar
+       white paints these too, and a menu of white text on a white sheet is a
+       menu with nothing in it. Measured the hard way, on a screenshot of an
+       empty popover.
+
+       Three classes deep, and every one of them a class that is already on the
+       tree. The rule it has to beat has two, and element names count for less
+       than classes do however many of them are written: the first attempt at
+       this said ".app_popover > contents modelbutton label", which is one class
+       and three names, and lost. Leaning on which rule comes last in the file
+       would have worked until someone moved one. */
+    .list .default-decoration .add_image popover modelbutton,
+    .list .default-decoration .add_image popover modelbutton label {
+      color: #2C2C2A;
+      text-shadow: none;
+    }
+
+    /* Having focus is not the same as being chosen, and this is where that is
+       said. GTK hands focus to the first item the moment a menu opens, and a
+       theme that paints that with the system accent leaves an item looking
+       picked before anything has been pressed: on a red accent, a red ring
+       around a menu the pointer had not even reached.
+
+       This one comes first on purpose. GTK also moves focus to whatever the
+       pointer is over, so an item under the mouse has both states at once, and
+       these rules are worth exactly as much as each other. Written the other way
+       round, which is how it was, the focus rule won and there was no hover
+       effect at all. */
+    .app_popover modelbutton:focus,
+    .list .default-decoration .add_image popover modelbutton:focus {
+      background-color: transparent;
+      background-image: none;
+      outline: none;
+    }
+
+    /* And these two come after it, because they are the ones that should win.
+       The pointer being over something, and focus that arrived from the keyboard
+       rather than from the mouse, which is the whole point of :focus-visible. */
+    .app_popover modelbutton:hover,
+    .app_popover modelbutton:focus-visible,
+    .list .default-decoration .add_image popover modelbutton:hover,
+    .list .default-decoration .add_image popover modelbutton:focus-visible {
+      background-color: #eef0fb;
+      background-image: none;
+      outline: none;
+    }
+
     .upload_button label {
       color: #fff;
       font-weight: 700;
@@ -69,8 +170,27 @@ class Stylesheet {
       font-weight: 400;
     }
 
+    /* The bar across the top of the welcome screen, which is the one surface in
+       this app that was still left to whatever theme is installed. That made it
+       the only part of the window that looks different on every desktop: flat
+       white on elementary, a grey gradient on Adwaita, something else again
+       elsewhere. It is painted here now, the same near white elementary gave it,
+       so the app arrives looking like itself wherever it is opened. The bar in
+       the list is purple and says so further down, which wins on having a class
+       more.
+
+       The line along the bottom goes with it, and that one was a real fault. In
+       the list the next thing under this bar is the row of column headings, the
+       same purple, so a theme's border landed in the middle of one block of
+       colour and read as a gap in it. Adwaita draws that line as a border and
+       other themes as an inset shadow, so both are named. */
     .default-decoration {
       transition: background-color .1s ease-in-out;
+      background: #fafafa;
+      background-image: none;
+      color: #2c2c2a;
+      border-bottom: none;
+      box-shadow: none;
     }
 
     .list .default-decoration {
@@ -85,19 +205,40 @@ class Stylesheet {
       font-weight: 700;
     }
 
-    /* 10px above and below a 16px line, and the same 14 on the sides that the
-       columns and the summary bar keep free. Themes have their own idea of how
-       tall a compact header bar is, which is what this replaces. */
+    /* 10px above and below a 16px line. 14 on the right, which is what the
+       columns and the summary bar keep free, and 6 on the left, where there is a
+       button: 14 there left it sitting away from the corner rather than in it,
+       and a button carries its own padding on top of whatever the bar has. */
     .list .default-decoration {
       min-height: 36px;
-      padding: 0 14px;
+      padding: 0 14px 0 6px;
     }
 
     /* The plus in the header bar. Styled here rather than left to the theme,
        which paints it with the system accent colour: on a red accent that put a
        red button on a purple bar. Flat with a lighter purple on hover keeps it
-       part of the bar it sits in. */
+       part of the bar it sits in.
+
+       A menu button is a button inside a menubutton node, and only the inner one
+       is painted. The outer one carries nothing: no padding, because its padding
+       was pushing the whole thing away from the corner on top of what the bar
+       already keeps free, and no colour, because it had kept the colours from
+       when this was a plain button and was drawing a second, larger rectangle
+       behind the real one. With the menu open and the pointer over it, that was
+       a light purple box around a dark purple box.
+
+       :checked as well as :active below, because it stays pressed for as long as
+       its menu is open. */
     .list .default-decoration .add_image {
+      background-color: transparent;
+      background-image: none;
+      border: none;
+      box-shadow: none;
+      padding: 0;
+      margin: 0;
+      color: #fff;
+    }
+    .list .default-decoration .add_image > button {
       background-color: transparent;
       background-image: none;
       border: none;
@@ -107,11 +248,12 @@ class Stylesheet {
       padding: 4px 6px;
     }
 
-    .list .default-decoration .add_image:hover {
+    .list .default-decoration .add_image > button:hover {
       background-color: #7d8fe2;
     }
 
-    .list .default-decoration .add_image:active {
+    .list .default-decoration .add_image > button:active,
+    .list .default-decoration .add_image > button:checked {
       background-color: #5a6fd0;
     }
 

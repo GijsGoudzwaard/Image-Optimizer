@@ -9,4 +9,4 @@ Terminal=false
 Type=Application
 X-GNOME-Gettext-Domain=Image Optimizer
 Keywords=compress;compressor;shrink;reduce;file size;optimize;optimise;png;jpeg;jpg;photo;picture;batch;lossless;
-MimeType=image/jpeg;image/jpg;image/png;
+MimeType=image/jpeg;image/jpg;image/png;inode/directory;

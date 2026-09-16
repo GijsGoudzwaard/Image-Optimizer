@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: com.github.gijsgoudzwaard.image-optimizer\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-11 09:31+0000\n"
+"POT-Creation-Date: 2026-09-13 09:53+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,41 +22,66 @@ msgstr ""
 msgid "Image Optimizer"
 msgstr ""
 
-#: src/MainWindow.vala:146
-msgid "Add Image"
+#. One button, and what it can add is a choice inside it rather than two
+#. buttons asking the same question twice. The file chooser is asked for
+#. files or for folders and there is no dialog that offers both, but that is
+#. the portal's problem and not something to put on this bar.
+#.
+#. A menu model and not a box of buttons. GTK builds a real menu out of this,
+#. which knows that only one item is highlighted at a time and that keyboard
+#. focus is not the same thing as being chosen. Built by hand it was neither:
+#. the item that had focus kept the system accent colour around it, red on a
+#. red accent, and stayed lit while the pointer highlighted another.
+#: src/MainWindow.vala:162
+msgid "Images…"
 msgstr ""
 
-#: src/MainWindow.vala:247
+#: src/MainWindow.vala:163
+msgid "A folder…"
+msgstr ""
+
+#: src/MainWindow.vala:176
+msgid "Add images or a folder"
+msgstr ""
+
+#: src/MainWindow.vala:321
+msgid "Select a folder"
+msgstr ""
+
+#: src/MainWindow.vala:353
 msgid "Select image(s)"
 msgstr ""
 
-#: src/Utils/Ect.vala:154
+#. Without this the row would say the file was already as small as it
+#. gets, which is what a batch on a full disk would have reported for
+#. every file in it.
+#: src/Utils/Ect.vala:164 src/Utils/Rewrite.vala:122
+msgid "There was nowhere to put a working copy of this file"
+msgstr ""
+
+#: src/Utils/Ect.vala:181
 msgid "The optimizer could not be started"
 msgstr ""
 
-#: src/Utils/Ect.vala:201 src/Utils/Ect.vala:371
+#: src/Utils/Ect.vala:237 src/Utils/Ect.vala:405
 msgid "The optimizer could not process this file"
 msgstr ""
 
-#: src/Utils/Ect.vala:355
+#: src/Utils/Ect.vala:389
 msgid "This is not a PNG file, whatever its name says"
 msgstr ""
 
-#: src/Utils/Ect.vala:359
+#: src/Utils/Ect.vala:393
 msgid "This is not a JPEG file, whatever its name says"
 msgstr ""
 
 #. What ECT says about a file that stops halfway through, in either format.
-#: src/Utils/Ect.vala:364
+#: src/Utils/Ect.vala:398
 msgid "This file stops halfway through, so it may be damaged"
 msgstr ""
 
-#: src/Utils/Ect.vala:368 src/Utils/Rewrite.vala:252
+#: src/Utils/Ect.vala:402 src/Utils/Rewrite.vala:252
 msgid "Could not write to this file, it may be read only"
-msgstr ""
-
-#: src/Utils/Rewrite.vala:122
-msgid "There was nowhere to put a working copy of this file"
 msgstr ""
 
 #: src/Utils/Rewrite.vala:152
@@ -106,83 +131,150 @@ msgstr ""
 msgid "Only PNG and JPEG are supported"
 msgstr ""
 
-#: src/Widgets/List.vala:122
+#: src/Widgets/List.vala:169
 msgid "Size"
 msgstr ""
 
-#: src/Widgets/List.vala:127
+#: src/Widgets/List.vala:174
 msgid "New size"
 msgstr ""
 
-#: src/Widgets/List.vala:132
+#: src/Widgets/List.vala:179
 msgid "Savings"
 msgstr ""
 
-#: src/Widgets/List.vala:322
+#: src/Widgets/List.vala:480
 msgid "File"
 msgstr ""
 
-#: src/Widgets/SummaryBar.vala:211
+#. The same button the welcome screen uses, because it is the same kind of
+#. thing: the one thing to press on this screen right now.
+#: src/Widgets/SummaryBar.vala:154
+msgid "Optimize"
+msgstr ""
+
+#: src/Widgets/SummaryBar.vala:193
+msgid "Looking for images…"
+msgstr ""
+
+#: src/Widgets/SummaryBar.vala:195
+#, c-format
+msgid "%u found so far"
+msgid_plural "%u found so far"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Widgets/SummaryBar.vala:229
+msgid "No images in there"
+msgstr ""
+
+#: src/Widgets/SummaryBar.vala:232
+#, c-format
+msgid "Looked in %u folder and found nothing to optimize"
+msgid_plural "Looked in %u folders and found nothing to optimize"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Widgets/SummaryBar.vala:243
+#, c-format
+msgid "%u image found"
+msgid_plural "%u images found"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Widgets/SummaryBar.vala:246
+#, c-format
+msgid "in %u folder"
+msgid_plural "in %u folders"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Widgets/SummaryBar.vala:254
+#, c-format
+msgid "%u other file skipped"
+msgid_plural "%u other files skipped"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Widgets/SummaryBar.vala:323
 msgid "Optimizing…"
 msgstr ""
 
-#: src/Widgets/SummaryBar.vala:213
+#: src/Widgets/SummaryBar.vala:325
 #, c-format
 msgid "%u of %u file done"
 msgid_plural "%u of %u files done"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Widgets/SummaryBar.vala:219
+#: src/Widgets/SummaryBar.vala:331
 msgid "saved so far"
 msgstr ""
 
 #. "0%" next to a run that did everything it could reads as a failure, so
 #. there is no figure at all in this case.
-#: src/Widgets/SummaryBar.vala:267
+#: src/Widgets/SummaryBar.vala:379
 msgid "Nothing left to save"
 msgstr ""
 
-#: src/Widgets/SummaryBar.vala:274
+#: src/Widgets/SummaryBar.vala:386
 #, c-format
 msgid "%s saved"
 msgstr ""
 
-#: src/Widgets/SummaryBar.vala:280
+#: src/Widgets/SummaryBar.vala:392
 #, c-format
 msgid "%s to %s"
 msgstr ""
 
-#: src/Widgets/SummaryBar.vala:322
+#: src/Widgets/SummaryBar.vala:434
 #, c-format
 msgid "%u of %u file optimized"
 msgid_plural "%u of %u files optimized"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Widgets/SummaryBar.vala:329
+#: src/Widgets/SummaryBar.vala:441
 #, c-format
 msgid "%u already optimal"
 msgstr ""
 
-#: src/Widgets/SummaryBar.vala:333
+#: src/Widgets/SummaryBar.vala:445
 #, c-format
 msgid "%u failed"
 msgstr ""
 
-#: src/Widgets/SummaryBar.vala:337
+#: src/Widgets/SummaryBar.vala:449
 #, c-format
 msgid "%u skipped"
 msgstr ""
 
-#: src/Widgets/UploadScreen.vala:22
-msgid "Drag and drop images here"
+#: src/Widgets/UploadScreen.vala:24
+msgid "Drag and drop images or folders here"
 msgstr ""
 
-#: src/Widgets/UploadScreen.vala:25
+#: src/Widgets/UploadScreen.vala:27
 msgid "or"
 msgstr ""
 
-#: src/Widgets/UploadScreen.vala:28
+#: src/Widgets/UploadScreen.vala:30
 msgid "Browse files"
+msgstr ""
+
+#. One control and not two. A folder cannot come through the same dialog as a
+#. file, because the chooser is asked for one or the other and there is no
+#. dialog that offers both, but that is the portal's problem and not
+#. something to hand to the person looking at this screen. So the button does
+#. the ordinary thing when it is pressed, and the arrow beside it offers the
+#. other one.
+#. A menu model, for the same reason the header bar uses one: built out of a
+#. button, the one item in here took keyboard focus the moment the menu
+#. opened and was painted with the system accent colour, which on a red
+#. accent looked like it had already been chosen.
+#: src/Widgets/UploadScreen.vala:49
+msgid "Browse a folder"
+msgstr ""
+
+#: src/Widgets/UploadScreen.vala:53
+msgid "Other ways to add images"
 msgstr ""

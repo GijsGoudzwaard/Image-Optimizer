@@ -144,7 +144,7 @@ msgid "Optimizing a batch of images"
 msgstr ""
 
 #: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:67
-msgid "Drag and drop images to get started"
+msgid "Drag and drop images or whole folders to get started"
 msgstr ""
 
 #: data/com.github.gijsgoudzwaard.image-optimizer.appdata.xml.in:81
