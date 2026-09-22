@@ -79,6 +79,14 @@
       <color type="primary" scheme_preference="dark">#161650</color>
    </branding>
    <releases>
+      <release version="0.7.0" date="2026-09-22">
+         <description>
+            <ul>
+               <li>A running batch can be stopped. The files already being worked on are finished rather than cut off, so nothing is ever left half written, and everything the batch never reached is left exactly as it was and says so in the list</li>
+               <li>Ctrl + O opens the file chooser and Ctrl + Shift + O opens the folder chooser, so neither way in needs the mouse any more. Both keys are written beside the two ways of adding something, in the menu on the button that offers them</li>
+            </ul>
+         </description>
+      </release>
       <release version="0.6.0" date="2026-09-16">
          <description>
             <ul>
