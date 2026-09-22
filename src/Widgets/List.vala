@@ -61,6 +61,23 @@ public class List {
   private uint unsupported_files = 0;
 
   /**
+   * Files that were in the batch and never got started.
+   *
+   * @var uint
+   */
+  private uint stopped_files = 0;
+
+  /**
+   * Asked to stop. One for the whole list rather than one per batch, because
+   * dropping more files while a batch runs starts a second one and a single
+   * press has to reach both. It is never reset: a batch that is stopped and then
+   * added to gets a fresh one, and the threads winding down keep the old.
+   *
+   * @var Cancellable
+   */
+  private Cancellable cancellable = new Cancellable ();
+
+  /**
    * Original size of the optimized files only.
    *
    * Files that were already optimal are left out on purpose. Counting them
@@ -185,6 +202,7 @@ public class List {
 
     // Pressing it is the only thing that starts a folder.
     this.summary.start_requested.connect (this.begin_pending);
+    this.summary.stop_requested.connect (this.stop);
 
     this.start (this.images);
 
@@ -233,8 +251,25 @@ public class List {
       return;
     }
 
+    // A batch that was stopped leaves a cancelled one behind, and anything
+    // started after that would stop before it began. The old one is not reset,
+    // it is replaced: workers that are still winding down hold their own
+    // reference to it and have to keep seeing the answer they got.
+    if (this.cancellable.is_cancelled ()) {
+      this.cancellable = new Cancellable ();
+    }
+
     var optimizer = new Optimizer (to_optimize);
-    optimizer.optimize (this);
+    optimizer.optimize (this, this.cancellable);
+  }
+
+  /**
+   * Stop the batch, without cutting off the files already in hand.
+   *
+   * @return void
+   */
+  private void stop () {
+    this.cancellable.cancel ();
   }
 
   /**
@@ -364,6 +399,7 @@ public class List {
       this.optimized_files,
       this.failed_files,
       this.unsupported_files,
+      this.stopped_files,
       this.total_before,
       this.total_after
     );
@@ -708,6 +744,10 @@ public class List {
 
         case Status.FAILED:
           this.failed_files++;
+          break;
+
+        case Status.STOPPED:
+          this.stopped_files++;
           break;
 
         default:

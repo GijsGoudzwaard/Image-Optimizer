@@ -24,10 +24,13 @@ public class Optimizer {
    * goes through the same code whatever it is. Only supported files ever arrive:
    * List.start keeps the rest out and gives them a row saying why.
    *
+   * @param  List list
+   * @param  Cancellable cancellable  shared with every batch, so one press stops
+   *                                  all of them
    * @return void
    */
-  public void optimize (List list) {
-    var ect = new Ect (list);
+  public void optimize (List list, Cancellable cancellable) {
+    var ect = new Ect (list, cancellable);
 
     foreach (var image in this.images) {
       ect.add_image (image.path);

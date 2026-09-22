@@ -40,5 +40,13 @@ public enum Status {
   /**
    * Never offered to an optimizer, because it is not a PNG or a JPEG.
    */
-  UNSUPPORTED
+  UNSUPPORTED,
+
+  /**
+   * Was in the batch and never got started, because the batch was stopped
+   * before its turn came. Untouched, and told apart from a file that failed and
+   * from one that had nothing left to give, because neither of those is what
+   * happened to it.
+   */
+  STOPPED
 }

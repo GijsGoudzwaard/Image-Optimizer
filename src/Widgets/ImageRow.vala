@@ -130,6 +130,15 @@ public class ImageRow : GLib.Object {
         this.note = _("Only PNG and JPEG are supported");
         break;
 
+      case Status.STOPPED:
+        // Nothing went wrong here and nothing was gained, because nothing
+        // happened at all. The size it came in with is still the size it has.
+        this.icon_resource = "/com/github/gijsgoudzwaard/image-optimizer/icons/dash.svg";
+        this.new_size_text = "";
+        this.savings_text = "";
+        this.note = _("Stopped before this one was reached");
+        break;
+
       case Status.WAITING:
         // The size it has now is worth showing, because that is the number the
         // person is being asked about. Everything else is still unknown.
