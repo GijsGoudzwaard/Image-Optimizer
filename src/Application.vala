@@ -34,6 +34,9 @@ class Application : Gtk.Application {
     var open_files = new SimpleAction ("open-files", null);
 
     add_action (open_files);
+    // The key everything else uses for this, so the app does not make somebody
+    // reach for the mouse to do the one thing it is for.
+    set_accels_for_action ("app.open-files", {"<Control>o"});
 
     open_files.activate.connect (() => {
       if (this.app_window != null) {
@@ -44,6 +47,9 @@ class Application : Gtk.Application {
     var open_folder = new SimpleAction ("open-folder", null);
 
     add_action (open_folder);
+    // Shift on top of the same key, the way a second, wider version of an action
+    // is usually spelled.
+    set_accels_for_action ("app.open-folder", {"<Control><Shift>o"});
 
     open_folder.activate.connect (() => {
       if (this.app_window != null) {

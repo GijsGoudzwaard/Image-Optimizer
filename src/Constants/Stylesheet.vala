@@ -153,6 +153,36 @@ class Stylesheet {
       outline: none;
     }
 
+    /* The way out of a running batch. Outlined rather than filled, because it
+       sits where the filled Optimize button was a moment ago and the two must
+       not read as the same button in two places. It is also not the thing to
+       press: it is there for somebody who changed their mind. */
+    .stop_button {
+      padding: 6px 14px;
+      color: #4a4a52;
+      background-color: transparent;
+      background-image: none;
+      border: 1px solid #c9c9d4;
+      border-radius: 4px;
+      box-shadow: none;
+      outline: none;
+      transition: background-color 150ms ease-in-out;
+    }
+
+    .stop_button:hover {
+      background-color: #eef0fb;
+    }
+
+    .stop_button:active {
+      background-color: #dfe3f6;
+    }
+
+    .stop_button label {
+      color: #4a4a52;
+      font-weight: 700;
+      font-size: 13px;
+    }
+
     .upload_button label {
       color: #fff;
       font-weight: 700;

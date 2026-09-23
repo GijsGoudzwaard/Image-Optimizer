@@ -14,16 +14,17 @@
    <project_license>MIT</project_license>
    <summary>Shrink images losslessly</summary>
    <description>
-      <p>Image Optimizer makes PNG and JPEG files smaller without changing how they look. It rewrites the files you pick in place, so the file you selected is the one that gets smaller.</p>
+      <p>Image Optimizer makes PNG and JPEG files smaller without changing how they look. Hand it a few files or a whole folder, and every image is rewritten in place, so the files you already have are the ones that get smaller.</p>
       <p>The compression is lossless, which means the pixels come out identical and nothing is re-encoded at a lower quality. What comes off is whatever the encoder left on the table, so screenshots and interface images usually gain the most and photos straight out of a camera the least.</p>
       <p>Features:</p>
       <ul>
          <li>Compress PNG and JPEG images without losing quality</li>
-         <li>Optimize a whole batch at once, several files at a time</li>
+         <li>Drop in a whole folder, subfolders and all, and see what was found before anything is touched</li>
+         <li>Optimize a batch of any size, several files at a time, and stop it whenever you want</li>
+         <li>Asks for no access to your files. Nothing reaches the app that you did not hand it yourself</li>
          <li>Works offline, with no account and nothing uploaded</li>
          <li>Keeps the colour profile and the orientation, so images still look the way they did</li>
          <li>Keeps modification times, so a library sorted by date stays in order</li>
-         <li>Quit quickly by pressing Ctrl + Q</li>
       </ul>
    </description>
    <keywords>
@@ -40,6 +41,9 @@
       <keyword>photo</keyword>
       <keyword>picture</keyword>
       <keyword>batch</keyword>
+      <keyword>bulk</keyword>
+      <keyword>folder</keyword>
+      <keyword>directory</keyword>
       <keyword>lossless</keyword>
    </keywords>
    <url type="homepage">https://github.com/gijsgoudzwaard/image-optimizer</url>
@@ -75,6 +79,14 @@
       <color type="primary" scheme_preference="dark">#161650</color>
    </branding>
    <releases>
+      <release version="0.7.0" date="2026-09-22">
+         <description>
+            <ul>
+               <li>A running batch can be stopped. The files already being worked on are finished rather than cut off, so nothing is ever left half written, and everything the batch never reached is left exactly as it was and says so in the list</li>
+               <li>Ctrl + O opens the file chooser and Ctrl + Shift + O opens the folder chooser, so neither way in needs the mouse any more. Both keys are written beside the two ways of adding something, in the menu on the button that offers them</li>
+            </ul>
+         </description>
+      </release>
       <release version="0.6.0" date="2026-09-16">
          <description>
             <ul>

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: com.github.gijsgoudzwaard.image-optimizer\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-16 10:42+0000\n"
+"POT-Creation-Date: 2026-09-22 09:55+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -42,31 +42,31 @@ msgstr ""
 msgid "Select image(s)"
 msgstr ""
 
-#: src/Utils/Ect.vala:164 src/Utils/Rewrite.vala:122
+#: src/Utils/Ect.vala:189 src/Utils/Rewrite.vala:122
 msgid "There was nowhere to put a working copy of this file"
 msgstr ""
 
-#: src/Utils/Ect.vala:181
+#: src/Utils/Ect.vala:206
 msgid "The optimizer could not be started"
 msgstr ""
 
-#: src/Utils/Ect.vala:237 src/Utils/Ect.vala:405
+#: src/Utils/Ect.vala:262 src/Utils/Ect.vala:430
 msgid "The optimizer could not process this file"
 msgstr ""
 
-#: src/Utils/Ect.vala:389
+#: src/Utils/Ect.vala:414
 msgid "This is not a PNG file, whatever its name says"
 msgstr ""
 
-#: src/Utils/Ect.vala:393
+#: src/Utils/Ect.vala:418
 msgid "This is not a JPEG file, whatever its name says"
 msgstr ""
 
-#: src/Utils/Ect.vala:398
+#: src/Utils/Ect.vala:423
 msgid "This file stops halfway through, so it may be damaged"
 msgstr ""
 
-#: src/Utils/Ect.vala:402 src/Utils/Rewrite.vala:252
+#: src/Utils/Ect.vala:427 src/Utils/Rewrite.vala:252
 msgid "Could not write to this file, it may be read only"
 msgstr ""
 
@@ -110,118 +110,131 @@ msgstr ""
 msgid "Only PNG and JPEG are supported"
 msgstr ""
 
-#: src/Widgets/List.vala:169
+#: src/Widgets/ImageRow.vala:139
+msgid "Stopped before this one was reached"
+msgstr ""
+
+#: src/Widgets/List.vala:186
 msgid "Size"
 msgstr ""
 
-#: src/Widgets/List.vala:174
+#: src/Widgets/List.vala:191
 msgid "New size"
 msgstr ""
 
-#: src/Widgets/List.vala:179
+#: src/Widgets/List.vala:196
 msgid "Savings"
 msgstr ""
 
-#: src/Widgets/List.vala:490
+#: src/Widgets/List.vala:526
 msgid "File"
 msgstr ""
 
-#: src/Widgets/SummaryBar.vala:154
+#: src/Widgets/SummaryBar.vala:177
 msgid "Optimize"
 msgstr ""
 
-#: src/Widgets/SummaryBar.vala:193
+#: src/Widgets/SummaryBar.vala:189
+msgid "Stop"
+msgstr ""
+
+#: src/Widgets/SummaryBar.vala:234
 msgid "Looking for images…"
 msgstr ""
 
-#: src/Widgets/SummaryBar.vala:195
+#: src/Widgets/SummaryBar.vala:236
 #, c-format
 msgid "%u found so far"
 msgid_plural "%u found so far"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Widgets/SummaryBar.vala:229
+#: src/Widgets/SummaryBar.vala:271
 msgid "No images in there"
 msgstr ""
 
-#: src/Widgets/SummaryBar.vala:232
+#: src/Widgets/SummaryBar.vala:274
 #, c-format
 msgid "Looked in %u folder and found nothing to optimize"
 msgid_plural "Looked in %u folders and found nothing to optimize"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Widgets/SummaryBar.vala:243
+#: src/Widgets/SummaryBar.vala:285
 #, c-format
 msgid "%u image found"
 msgid_plural "%u images found"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Widgets/SummaryBar.vala:246
+#: src/Widgets/SummaryBar.vala:288
 #, c-format
 msgid "in %u folder"
 msgid_plural "in %u folders"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Widgets/SummaryBar.vala:254
+#: src/Widgets/SummaryBar.vala:296
 #, c-format
 msgid "%u other file skipped"
 msgid_plural "%u other files skipped"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Widgets/SummaryBar.vala:323
+#: src/Widgets/SummaryBar.vala:373
 msgid "Optimizing…"
 msgstr ""
 
-#: src/Widgets/SummaryBar.vala:325
+#: src/Widgets/SummaryBar.vala:375
 #, c-format
 msgid "%u of %u file done"
 msgid_plural "%u of %u files done"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Widgets/SummaryBar.vala:331
+#: src/Widgets/SummaryBar.vala:381
 msgid "saved so far"
 msgstr ""
 
-#: src/Widgets/SummaryBar.vala:379
+#: src/Widgets/SummaryBar.vala:432
 msgid "Nothing left to save"
 msgstr ""
 
-#: src/Widgets/SummaryBar.vala:386
+#: src/Widgets/SummaryBar.vala:439
 #, c-format
 msgid "%s saved"
 msgstr ""
 
-#: src/Widgets/SummaryBar.vala:392
+#: src/Widgets/SummaryBar.vala:445
 #, c-format
 msgid "%s to %s"
 msgstr ""
 
-#: src/Widgets/SummaryBar.vala:434
+#: src/Widgets/SummaryBar.vala:494
 #, c-format
 msgid "%u of %u file optimized"
 msgid_plural "%u of %u files optimized"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Widgets/SummaryBar.vala:441
+#: src/Widgets/SummaryBar.vala:501
 #, c-format
 msgid "%u already optimal"
 msgstr ""
 
-#: src/Widgets/SummaryBar.vala:445
+#: src/Widgets/SummaryBar.vala:505
 #, c-format
 msgid "%u failed"
 msgstr ""
 
-#: src/Widgets/SummaryBar.vala:449
+#: src/Widgets/SummaryBar.vala:509
 #, c-format
 msgid "%u skipped"
+msgstr ""
+
+#: src/Widgets/SummaryBar.vala:515
+#, c-format
+msgid "%u not started"
 msgstr ""
 
 #: src/Widgets/UploadScreen.vala:22
@@ -236,10 +249,15 @@ msgstr ""
 msgid "Browse files"
 msgstr ""
 
-#: src/Widgets/UploadScreen.vala:47
+#: src/Widgets/UploadScreen.vala:43
+#, c-format
+msgid "Browse files (%s)"
+msgstr ""
+
+#: src/Widgets/UploadScreen.vala:57
 msgid "Browse a folder"
 msgstr ""
 
-#: src/Widgets/UploadScreen.vala:51
+#: src/Widgets/UploadScreen.vala:61
 msgid "Other ways to add images"
 msgstr ""

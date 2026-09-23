@@ -17,6 +17,13 @@ public class SummaryBar : Gtk.Box {
   public signal void start_requested ();
 
   /**
+   * Emitted when someone presses the button that replaces the numbers while a
+   * batch is running. What it asks for is that nothing further is started, not
+   * that anything in hand is dropped.
+   */
+  public signal void stop_requested ();
+
+  /**
    * Shown when every file was dealt with without trouble.
    */
   private const string ICON_OK = "/com/github/gijsgoudzwaard/image-optimizer/icons/check-circle.svg";
@@ -81,6 +88,22 @@ public class SummaryBar : Gtk.Box {
    * @var Gtk.Button
    */
   private Gtk.Button start;
+
+  /**
+   * Takes the same place while there is something to stop.
+   *
+   * @var Gtk.Button
+   */
+  private Gtk.Button stop;
+
+  /**
+   * Whether stopping has been asked for already. The bar keeps being updated
+   * after that, once per file still being accounted for, and the button must not
+   * reappear in between.
+   *
+   * @var bool
+   */
+  private bool stopping = false;
 
   construct {
     this.set_orientation (Gtk.Orientation.VERTICAL);
@@ -160,6 +183,22 @@ public class SummaryBar : Gtk.Box {
       this.start_requested ();
     });
 
+    // Quieter than the one that starts things, because it is not the thing to
+    // press: it is the way out for somebody who pressed the other one and
+    // changed their mind.
+    this.stop = new Gtk.Button.with_label (_("Stop"));
+    this.stop.add_css_class ("stop_button");
+    this.stop.set_valign (Gtk.Align.CENTER);
+    this.stop.set_visible (false);
+    ((Gtk.Widget) this.stop).set_focus_on_click (false);
+    this.stop.clicked.connect (() => {
+      // Once, and then it is gone. Pressing it twice cannot ask for anything
+      // more than pressing it once already did.
+      this.stopping = true;
+      this.stop.set_visible (false);
+      this.stop_requested ();
+    });
+
     left.append (this.spinner);
     left.append (this.icon);
     left.append (text);
@@ -167,6 +206,7 @@ public class SummaryBar : Gtk.Box {
     row.append (left);
     row.append (numbers);
     row.append (this.start);
+    row.append (this.stop);
 
     this.progress = new Gtk.ProgressBar ();
     this.progress.add_css_class ("summary_progress");
@@ -189,6 +229,7 @@ public class SummaryBar : Gtk.Box {
     this.spinner.start ();
     this.icon.set_visible (false);
     this.start.set_visible (false);
+    this.stop.set_visible (false);
 
     this.headline.set_label (_("Looking for images…"));
     this.sub.set_label (
@@ -220,6 +261,7 @@ public class SummaryBar : Gtk.Box {
     this.spinner.set_visible (false);
     this.icon.set_from_resource (images > 0 ? SummaryBar.ICON_OK : SummaryBar.ICON_PROBLEM);
     this.icon.set_visible (true);
+    this.stop.set_visible (false);
 
     this.figure.set_visible (false);
     this.caption.set_visible (false);
@@ -282,6 +324,7 @@ public class SummaryBar : Gtk.Box {
     uint optimized,
     uint failed,
     uint unsupported,
+    uint stopped,
     int64 before,
     int64 after
   ) {
@@ -289,7 +332,7 @@ public class SummaryBar : Gtk.Box {
       return;
     }
 
-    var accounted = optimized + failed + unsupported;
+    var accounted = optimized + failed + unsupported + stopped;
     uint skipped = finished > accounted ? finished - accounted : 0;
     var saved = before - after;
 
@@ -299,7 +342,7 @@ public class SummaryBar : Gtk.Box {
       return;
     }
 
-    this.done (total, optimized, skipped, failed, unsupported, before, after, saved);
+    this.done (total, optimized, skipped, failed, unsupported, stopped, before, after, saved);
   }
 
   /**
@@ -315,6 +358,13 @@ public class SummaryBar : Gtk.Box {
     // has something to show, so the state is readable without reading a word.
     this.remove_css_class ("done");
     this.start.set_visible (false);
+
+    // The only state there is anything to stop in. It hides itself when pressed,
+    // so it does not come back here: a batch that was stopped still reports
+    // every remaining file and keeps passing through this state until it has.
+    if (! this.stopping) {
+      this.stop.set_visible (true);
+    }
 
     this.spinner.set_visible (true);
     this.spinner.start ();
@@ -353,11 +403,14 @@ public class SummaryBar : Gtk.Box {
     uint skipped,
     uint failed,
     uint unsupported,
+    uint stopped,
     int64 before,
     int64 after,
     int64 saved
   ) {
     this.add_css_class ("done");
+    this.stop.set_visible (false);
+    this.stopping = false;
 
     this.spinner.stop ();
     this.spinner.set_visible (false);
@@ -369,7 +422,7 @@ public class SummaryBar : Gtk.Box {
     );
     this.icon.set_visible (true);
 
-    this.sub.set_label (this.counts (total, optimized, skipped, failed, unsupported));
+    this.sub.set_label (this.counts (total, optimized, skipped, failed, unsupported, stopped));
 
     this.progress.set_visible (false);
 
@@ -424,12 +477,19 @@ public class SummaryBar : Gtk.Box {
    * @param  uint unsupported
    * @return string
    */
-  private string counts (uint total, uint optimized, uint skipped, uint failed, uint unsupported) {
+  private string counts (
+    uint total,
+    uint optimized,
+    uint skipped,
+    uint failed,
+    uint unsupported,
+    uint stopped
+  ) {
     string[] parts = {};
 
     // "0 of 3 files optimized" only earns its place when there is nothing else
     // to report. Next to "3 already optimal" it is noise.
-    if (optimized > 0 || (skipped == 0 && failed == 0 && unsupported == 0)) {
+    if (optimized > 0 || (skipped == 0 && failed == 0 && unsupported == 0 && stopped == 0)) {
       parts += ngettext (
         "%u of %u file optimized",
         "%u of %u files optimized",
@@ -447,6 +507,12 @@ public class SummaryBar : Gtk.Box {
 
     if (unsupported > 0) {
       parts += _("%u skipped").printf (unsupported);
+    }
+
+    // Last, because it is the only one of these that says something about what
+    // the person did rather than about what the files were.
+    if (stopped > 0) {
+      parts += _("%u not started").printf (stopped);
     }
 
     // Not translatable on purpose: a bare ", " gives a translator nothing to go

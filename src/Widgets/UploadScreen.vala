@@ -33,6 +33,16 @@ public class UploadScreen : Gtk.Box {
     this.upload_button.set_valign (Gtk.Align.CENTER);
     ((Gtk.Widget) this.upload_button).set_focus_on_click (false);
 
+    // The one place a key has to be spelled out. Everywhere else the two ways in
+    // are menu items, and GTK writes their shortcut beside them by itself, but
+    // this is a plain button and gets nothing. The key is read back from the
+    // application instead of typed here, so changing it changes this too.
+    var shortcut = Utils.accelerator_label ("app.open-files");
+
+    if (shortcut != "") {
+      this.upload_button.set_tooltip_text (_("Browse files (%s)").printf (shortcut));
+    }
+
     // One control and not two. A folder cannot come through the same dialog as a
     // file, because the chooser is asked for one or the other and there is no
     // dialog that offers both, but that is the portal's problem and not

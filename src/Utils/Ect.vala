@@ -71,12 +71,22 @@ public class Ect {
   private int next_image = 0;
 
   /**
+   * Set when somebody asks for the batch to stop. Shared with every other batch
+   * running at the same time, so one press reaches all of them.
+   *
+   * @var Cancellable
+   */
+  private Cancellable cancellable;
+
+  /**
    * Create a new instance.
    *
    * @param List list
+   * @param Cancellable cancellable
    */
-  public Ect (List list) {
+  public Ect (List list, Cancellable cancellable) {
     this.list = list;
+    this.cancellable = cancellable;
   }
 
   /**
@@ -103,6 +113,21 @@ public class Ect {
 
           if (index >= this.images.length) {
             break;
+          }
+
+          // Stopping does not leave the rest of the queue hanging. Every file
+          // still in it is pulled and reported as untouched, through the same
+          // path every other outcome takes. Walking away instead would leave
+          // those rows spinning for good and the bar stuck at "23 of 26",
+          // because the counts are what the reports add up to.
+          //
+          // The file already in a worker's hands is finished rather than cut
+          // off. It is being copied, compressed and written back, and the one
+          // thing this app may never do is stop in the middle of that.
+          if (this.cancellable.is_cancelled ()) {
+            this.list.update_result (this.images[index], Status.STOPPED, 0, null);
+
+            continue;
           }
 
           this.compress_one (this.images[index]);

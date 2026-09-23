@@ -24,6 +24,7 @@
 #   R17 modification times, which the app promises to leave alone.
 #   R18 a missing optimizer, which is now every file rather than half of them.
 #   R19 a folder, which is looked through and then waits to be told to go.
+#   R20 stopping a batch, which may not leave a file half written.
 #
 # Usage, against an installed tree:
 #
@@ -756,6 +757,80 @@ if command -v xdotool >/dev/null 2>&1; then
     check "the hidden folder was left alone" "$(size "$r19/tree/.cache/hidden.png")" "$before_hidden"
     check "the file that is not an image was left alone" \
       "$(cat "$r19/tree/notes.txt")" "not an image"
+  else
+    echo "  FAIL no window to press the button in"
+    failed=$((failed + 1))
+  fi
+else
+  echo "  SKIP xdotool is not available, so the button could not be pressed"
+fi
+
+stop_app
+
+echo "### R20 a batch can be stopped, and what it never reached is untouched ###"
+# The point of stopping is not that it is quick, it is that it is safe. A file
+# already in a worker's hands is finished rather than cut off, because that is a
+# copy, a compression and a write back, and a file caught between the last two is
+# neither the old one nor the new one. Everything else is simply never started.
+#
+# A stand-in that takes its time, because the real optimizer is far too quick on
+# a fixture this size to press a button in the middle of it.
+r20="$WORK/r20"
+mkdir -p "$r20/bin" "$r20/files"
+
+cat > "$r20/bin/ect" <<'STUB'
+#!/bin/sh
+for a in "$@"; do file=$a; done
+sleep 1
+printf '%s' 'shrunk' > "$file"
+echo "Processed 1 file"
+exit 0
+STUB
+chmod +x "$r20/bin/ect"
+
+# Enough of them that no machine finishes the lot before the button is pressed.
+# Each one is two passes of a second, so even sixteen cores are three files deep
+# per core when the click lands.
+i=1
+while [ $i -le 48 ]; do
+  cp "$PNG_SOURCE" "$r20/files/file-$(printf '%02d' $i).png"
+  i=$((i + 1))
+done
+
+start_app "env PATH=$r20/bin:$PATH" "$r20/files"/*.png
+sleep 3
+
+if command -v xdotool >/dev/null 2>&1; then
+  window=$(xdotool search --name "Image Optimizer" 2>/dev/null | head -1)
+
+  if [ -n "$window" ]; then
+    # Same bar along the bottom that R19 presses, at the right hand end of it.
+    xdotool mousemove --window "$window" 930 645 click 1 2>/dev/null
+    # Long enough for the files already in hand to finish and for every file
+    # behind them to be accounted for.
+    sleep 6
+
+    check "app still running after being stopped" "$(alive)" "yes"
+
+    untouched=0
+    finished=0
+    for f in "$r20/files"/*.png; do
+      if cmp -s "$PNG_SOURCE" "$f"; then
+        untouched=$((untouched + 1))
+      elif [ "$(cat "$f")" = "shrunk" ]; then
+        finished=$((finished + 1))
+      fi
+    done
+
+    # The assertion that matters, and the only one here that does not depend on
+    # how fast the machine is: every file is either exactly what it was or
+    # exactly what it should have become. Nothing in between.
+    check "every file is either untouched or finished" \
+      "$((untouched + finished))" "48"
+    check "the batch was really cut short" \
+      "$([ "$untouched" -gt 0 ] && echo yes || echo no)" "yes"
+    check "and it had really started" \
+      "$([ "$finished" -gt 0 ] && echo yes || echo no)" "yes"
   else
     echo "  FAIL no window to press the button in"
     failed=$((failed + 1))
